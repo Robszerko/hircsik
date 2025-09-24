@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beágyazható Hírszalag</title>
+
+    <!-- Google Fonts importálása -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK (v9 Modular) -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+
+    <!-- BEÉPÍTETT CSS STÍLUSOK -->
+    <style>
+        :root {
+            --background-main: #121417;
+            --primary-text: #e8e6e3;
+            --secondary-text: #a9a9a9;
+            --border-color: #33383e;
+            --brand-red: #e50914;
+            --accent-gold: #c7a468;
+            --font-title: 'Roboto Condensed', sans-serif;
+            --font-body: 'Source Sans Pro', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: transparent;
+            font-family: var(--font-body);
+            overflow: hidden;
+        }
+        .news-ticker-container {
+            background-color: #101214; display: flex; align-items: stretch; border-radius: 8px;
+            margin: 0; box-shadow: inset 0 2px 8px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid var(--border-color);
+            height: 55px;
+        }
+        .ticker-label {
+            background-color: var(--brand-red); color: white; padding: 0 1.25rem;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            font-family: var(--font-title);
+        }
+        .ticker-label-content {
+            display: flex; flex-direction: column; align-items: flex-start; justify-content: center; line-height: 1.15;
+        }
+        .brand-name {
+            font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 2px;
+            white-space: nowrap;
+        }
+        #clock { font-size: 0.9rem; font-weight: 600; color: #f0f0f0; }
+        #clock-colon { animation: blink 1s step-end infinite; }
+        .ticker-label svg {
+            height: 3.5rem; width: auto; animation: rotate-globe 20s linear infinite;
+        }
+        .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; }
+        .ticker-wrap::before, .ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 50px; z-index: 2; }
+        .ticker-wrap::before { left: 0; background: linear-gradient(to right, #101214, transparent); }
+        .ticker-wrap::after { right: 0; background: linear-gradient(to left, #101214, transparent); }
+        .ticker {
+            display: inline-block; white-space: nowrap; padding: 1rem 0; animation: ticker-scroll 300s linear infinite;
+            opacity: 1; transition: opacity 0.5s ease-in-out;
+        }
+        .ticker.hidden { opacity: 0; }
+        .ticker:hover { animation-play-state: paused; }
+        .ticker-item { display: inline-block; margin: 0 0.5rem; font-size: 1rem; }
+        .ticker-item::after { content: '◆'; color: var(--border-color); margin: 0 2rem; }
+        .ticker-item:last-child::after { content: ''; }
+        .ticker-item .meta { color: #888; margin-right: 0.75rem; font-weight: 300; }
+        .ticker-item .source { font-weight: 600; color: var(--accent-gold); }
+        .ticker-item a { color: var(--secondary-text); text-decoration: none; transition: color 0.3s; }
+        .ticker-item a:hover { color: var(--primary-text); }
+        @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes rotate-globe { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <section class="news-ticker-container">
+        <div class="ticker-label">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <div class="ticker-label-content">
+                <span class="brand-name">TKP NEWS</span>
+                <div id="clock">
+                    <span id="clock-hours">--</span><span id="clock-colon">:</span><span id="clock-minutes">--</span>
+                </div>
+            </div>
+        </div>
+        <div class="ticker-wrap"><div class="ticker" id="news-ticker-content"><div class="ticker-item">Hírek inicializálása...</div></div></div>
+    </section>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const feedsRef = ref(database, 'feeds');
+
+        const ticker = document.getElementById('news-ticker-content');
+        const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+        
+        let rssFeeds = {};
+        let isFirstLoad = true;
+        let newsUpdateInterval = null;
+
+        const clockHours = document.getElementById('clock-hours');
+        const clockMinutes = document.getElementById('clock-minutes');
+        const updateClock = () => {
+            const now = new Date();
+            clockHours.textContent = now.getHours().toString().padStart(2, '0');
+            clockMinutes.textContent = now.getMinutes().toString().padStart(2, '0');
+        };
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        const getSourceName = (url) => {
+            try {
+                const hostname = new URL(url).hostname;
+                if (hostname.includes('hirstart.hu')) return 'Hírstart';
+                if (hostname.includes('index.hu')) return 'Index';
+                if (hostname.includes('telex.hu')) return 'Telex';
+                if (hostname.includes('hvg.hu')) return 'HVG';
+                if (hostname.includes('24.hu')) return '24.hu';
+                return hostname.replace('www.', '').split('.')[0].toUpperCase();
+            } catch (e) { return 'Ismeretlen'; }
+        };
+        
+        const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+
+        const fetchAndDisplayNews = async () => {
+            if (Object.keys(rssFeeds).length === 0) {
+                ticker.innerHTML = '<div class="ticker-item">Nincsenek RSS források beállítva.</div>'; return;
+            }
+            let allItems = [];
+            const fetchPromises = Object.values(rssFeeds).map(async (url) => {
+                try {
+                    const response = await fetch(CORS_PROXY + encodeURIComponent(url));
+                    if (!response.ok) return [];
+                    const str = await response.text();
+                    const data = new window.DOMParser().parseFromString(str, "text/xml");
+                    if (data.querySelector("parsererror")) return [];
+                    const items = Array.from(data.querySelectorAll("item"));
+                    return items.map(item => ({ title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, source: getSourceName(url) }));
+                } catch (error) { return []; }
+            });
+
+            const results = await Promise.all(fetchPromises);
+            allItems = results.flat();
+            if (allItems.length === 0) return;
+
+            allItems.sort((a, b) => (new Date(b.pubDate) || 0) - (new Date(a.pubDate) || 0));
+            
+            const newsHtml = allItems.slice(0, 40).map(item => {
+                const dateObj = item.pubDate ? new Date(item.pubDate) : null;
+                let metaHtml = `[<span class="source">${item.source}</span>`;
+                if (dateObj && !isNaN(dateObj.getTime())) { metaHtml += ` | ${formatTime(dateObj)}`; }
+                metaHtml += ']';
+                return `<div class="ticker-item"><span class="meta">${metaHtml}</span> <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a></div>`;
+            }).join('');
+
+            const contentToDisplay = newsHtml + newsHtml;
+
+            if (isFirstLoad) {
+                ticker.innerHTML = contentToDisplay; isFirstLoad = false;
+            } else {
+                ticker.classList.add('hidden');
+                setTimeout(() => { ticker.innerHTML = contentToDisplay; ticker.classList.remove('hidden'); }, 500);
+            }
+        };
+        
+        const startNewsUpdates = () => { if (newsUpdateInterval) clearInterval(newsUpdateInterval); fetchAndDisplayNews(); newsUpdateInterval = setInterval(fetchAndDisplayNews, 300000); };
+        const stopNewsUpdates = () => clearInterval(newsUpdateInterval);
+
+        onValue(feedsRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                rssFeeds = data;
+                if (document.visibilityState === 'visible') startNewsUpdates();
+            } else {
+                ticker.innerHTML = '<div class="ticker-item">Adatbázis nem elérhető vagy üres.</div>';
+            }
+        });
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') startNewsUpdates(); else stopNewsUpdates(); });
+    </script>
+</body>
+</html>
