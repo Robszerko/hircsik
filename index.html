@@ -37,8 +37,18 @@
         .ticker-wrap::before { left: 0; background: linear-gradient(to right, #101214, transparent); }
         .ticker-wrap::after { right: 0; background: linear-gradient(to left, #101214, transparent); }
         
-        .ticker { display: inline-block; white-space: nowrap; padding: 1rem 0; animation: ticker-scroll 300s linear infinite; opacity: 1; transition: opacity 0.5s ease-in-out; }
-        .ticker.hidden { opacity: 0; }
+        .ticker {
+            display: inline-block; white-space: nowrap; padding: 1rem 0;
+            /* Az animációt itt állítjuk be */
+            animation: ticker-scroll 300s linear infinite;
+            opacity: 1;
+            /* Az átmenet az opacity (átlátszóság) tulajdonságra vonatkozik */
+            transition: opacity 0.75s ease-in-out;
+        }
+        /* Ezt az osztályt kapja meg a ticker, amikor elrejtjük */
+        .ticker.hidden {
+            opacity: 0;
+        }
         .ticker:hover { animation-play-state: paused; }
         .ticker-item {
             display: inline-block; margin: 0 0.5rem;
@@ -55,17 +65,16 @@
         .refresh-notice {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;
             color: var(--accent-gold); font-family: var(--font-title); padding: 5px 15px; border-radius: 5px;
-            background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0.5s;
+            background: rgba(0,0,0,0.7); opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0.5s;
             white-space: nowrap;
         }
         .refresh-notice.visible {
-            opacity: 1; visibility: visible; animation: soft-blink 1.5s 2;
+            opacity: 1; visibility: visible;
         }
 
         @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes rotate-globe { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blink { 50% { opacity: 0; } }
-        @keyframes soft-blink { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -93,7 +102,7 @@
         const feedsRef = ref(database, 'feeds');
         const messageRef = ref(database, 'message');
 
-        const ticker = document.getElementById('news-ticker-content');
+        let ticker = document.getElementById('news-ticker-content');
         const refreshNotice = document.getElementById('refresh-notice');
         const CORS_PROXY = "https://api.allorigins.win/raw?url=";
         
@@ -125,7 +134,6 @@
             const results = await Promise.all(fetchPromises);
             allItems = results.flat();
             
-            // MÓDOSÍTÁS: 3 óráról 2 órára való átállítás
             const twoHoursAgo = new Date();
             twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
             const recentItems = allItems.filter(item => {
@@ -136,15 +144,12 @@
 
             recentItems.sort((a, b) => (new Date(b.pubDate) || 0) - (new Date(a.pubDate) || 0));
 
-            // MÓDOSÍTÁS: Ellenőrizzük, hogy vannak-e friss hírek. Ha nincsenek, üzenetet jelenítünk meg.
             if (recentItems.length === 0 && !customMessage) {
-                // Az animáció leállítása érdekében nem duplikáljuk a tartalmat
                 ticker.innerHTML = '<div class="ticker-item" style="animation: none;">Jelenleg nincsenek az elmúlt 2 órában megjelent hírek. Látogasson vissza később!</div>';
-                return; // Kilépünk a függvényből, hogy ne folytassa a feldolgozást
+                return;
             }
             
             let singlePassHtml = '';
-            // KÖZLEMÉNY MEGJELENÍTÉSE
             if (customMessage) {
                 singlePassHtml += `<div class="ticker-item custom-message">${customMessage}</div>`;
             }
@@ -157,23 +162,44 @@
                 return `<div class="ticker-item"><span class="meta">${metaHtml}</span> <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a></div>`;
             }).join('');
             
-            // A tartalom duplikálása a folyamatos, "végtelen" scroll animációhoz
             const contentToDisplay = singlePassHtml + singlePassHtml;
 
-            // ANIMÁCIÓS LOGIKA
+            // --- MÓDOSÍTOTT ANIMÁCIÓS LOGIKA ---
             if (isFirstLoad) {
                 ticker.innerHTML = contentToDisplay;
                 isFirstLoad = false;
             } else {
-                ticker.classList.add('hidden');
+                // 1. Megjelenítjük a frissítési üzenetet a futó hírszalag felett.
                 refreshNotice.classList.add('visible');
+
+                // 2. Várunk 2 másodpercet, amíg a régi hírek még futnak a háttérben.
                 setTimeout(() => {
-                    refreshNotice.classList.remove('visible');
-                    setTimeout(() => {
+                    // 3. Elhalványítjuk a régi hírszalagot.
+                    ticker.classList.add('hidden');
+
+                    // 4. Megvárjuk, amíg a halványítási animáció (0.75s) befejeződik.
+                    // A 'transitionend' esemény biztosítja, hogy a csere csak utána történjen meg.
+                    ticker.addEventListener('transitionend', function handleUpdate() {
+                        // Lecseréljük a tartalmat, amíg a szalag láthatatlan.
                         ticker.innerHTML = contentToDisplay;
+
+                        // Újraindítjuk az animációt.
+                        // Az animáció eltávolítása és visszaállítása újraindítja azt 0-ról.
+                        ticker.style.animation = 'none';
+                        ticker.offsetHeight; // Ez egy trükk a böngésző "reflow"-jának kényszerítésére.
+                        ticker.style.animation = '';
+
+                        // Eltüntetjük a frissítési üzenetet.
+                        refreshNotice.classList.remove('visible');
+                        
+                        // Visszahozzuk az új hírszalagot.
                         ticker.classList.remove('hidden');
-                    }, 500); // Wait for fade out
-                }, 3000); // Notice duration
+                        
+                        // Eltávolítjuk az eseményfigyelőt, hogy ne fusson le többször.
+                        ticker.removeEventListener('transitionend', handleUpdate);
+                    }, { once: true }); // A {once: true} opció biztosítja, hogy az esemény csak egyszer fusson le.
+
+                }, 2000); // Az üzenet megjelenítésének ideje, mielőtt az átmenet megkezdődik.
             }
         };
         
