@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
     <style>
@@ -14,6 +15,8 @@
             --background-main: #121417; --primary-text: #e8e6e3; --secondary-text: #a9a9a9;
             --border-color: #33383e; --brand-red: #e50914; --accent-gold: #c7a468;
             --font-title: 'Roboto Condensed', sans-serif; --font-body: 'Source Sans Pro', sans-serif;
+            --weather-blue: #38bdf8;
+            --calendar-yellow: #facc15;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: transparent; font-family: var(--font-body); overflow: hidden; }
@@ -21,39 +24,30 @@
             background-color: #101214; display: flex; align-items: stretch; border-radius: 8px; margin: 0;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.5); overflow: hidden; border: 1px solid var(--border-color); height: 55px;
         }
-        .ticker-label {
-            background-color: var(--brand-red); color: white; padding: 0 1.25rem; display: flex;
-            align-items: center; justify-content: center; gap: 12px; font-family: var(--font-title);
-        }
-        .ticker-label-content { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; line-height: 1.15; }
-        .brand-name { font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 2px; white-space: nowrap; }
+        .ticker-label { background-color: var(--brand-red); color: white; padding: 0 1.25rem; display: flex; align-items: center; justify-content: center; gap: 12px; font-family: var(--font-title); }
+        .ticker-label-content { display: flex; align-items: center; justify-content: center; gap: 8px; line-height: 1.15; }
+        .brand-name { font-size: 1.1rem; letter-spacing: 1px; white-space: nowrap; }
+        #clock-container { display: flex; flex-direction: column; align-items: flex-start; }
         #clock { font-size: 0.9rem; font-weight: 600; color: #f0f0f0; }
         #clock-colon { animation: blink 1s step-end infinite; }
-        .ticker-label svg {
-            height: 3.0rem; width: auto; animation: rotate-globe 20s linear infinite;
-        }
+        .ticker-label svg { height: 3.0rem; width: auto; animation: rotate-globe 20s linear infinite; flex-shrink: 0; }
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; }
-        .ticker-wrap::before, .ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 50px; z-index: 2; }
+        .ticker-wrap::before, .ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 50px; z-index: 2; pointer-events: none; }
         .ticker-wrap::before { left: 0; background: linear-gradient(to right, #101214, transparent); }
         .ticker-wrap::after { right: 0; background: linear-gradient(to left, #101214, transparent); }
         
+        /* --- MÓDOSÍTOTT ANIMÁCIÓS LOGIKA --- */
         .ticker {
             display: inline-block; white-space: nowrap; padding: 1rem 0;
-            /* Az animációt itt állítjuk be */
-            animation: ticker-scroll 300s linear infinite;
-            opacity: 1;
-            /* Az átmenet az opacity (átlátszóság) tulajdonságra vonatkozik */
-            transition: opacity 0.75s ease-in-out;
+            opacity: 0; /* Alapból láthatatlan */
+            transform: translateX(0); /* Alaphelyzetben van, nem mozog */
+            transition: opacity 0.5s ease-in-out; 
         }
-        /* Ezt az osztályt kapja meg a ticker, amikor elrejtjük */
-        .ticker.hidden {
-            opacity: 0;
-        }
+        .ticker.visible { opacity: 1; } /* Láthatóvá teszi */
+        .ticker.scrolling { animation: ticker-scroll 300s linear infinite; } /* Csak ekkor indul a mozgás */
         .ticker:hover { animation-play-state: paused; }
-        .ticker-item {
-            display: inline-block; margin: 0 0.5rem;
-            font-size: 1.05rem;
-        }
+        
+        .ticker-item { display: inline-block; margin: 0 0.5rem; font-size: 1.05rem; }
         .ticker-item.custom-message { font-weight: bold; color: var(--brand-red); }
         .ticker-item::after { content: '◆'; color: var(--border-color); margin: 0 2rem; }
         .ticker-item:last-child::after { content: ''; }
@@ -61,33 +55,37 @@
         .ticker-item .source { font-weight: 600; color: var(--accent-gold); }
         .ticker-item a { color: var(--secondary-text); text-decoration: none; transition: color 0.3s; }
         .ticker-item a:hover { color: var(--primary-text); }
+        
+        #breaking-indicator {
+            width: 10px; height: 10px; background-color: #ffc107;
+            border-radius: 50%; display: none;
+            animation: pulse 1.5s infinite; box-shadow: 0 0 5px #ffc107, 0 0 10px #ffc107;
+        }
+        #breaking-indicator.active { display: block; }
 
-        .refresh-notice {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;
-            color: var(--accent-gold); font-family: var(--font-title); padding: 5px 15px; border-radius: 5px;
-            background: rgba(0,0,0,0.7); opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0.5s;
-            white-space: nowrap;
-        }
-        .refresh-notice.visible {
-            opacity: 1; visibility: visible;
-        }
+        .ticker-item.weather-item { color: var(--weather-blue); font-weight: 600; }
+        .ticker-item.calendar-item { color: var(--calendar-yellow); font-weight: 700; }
+        .ticker-item.news-intro-item { color: var(--primary-text); font-weight: 600; }
 
         @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes rotate-globe { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blink { 50% { opacity: 0; } }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(0.9); opacity: 1; } }
     </style>
 </head>
 <body>
     <section class="news-ticker-container">
-        <div class="ticker-label">
+        <div class="ticker-label" id="ticker-label">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
             <div class="ticker-label-content">
-                <span class="brand-name">TKP NEWS</span>
-                <div id="clock"><span id="clock-hours">--</span><span id="clock-colon">:</span><span id="clock-minutes">--</span></div>
+                <div id="breaking-indicator"></div>
+                <div id="clock-container">
+                    <span class="brand-name">TKP NEWS</span>
+                    <div id="clock"><span id="clock-hours">--</span><span id="clock-colon">:</span><span id="clock-minutes">--</span></div>
+                </div>
             </div>
         </div>
         <div class="ticker-wrap">
-            <div class="refresh-notice" id="refresh-notice">Friss hirek az elmult 2 órából</div>
             <div class="ticker" id="news-ticker-content"><div class="ticker-item">Hírek inicializálása...</div></div>
         </div>
     </section>
@@ -96,120 +94,147 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
+        // --- Konfigurációk ---
         const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
+        const weatherComApiKey = 'e1f10a1e78da46f5b10a1e78da96f525';
+        const PWS_STATIONS = { NYIREGYHAZI_UT: { id: 'INYREG26', displayName: 'Nyíregyházi út' }, KOSSUTH: { id: 'INYREG42', displayName: 'Kossuth út' }, KERT_UTCA: { id: 'INYREG37', displayName: 'Kert u.' }, SOSTOHEGY: { id: 'INYREG20', displayName: 'Sóstóhegy' }, BORBANYA: { id: 'INYREG30', displayName: 'Borbánya' }, OROS_DERUS: { id: 'INYREG35', displayName: 'Oros' } };
+        const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+        const BREAKING_KEYWORDS = ['rendkívüli', 'fontos bejelentés', 'most érkezett', 'élőben', 'percről percre', 'breaking', 'rakétacsapás', 'háború'];
+
+        // --- DOM Elemek és Állapotváltozók ---
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const feedsRef = ref(database, 'feeds');
         const messageRef = ref(database, 'message');
-
-        let ticker = document.getElementById('news-ticker-content');
-        const refreshNotice = document.getElementById('refresh-notice');
-        const CORS_PROXY = "https://api.allorigins.win/raw?url=";
-        
+        const ticker = document.getElementById('news-ticker-content');
+        const breakingIndicator = document.getElementById('breaking-indicator');
         let rssFeeds = {};
         let customMessage = '';
         let isFirstLoad = true;
-        let newsUpdateInterval = null;
+        let updateTimeout = null;
+        
+        const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "10-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"10-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-11": ["Árpád"],"12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
 
-        const clockHours = document.getElementById('clock-hours');
-        const clockMinutes = document.getElementById('clock-minutes');
-        const updateClock = () => { const now = new Date(); clockHours.textContent = now.getHours().toString().padStart(2, '0'); clockMinutes.textContent = now.getMinutes().toString().padStart(2, '0'); };
-        updateClock(); setInterval(updateClock, 1000);
-
-        const getSourceName = (url) => { try { const hostname = new URL(url).hostname; if (hostname.includes('hirstart.hu')) return 'Hírstart'; if (hostname.includes('index.hu')) return 'Index'; if (hostname.includes('telex.hu')) return 'Telex'; if (hostname.includes('hvg.hu')) return 'HVG'; if (hostname.includes('24.hu')) return '24.hu'; return hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch (e) { return 'Ismeretlen'; } };
+        // --- Segédfüggvények ---
+        const formatValue = (value, unit = '', precision = 1) => { if (value === null || typeof value === 'undefined' || isNaN(value)) return 'N/A'; return `${Number(value).toFixed(precision)}${unit}`; };
+        const updateClock = () => { const now = new Date(); document.getElementById('clock-hours').textContent = now.getHours().toString().padStart(2, '0'); document.getElementById('clock-minutes').textContent = now.getMinutes().toString().padStart(2, '0'); };
+        const getSourceName = (url) => { try { const hn = new URL(url).hostname; if (hn.includes('hirstart.hu')) return 'Hírstart'; if (hn.includes('index.hu')) return 'Index'; if (hn.includes('telex.hu')) return 'Telex'; if (hn.includes('hvg.hu')) return 'HVG'; if (hn.includes('24.hu')) return '24.hu'; return hn.replace('www.', '').split('.')[0].toUpperCase(); } catch (e) { return 'Ismeretlen'; } };
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+        const checkBreakingNews = (items) => { const titles = items.slice(0, 10).map(item => item.title.toLowerCase()); const isBreaking = titles.some(title => BREAKING_KEYWORDS.some(keyword => title.includes(keyword))); breakingIndicator.classList.toggle('active', isBreaking); };
+        
+        const createIntroItems = () => {
+            const today = new Date();
+            const dateString = `Ma ${today.getFullYear()}. ${CALENDAR_DATA.honapok[today.getMonth()]} ${today.getDate()}. ${CALENDAR_DATA.napok[today.getDay()]} van.`;
+            const nameDayKey = `${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+            const names = CALENDAR_DATA.nameDays[nameDayKey] || [];
+            const nameDayString = names.length > 0 ? `Mai névnap: ${names.join(' és ')}.` : "Ma nincs névnap.";
+            return [ { type: 'calendar_intro', text: `${dateString} ${nameDayString}` }, { type: 'news_intro', text: 'A legfrissebb hírek:' } ];
+        };
 
-        const fetchAndDisplayNews = async () => {
-            if (Object.keys(rssFeeds).length === 0 && !customMessage) { ticker.innerHTML = '<div class="ticker-item">Nincsenek források beállítva.</div>'; return; }
-            let allItems = [];
-            const fetchPromises = Object.values(rssFeeds).map(async (url) => {
+        async function fetchPwsTemperatures() {
+            const promises = Object.values(PWS_STATIONS).map(async (station) => {
                 try {
-                    const response = await fetch(CORS_PROXY + encodeURIComponent(url)); if (!response.ok) return []; const str = await response.text();
-                    const data = new window.DOMParser().parseFromString(str, "text/xml"); if (data.querySelector("parsererror")) return [];
-                    const items = Array.from(data.querySelectorAll("item"));
-                    return items.map(item => ({ title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, source: getSourceName(url) }));
-                } catch (error) { return []; }
+                    const url = `https://api.weather.com/v2/pws/observations/current?apiKey=${weatherComApiKey}&stationId=${station.id}&numericPrecision=decimal&format=json&units=m`;
+                    const response = await fetch(url);
+                    if (!response.ok) return null;
+                    const data = await response.json();
+                    return data.observations?.length > 0 ? { name: station.displayName, temp: data.observations[0].metric.temp } : null;
+                } catch { return null; }
             });
-
-            const results = await Promise.all(fetchPromises);
-            allItems = results.flat();
+            return (await Promise.all(promises)).filter(r => r !== null);
+        }
+        
+        const fetchAndDisplayContent = async () => {
+            const newsPromises = Object.values(rssFeeds).map(async (url) => {
+                try {
+                    const res = await fetch(CORS_PROXY + encodeURIComponent(url)); if (!res.ok) return []; const str = await res.text();
+                    const data = new window.DOMParser().parseFromString(str, "text/xml");
+                    return data.querySelector("parsererror") ? [] : [...data.querySelectorAll("item")].map(item => ({ type: 'news', title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, source: getSourceName(url) }));
+                } catch { return []; }
+            });
             
-            const twoHoursAgo = new Date();
-            twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
-            const recentItems = allItems.filter(item => {
-                if (!item.pubDate) return false;
-                const itemDate = new Date(item.pubDate);
-                return itemDate >= twoHoursAgo;
+            const [newsResults, pwsTemperatures] = await Promise.all([Promise.all(newsPromises), fetchPwsTemperatures()]);
+            
+            let newsItems = newsResults.flat();
+            const twoHoursAgo = new Date(); twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
+            const recentNews = newsItems.filter(item => item.pubDate && new Date(item.pubDate) >= twoHoursAgo).sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+            checkBreakingNews(recentNews);
+            
+            let weatherModules = pwsTemperatures.map(pws => ({ type: 'weather_pws', name: pws.name, temp: pws.temp }));
+            
+            let combinedContent = [...createIntroItems()];
+            if (customMessage) combinedContent.push({ type: 'custom_message', text: customMessage });
+            
+            recentNews.slice(0, 40).forEach((newsItem, index) => {
+                combinedContent.push(newsItem);
+                if ((index + 1) % 3 === 0 && weatherModules.length > 0) combinedContent.push(weatherModules.shift());
             });
-
-            recentItems.sort((a, b) => (new Date(b.pubDate) || 0) - (new Date(a.pubDate) || 0));
-
-            if (recentItems.length === 0 && !customMessage) {
-                ticker.innerHTML = '<div class="ticker-item" style="animation: none;">Jelenleg nincsenek az elmúlt 2 órában megjelent hírek. Látogasson vissza később!</div>';
+            
+            if (combinedContent.length <= 2) {
+                ticker.innerHTML = '<div class="ticker-item" style="animation: none;">Nincsenek megjeleníthető hírek.</div>';
+                ticker.classList.add('visible'); // Legyen látható a hibaüzenet
                 return;
             }
             
-            let singlePassHtml = '';
-            if (customMessage) {
-                singlePassHtml += `<div class="ticker-item custom-message">${customMessage}</div>`;
-            }
-
-            singlePassHtml += recentItems.slice(0, 40).map(item => {
-                const dateObj = item.pubDate ? new Date(item.pubDate) : null;
-                let metaHtml = `[<span class="source">${item.source}</span>`;
-                if (dateObj && !isNaN(dateObj.getTime())) { metaHtml += ` | ${formatTime(dateObj)}`; }
-                metaHtml += ']';
-                return `<div class="ticker-item"><span class="meta">${metaHtml}</span> <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a></div>`;
+            let singlePassHtml = combinedContent.map(item => {
+                switch (item.type) {
+                    case 'calendar_intro': return `<div class="ticker-item calendar-item">${item.text}</div>`;
+                    case 'news_intro': return `<div class="ticker-item news-intro-item">${item.text}</div>`;
+                    case 'news':
+                        const dateObj = item.pubDate ? new Date(item.pubDate) : null;
+                        let meta = `[<span class="source">${item.source}</span>`;
+                        if (dateObj && !isNaN(dateObj.getTime())) meta += ` | ${formatTime(dateObj)}`;
+                        meta += ']';
+                        return `<div class="ticker-item"><span class="meta">${meta}</span> <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a></div>`;
+                    case 'custom_message': return `<div class="ticker-item custom-message">${item.text}</div>`;
+                    case 'weather_pws': return `<div class="ticker-item weather-item">Időjárás most: Nyíregyháza ${item.name} ${formatValue(item.temp, '', 1)} fok</div>`;
+                    default: return '';
+                }
             }).join('');
             
             const contentToDisplay = singlePassHtml + singlePassHtml;
-
-            // --- MÓDOSÍTOTT ANIMÁCIÓS LOGIKA ---
+            
             if (isFirstLoad) {
                 ticker.innerHTML = contentToDisplay;
+                setTimeout(() => { ticker.classList.add('visible'); }, 100);
+                setTimeout(() => { ticker.classList.add('scrolling'); }, 2000);
                 isFirstLoad = false;
             } else {
-                // 1. Megjelenítjük a frissítési üzenetet a futó hírszalag felett.
-                refreshNotice.classList.add('visible');
-
-                // 2. Várunk 2 másodpercet, amíg a régi hírek még futnak a háttérben.
+                ticker.classList.remove('visible', 'scrolling');
                 setTimeout(() => {
-                    // 3. Elhalványítjuk a régi hírszalagot.
-                    ticker.classList.add('hidden');
-
-                    // 4. Megvárjuk, amíg a halványítási animáció (0.75s) befejeződik.
-                    // A 'transitionend' esemény biztosítja, hogy a csere csak utána történjen meg.
-                    ticker.addEventListener('transitionend', function handleUpdate() {
-                        // Lecseréljük a tartalmat, amíg a szalag láthatatlan.
-                        ticker.innerHTML = contentToDisplay;
-
-                        // Újraindítjuk az animációt.
-                        // Az animáció eltávolítása és visszaállítása újraindítja azt 0-ról.
-                        ticker.style.animation = 'none';
-                        ticker.offsetHeight; // Ez egy trükk a böngésző "reflow"-jának kényszerítésére.
-                        ticker.style.animation = '';
-
-                        // Eltüntetjük a frissítési üzenetet.
-                        refreshNotice.classList.remove('visible');
-                        
-                        // Visszahozzuk az új hírszalagot.
-                        ticker.classList.remove('hidden');
-                        
-                        // Eltávolítjuk az eseményfigyelőt, hogy ne fusson le többször.
-                        ticker.removeEventListener('transitionend', handleUpdate);
-                    }, { once: true }); // A {once: true} opció biztosítja, hogy az esemény csak egyszer fusson le.
-
-                }, 2000); // Az üzenet megjelenítésének ideje, mielőtt az átmenet megkezdődik.
+                    ticker.innerHTML = contentToDisplay;
+                    ticker.classList.add('visible');
+                    ticker.classList.add('scrolling');
+                }, 600);
             }
+            
+            scheduleNextUpdate();
         };
         
-        const startNewsUpdates = () => { if (newsUpdateInterval) clearInterval(newsUpdateInterval); fetchAndDisplayNews(); newsUpdateInterval = setInterval(fetchAndDisplayNews, 300000); };
-        const stopNewsUpdates = () => clearInterval(newsUpdateInterval);
+        const scheduleNextUpdate = () => { if (updateTimeout) clearTimeout(updateTimeout); const now = new Date(); const delay = ((5 - (now.getMinutes() % 5)) * 60 - now.getSeconds()) * 1000; updateTimeout = setTimeout(fetchAndDisplayContent, delay); };
+        
+        const startSystem = () => { fetchAndDisplayContent(); };
+        const stopSystem = () => { if (updateTimeout) clearTimeout(updateTimeout); };
+        
+        // --- JAVÍTOTT: Az [object Object] hiba megelőzése ---
+        onValue(messageRef, (snapshot) => { 
+            const val = snapshot.val();
+            // Biztosítjuk, hogy csak szöveget vagy üres stringet tároljunk el
+            if (typeof val === 'string') {
+                customMessage = val;
+            } else if (typeof val === 'object' && val !== null && typeof val.text === 'string') {
+                customMessage = val.text;
+            } else {
+                customMessage = '';
+            }
 
-        onValue(feedsRef, (snapshot) => { rssFeeds = snapshot.val() || {}; if (document.visibilityState === 'visible') startNewsUpdates(); });
-        onValue(messageRef, (snapshot) => { customMessage = snapshot.val() || ''; if (document.visibilityState === 'visible') startNewsUpdates(); });
+            if (document.visibilityState === 'visible') { startSystem(); }
+        });
 
-        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') startNewsUpdates(); else stopNewsUpdates(); });
+        // Alap indítók
+        updateClock(); setInterval(updateClock, 1000);
+        onValue(feedsRef, (snapshot) => { rssFeeds = snapshot.val() || {}; if (document.visibilityState === 'visible') startSystem(); });
+        document.addEventListener('visibilitychange', () => { document.visibilityState === 'visible' ? startSystem() : stopSystem(); });
     </script>
 </body>
 </html>
