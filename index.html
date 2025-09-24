@@ -44,7 +44,8 @@
             transition: opacity 0.5s ease-in-out; 
         }
         .ticker.visible { opacity: 1; } /* Láthatóvá teszi */
-        .ticker.scrolling { animation: ticker-scroll 300s linear infinite; } /* Csak ekkor indul a mozgás */
+        /* A fix 300s időtartam innen el lett távolítva, mert a JS dinamikusan felülírja. */
+        .ticker.scrolling { animation: ticker-scroll 300s linear infinite; }
         .ticker:hover { animation-play-state: paused; }
         
         .ticker-item { display: inline-block; margin: 0 0.5rem; font-size: 1.05rem; }
@@ -68,7 +69,7 @@
         .ticker-item.news-intro-item { color: var(--primary-text); font-weight: 600; }
 
         @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes rotate-globe { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes rotate-globe { from { transform: rotate(0deg); } to { transform: rotate(300deg); } }
         @keyframes blink { 50% { opacity: 0; } }
         @keyframes pulse { 0% { transform: scale(0.9); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } 100% { transform: scale(0.9); opacity: 1; } }
     </style>
@@ -144,6 +145,20 @@
             return (await Promise.all(promises)).filter(r => r !== null);
         }
         
+        // --- ÚJ FÜGGVÉNY A SEBESSÉG BEÁLLÍTÁSÁRA ---
+        const setTickerSpeed = () => {
+            const pixelsPerSecond = 100; // Állítsd be a kívánt sebességet (pixel/másodperc)
+            // Az animáció a teljes szélesség felével (-50%) tolja el a tartalmat.
+            // A távolság tehát a görgethető szélesség fele.
+            const distance = ticker.scrollWidth / 2;
+
+            if (distance > 0) {
+                const duration = distance / pixelsPerSecond;
+                // Dinamikusan beállítjuk az animáció időtartamát.
+                ticker.style.animationDuration = `${duration}s`;
+            }
+        };
+
         const fetchAndDisplayContent = async () => {
             const newsPromises = Object.values(rssFeeds).map(async (url) => {
                 try {
@@ -172,7 +187,7 @@
             
             if (combinedContent.length <= 2) {
                 ticker.innerHTML = '<div class="ticker-item" style="animation: none;">Nincsenek megjeleníthető hírek.</div>';
-                ticker.classList.add('visible'); // Legyen látható a hibaüzenet
+                ticker.classList.add('visible');
                 return;
             }
             
@@ -194,15 +209,23 @@
             
             const contentToDisplay = singlePassHtml + singlePassHtml;
             
+            // --- MÓDOSÍTOTT LOGIKA A SEBESSÉG BEÁLLÍTÁSÁVAL ---
             if (isFirstLoad) {
                 ticker.innerHTML = contentToDisplay;
-                setTimeout(() => { ticker.classList.add('visible'); }, 100);
-                setTimeout(() => { ticker.classList.add('scrolling'); }, 2000);
+                // A böngészőnek idő kell a rendereléshez, mielőtt lekérdezzük a szélességet.
+                setTimeout(() => {
+                    setTickerSpeed(); // Sebesség beállítása
+                    ticker.classList.add('visible');
+                }, 100);
+                setTimeout(() => {
+                    ticker.classList.add('scrolling');
+                }, 2000);
                 isFirstLoad = false;
             } else {
                 ticker.classList.remove('visible', 'scrolling');
                 setTimeout(() => {
                     ticker.innerHTML = contentToDisplay;
+                    setTickerSpeed(); // Sebesség újra-kiszámítása és beállítása
                     ticker.classList.add('visible');
                     ticker.classList.add('scrolling');
                 }, 600);
@@ -216,10 +239,8 @@
         const startSystem = () => { fetchAndDisplayContent(); };
         const stopSystem = () => { if (updateTimeout) clearTimeout(updateTimeout); };
         
-        // --- JAVÍTOTT: Az [object Object] hiba megelőzése ---
         onValue(messageRef, (snapshot) => { 
             const val = snapshot.val();
-            // Biztosítjuk, hogy csak szöveget vagy üres stringet tároljunk el
             if (typeof val === 'string') {
                 customMessage = val;
             } else if (typeof val === 'object' && val !== null && typeof val.text === 'string') {
