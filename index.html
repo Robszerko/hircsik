@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beágyazható Hírszalag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
@@ -30,7 +30,6 @@
         #clock { font-size: 0.9rem; font-weight: 600; color: #f0f0f0; }
         #clock-colon { animation: blink 1s step-end infinite; }
         .ticker-label svg {
-            /* Kisebb földgömb */
             height: 3.0rem; width: auto; animation: rotate-globe 20s linear infinite;
         }
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; }
@@ -43,7 +42,6 @@
         .ticker:hover { animation-play-state: paused; }
         .ticker-item {
             display: inline-block; margin: 0 0.5rem;
-            /* Nagyobb betűméret */
             font-size: 1.05rem;
         }
         .ticker-item.custom-message { font-weight: bold; color: var(--brand-red); }
@@ -54,7 +52,6 @@
         .ticker-item a { color: var(--secondary-text); text-decoration: none; transition: color 0.3s; }
         .ticker-item a:hover { color: var(--primary-text); }
 
-        /* FRISSÍTÉS ANIMÁCIÓ */
         .refresh-notice {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10;
             color: var(--accent-gold); font-family: var(--font-title); padding: 5px 15px; border-radius: 5px;
@@ -62,7 +59,7 @@
             white-space: nowrap;
         }
         .refresh-notice.visible {
-            opacity: 1; visibility: visible; animation: soft-blink 1.5s 2; /* 2x villan (3 mp) */
+            opacity: 1; visibility: visible; animation: soft-blink 1.5s 2;
         }
 
         @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -81,7 +78,7 @@
             </div>
         </div>
         <div class="ticker-wrap">
-            <div class="refresh-notice" id="refresh-notice">Friss hirek az elmult 3 órából</div>
+            <div class="refresh-notice" id="refresh-notice">Friss hirek az elmult 2 órából</div>
             <div class="ticker" id="news-ticker-content"><div class="ticker-item">Hírek inicializálása...</div></div>
         </div>
     </section>
@@ -128,16 +125,23 @@
             const results = await Promise.all(fetchPromises);
             allItems = results.flat();
             
-            // 3 ÓRÁS FILTER
-            const threeHoursAgo = new Date();
-            threeHoursAgo.setHours(threeHoursAgo.getHours() - 3);
+            // MÓDOSÍTÁS: 3 óráról 2 órára való átállítás
+            const twoHoursAgo = new Date();
+            twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
             const recentItems = allItems.filter(item => {
                 if (!item.pubDate) return false;
                 const itemDate = new Date(item.pubDate);
-                return itemDate >= threeHoursAgo;
+                return itemDate >= twoHoursAgo;
             });
 
             recentItems.sort((a, b) => (new Date(b.pubDate) || 0) - (new Date(a.pubDate) || 0));
+
+            // MÓDOSÍTÁS: Ellenőrizzük, hogy vannak-e friss hírek. Ha nincsenek, üzenetet jelenítünk meg.
+            if (recentItems.length === 0 && !customMessage) {
+                // Az animáció leállítása érdekében nem duplikáljuk a tartalmat
+                ticker.innerHTML = '<div class="ticker-item" style="animation: none;">Jelenleg nincsenek az elmúlt 2 órában megjelent hírek. Látogasson vissza később!</div>';
+                return; // Kilépünk a függvényből, hogy ne folytassa a feldolgozást
+            }
             
             let singlePassHtml = '';
             // KÖZLEMÉNY MEGJELENÍTÉSE
@@ -152,7 +156,8 @@
                 metaHtml += ']';
                 return `<div class="ticker-item"><span class="meta">${metaHtml}</span> <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a></div>`;
             }).join('');
-
+            
+            // A tartalom duplikálása a folyamatos, "végtelen" scroll animációhoz
             const contentToDisplay = singlePassHtml + singlePassHtml;
 
             // ANIMÁCIÓS LOGIKA
