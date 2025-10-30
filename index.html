@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dinamikus Napszak Hírszalag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js" type="module"></script>
@@ -161,16 +161,80 @@
         const CORS_PROXY = "https://corsproxy.io/?";
         const BREAKING_KEYWORDS = ['rendkívüli', 'fontos bejelentés', 'most érkezett', 'élőben', 'percről percre', 'breaking', 'rakétacsapás', 'háború'];
         
+        // Finomított kulcsszavak a pontosabb kategória-besoroláshoz
         const CATEGORY_KEYWORDS = {
-            belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'],
-            külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'],
-            gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac'],
-            sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs'],
-            tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'],
-            'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás']
+            belföld: ['belföld', 'magyarország', 'budapest', 'kormány', 'parlament', 'belügyminisztérium', 'oktatás', 'tüntetés', 'magyar közlöny'],
+            külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'egyesült államok', 'kína', 'gáza', 'izrael', 'NATO'],
+            gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac', 'gazdasági'],
+            sport: ['sport', 'foci', 'nb i', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', 'ferencváros', 'válogatott', 'mérkőzés'],
+            tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk', 'meta', 'facebook'],
+            'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűzoltók', 'katasztrófavédelem', 'ítélet', 'nyomozás', 'lövöldözés']
         };
 
-        const QUOTES = [ "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít." ];
+        // Bővített idézet lista (60 db)
+        const QUOTES = [
+            "A siker kulcsa nem a tehetség, hanem a kitartás.",
+            "A legnagyobb dicsőség nem az, hogy soha nem bukunk el, hanem hogy minden bukás után felállunk.",
+            "Ne a sikert hajszold, hanem válj értékes emberré.",
+            "A jövő azoké, akik hisznek álmaik szépségében.",
+            "Az élet 10%-a, ami történik velünk, és 90%-a, ahogy reagálunk rá.",
+            "Aki hegyet akar mozgatni, apró kövek elhordásával kezdi.",
+            "A boldogság nem egy úticél, hanem maga az utazás.",
+            "A tudás hatalom, de a képzelet mindenhová eljuttat.",
+            "Az egyetlen dolog, ami közted és az álmaid között áll, az a történet, amit magadnak mesélsz.",
+            "Ne félj a tökéletességtől, úgysem éred el soha.",
+            "A változás az élet törvénye. Akik csak a múltba vagy a jelenbe néznek, lemaradnak a jövőről.",
+            "A legjobb idő egy fa elültetésére húsz évvel ezelőtt volt. A második legjobb idő most van.",
+            "Aki soha nem követett el hibát, valószínűleg soha nem próbált semmi újat.",
+            "Az optimizmus az a hit, amely a sikerhez vezet.",
+            "A tettek hangosabban beszélnek a szavaknál.",
+            "Ahol akarat van, ott út is van.",
+            "A türelem rózsát terem.",
+            "A képzelet fontosabb, mint a tudás.",
+            "Minden nap egy új lehetőség, hogy jobb legyél.",
+            "A kemény munka legyőzi a tehetséget, ha a tehetség nem dolgozik keményen.",
+            "Ne várj a lehetőségre. Teremtsd meg!",
+            "Az akadályok azok, amiket akkor látsz, ha leveszed a szemed a célról.",
+            "A siker útja tele van parkolóhelyekkel, de soha ne állj meg túl sokáig.",
+            "A kreativitás intelligencia, ami szórakozik.",
+            "A csoda nem a levegőben járás. A csoda az, hogy a földön jársz.",
+            "A világ egy könyv, és aki nem utazik, az csak egyetlen lapját olvassa el.",
+            "A mosoly a legrövidebb távolság két ember között.",
+            "Az igazi gazdagság nem a vagyon, hanem a jó egészség.",
+            "A barátság a legnehezebb dolog a világon, amit meg lehet magyarázni.",
+            "A lényeg láthatatlan a szemnek.",
+            "Nem az számít, mid van az életben, hanem hogy ki van melletted.",
+            "A boldogság akkor jön, amikor a gondolataid, a szavaid és a tetteid harmóniában vannak.",
+            "Aki másokat ismer, okos. Aki önmagát ismeri, bölcs.",
+            "Az ezer mérföldes utazás is egyetlen lépéssel kezdődik.",
+            "A csend néha a leghangosabb válasz.",
+            "Aki kérdez, öt percre bolond. Aki nem kérdez, az egész életére az marad.",
+            "A szépség mindenütt ott van, csak észre kell venni.",
+            "Jobb meggyújtani egy gyertyát, mint átkozni a sötétséget.",
+            "Az élet olyan, mint a biciklizés. Hogy megtartsd az egyensúlyt, mozgásban kell maradnod.",
+            "Aki a felhők fölött jár, nem zavarja a szél.",
+            "A múltat nem tudod megváltoztatni, de a jövő a te kezedben van.",
+            "A szeretet nem az, amit érzel, hanem az, amit teszel.",
+            "Ahol a szavak kudarcot vallanak, a zene beszél.",
+            "Nem azért hagyjuk abba a játékot, mert megöregszünk, hanem azért öregszünk meg, mert abbahagyjuk a játékot.",
+            "A ma a tegnap holnapja.",
+            "A bölcs ember többet tanul a hibáiból, mint a bolond a sikereiből.",
+            "A bátorság nem a félelem hiánya, hanem a győzelem felette.",
+            "Ha meg tudod álmodni, meg is tudod tenni.",
+            "A nehézségek megerősítenek, nem összetörnek.",
+            "A legjobb bosszú a hatalmas siker.",
+            "Minden művész először amatőr volt.",
+            "A nap minden reggel felkel, neked is megvan a lehetőséged.",
+            "Az apró dolgok teszik az életet naggyá.",
+            "A hit az első lépés, még akkor is, ha nem látod a teljes lépcsőt.",
+            "Aki ad, az kap.",
+            "Az idő a legértékesebb dolog, amivel egy ember rendelkezhet.",
+            "A kudarc csak egy lehetőség, hogy okosabban kezdjük újra.",
+            "Ne kövesd az ösvényt, hanem menj oda, ahol nincs, és hagyj nyomot.",
+            "A legfontosabb dolgokat az életben nem lehet megvásárolni.",
+            "Az élet viharai arra tanítanak, hogy erősebben kapaszkodjunk a gyökereinkbe."
+        ];
+
         const ICON_CALENDAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
         const ICON_WEATHER = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 17a5 5 0 0 0-3-8h-1.26A8 8 0 1 0 4 16.25"></path></svg>`;
         const ICON_NEWS = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`;
@@ -285,12 +349,17 @@
                 } else { const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0); newsToDisplay = filteredByCategory.filter(item => item.pubDate && new Date(item.pubDate) >= todayStart).sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate)); }
                 const isBreakingOverall = allNewsItems.slice(0, 10).some(item => BREAKING_KEYWORDS.some(keyword => item.title.toLowerCase().includes(keyword)));
                 breakingIndicator.classList.toggle('active', isBreakingOverall);
-                const today = new Date(); const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`; const names = (CALENDAR_DATA.nameDays && CALENDAR_DATA.nameDays[nameDayKey]) ? CALENDAR_DATA.nameDays[nameDayKey] : []; const nameDayString = names.length > 0 ? `Mai névnap: ${names.join(' és ')}.` : "";
-                contentItems.push(`<div class="ticker-item calendar-item">${ICON_CALENDAR} Ma ${today.getFullYear()}. ${CALENDAR_DATA.honapok[today.getMonth()]} ${today.getDate()}. ${CALENDAR_DATA.napok[today.getDay()]} van. ${nameDayString}</div>`);
-                pwsWeatherData.forEach(pws => { const windDirection = degreesToCardinal(pws.windDir); const weatherString = `Időjárás - ${pws.name}: ${formatValue(pws.temp, '°C')} | Páratartalom: ${formatValue(pws.humidity, '%')} | Szél: ${formatValue(pws.windSpeed, ' km/h')}${windDirection}`; contentItems.push(`<div class="ticker-item weather-item">${ICON_WEATHER} ${weatherString}</div>`); });
-                if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { const textColor = ann.color ? `style="color: ${ann.color};"` : `style="color: var(--accent-main);"`; contentItems.push(`<div class="ticker-item custom-announcement" ${textColor}>${ICON_ANNOUNCEMENT} ${ann.text}</div>`); }); }
-                const quote = QUOTES[new Date().getDate() % QUOTES.length];
-                contentItems.push(`<div class="ticker-item quote-item">Nap idézete: "${quote}"</div>`);
+                
+                // --- KIZÁRÓLAG AZ "ÖSSZES" NÉZETBEN MEGJELENŐ ELEMEK ---
+                if (activeFilter === 'all') {
+                    const today = new Date(); const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`; const names = (CALENDAR_DATA.nameDays && CALENDAR_DATA.nameDays[nameDayKey]) ? CALENDAR_DATA.nameDays[nameDayKey] : []; const nameDayString = names.length > 0 ? `Mai névnap: ${names.join(' és ')}.` : "";
+                    contentItems.push(`<div class="ticker-item calendar-item">${ICON_CALENDAR} Ma ${today.getFullYear()}. ${CALENDAR_DATA.honapok[today.getMonth()]} ${today.getDate()}. ${CALENDAR_DATA.napok[today.getDay()]} van. ${nameDayString}</div>`);
+                    pwsWeatherData.forEach(pws => { const windDirection = degreesToCardinal(pws.windDir); const weatherString = `Időjárás - ${pws.name}: ${formatValue(pws.temp, '°C')} | Páratartalom: ${formatValue(pws.humidity, '%')} | Szél: ${formatValue(pws.windSpeed, ' km/h')}${windDirection}`; contentItems.push(`<div class="ticker-item weather-item">${ICON_WEATHER} ${weatherString}</div>`); });
+                    if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { const textColor = ann.color ? `style="color: ${ann.color};"` : `style="color: var(--accent-main);"`; contentItems.push(`<div class="ticker-item custom-announcement" ${textColor}>${ICON_ANNOUNCEMENT} ${ann.text}</div>`); }); }
+                    const quote = QUOTES[new Date().getDate() % QUOTES.length];
+                    contentItems.push(`<div class="ticker-item quote-item">Nap idézete: "${quote}"</div>`);
+                }
+                
                 if (newsToDisplay.length > 0) { contentItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? ' A legfrissebb hírek:' : ` Napi hírek: '${activeFilter}'` }</div>`); }
             }
             
