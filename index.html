@@ -109,8 +109,6 @@
         .ticker-controls button { background-color: transparent; border: 1px solid var(--text-secondary); color: var(--text-secondary); border-radius: 4px; padding: 2px 8px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; transition: all 0.2s, color 1.5s ease-in-out, border-color 1.5s ease-in-out; text-transform: capitalize; }
         .ticker-controls button:hover { background-color: var(--text-secondary); color: #000; }
         .ticker-controls button.active { background-color: var(--accent-main); color: white; border-color: var(--accent-main); }
-        .icon-button { padding: 2px; display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; }
-        .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
         #night-mode-message { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); padding-left: 20px; transition: color 1.5s ease-in-out; }
     </style>
 </head>
@@ -131,18 +129,6 @@
             </div>
         </div>
         <div class="ticker-controls">
-            <button id="play-pause-btn" class="icon-button" title="Lejátszás/Szünet">
-                <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-            </button>
-            <div class="control-group">
-                <span class="control-group-label">Sebesség:</span>
-                <div id="speed-controls">
-                    <button data-speed="0.5">0.5x</button>
-                    <button data-speed="1" class="active">1x</button>
-                    <button data-speed="1.5">1.5x</button>
-                </div>
-            </div>
             <div class="control-group" id="filter-control-group">
                 <span class="control-group-label">Szűrő:</span>
                 <div id="filter-controls"></div>
@@ -248,15 +234,13 @@
         const tracks = { a: document.getElementById('ticker-a'), b: document.getElementById('ticker-b') };
         const brandNameEl = document.querySelector('.brand-name');
         const breakingIndicator = document.getElementById('breaking-indicator');
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const speedControls = document.getElementById('speed-controls');
         const filterControls = document.getElementById('filter-controls');
         const bodyEl = document.body;
         const filterControlGroup = document.getElementById('filter-control-group');
         const nightModeMessage = document.getElementById('night-mode-message');
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
-        let isPaused = false, speedMultiplier = 1, activeFilter = 'all';
+        let activeFilter = 'all';
         let currentMode = new Date().getHours() < 6 ? 'summary' : 'normal';
         let retryIntervalId = null, retryTimeoutId = null;
 
@@ -286,9 +270,6 @@
             const newMode = now.getHours() < 6 ? 'summary' : 'normal';
             if (newMode !== currentMode) { currentMode = newMode; stopNightlyRetryProcess(); triggerUpdate(); }
         }
-        function togglePlayPause() { isPaused = !isPaused; updateAnimationState(); }
-        function updateAnimationState() { const playState = isPaused ? 'paused' : 'running'; document.getElementById('play-icon').style.display = isPaused ? 'block' : 'none'; document.getElementById('pause-icon').style.display = isPaused ? 'none' : 'block'; for (const track of Object.values(tracks)) { const content = track.querySelector('.ticker-content'); if (content) content.style.animationPlayState = playState; } }
-        function setSpeed(target) { if (target.tagName !== 'BUTTON') return; speedMultiplier = parseFloat(target.dataset.speed); const currentActive = speedControls.querySelector('.active'); if (currentActive) currentActive.classList.remove('active'); target.classList.add('active'); setTickerSpeed(tracks[activeTrackKey].querySelector('.ticker-content')); }
         function setFilter(target) { if (target.tagName !== 'BUTTON') return; activeFilter = target.dataset.filter; const currentActive = filterControls.querySelector('.active'); if(currentActive) currentActive.classList.remove('active'); target.classList.add('active'); triggerUpdate(); }
         function getFaviconUrl(newsUrl) { try { const url = new URL(newsUrl); return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=32`; } catch { return ''; } }
         function tagNewsItems(newsItems) { return newsItems.map(item => { const title = item.title.toLowerCase(); item.categories = []; for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) { if (keywords.some(keyword => title.includes(keyword))) item.categories.push(category); } return item; }); }
@@ -299,7 +280,7 @@
         const formatValue = (value, unit = '') => (value === null || typeof value === 'undefined' || isNaN(value)) ? 'N/A' : `${Number(value).toFixed(1)}${unit}`;
         const degreesToCardinal = (deg) => { if (deg === null || typeof deg === 'undefined' || isNaN(deg)) return ''; const directions = ['É', 'ÉK', 'K', 'DK', 'D', 'DNy', 'Ny', 'ÉNy']; const index = Math.round(deg / 45) % 8; return ` (${directions[index]})`; };
         async function fetchPwsData() { const promises = Object.values(PWS_STATIONS).map(async (station) => { try { const url = `https://api.weather.com/v2/pws/observations/current?apiKey=${weatherComApiKey}&stationId=${station.id}&numericPrecision=decimal&format=json&units=m`; const response = await fetch(url); if (!response.ok) return null; const data = await response.json(); const obs = data?.observations?.[0]; if (!obs) return null; const metric = obs.metric; const humidity = obs.humidity ?? obs.relativeHumidity ?? null; return { name: station.displayName, temp: metric?.temp, humidity: humidity, windSpeed: metric?.windSpeed, windDir: obs.winddir }; } catch (error) { console.error(`Hiba az időjárási adatok lekérésekor (${station.displayName}):`, error); return null; } }); return (await Promise.all(promises)).filter(r => r !== null); }
-        function setTickerSpeed(contentElement) { if (!contentElement) return; const pixelsPerSecond = 100; const distance = contentElement.offsetWidth / 2; if (distance > 0) { const duration = distance / (pixelsPerSecond * speedMultiplier); contentElement.style.animationDuration = `${duration}s`; } }
+        function setTickerSpeed(contentElement) { if (!contentElement) return; const pixelsPerSecond = 100; const distance = contentElement.offsetWidth / 2; if (distance > 0) { const duration = distance / pixelsPerSecond; contentElement.style.animationDuration = `${duration}s`; } }
         
         function stopNightlyRetryProcess() { if (retryIntervalId) clearInterval(retryIntervalId); if (retryTimeoutId) clearTimeout(retryTimeoutId); retryIntervalId = null; retryTimeoutId = null; }
         async function retryFailedFeeds(failedUrls) {
@@ -377,7 +358,6 @@
                 tracks[standbyTrackKey].classList.add('visible');
                 tracks[activeTrackKey].classList.remove('visible');
                 activeTrackKey = standbyTrackKey;
-                updateAnimationState();
             });
             scheduleNextUpdate();
         };
@@ -397,8 +377,6 @@
             if (document.visibilityState === 'visible') startSystem();
         });
         document.addEventListener('visibilitychange', () => { document.visibilityState === 'visible' ? startSystem() : stopSystem(); });
-        playPauseBtn.addEventListener('click', togglePlayPause);
-        speedControls.addEventListener('click', (e) => setSpeed(e.target));
         filterControls.addEventListener('click', (e) => setFilter(e.target));
         onValue(announcementsRef, (snapshot) => { customAnnouncements = snapshot.val() ? Object.values(snapshot.val()) : []; triggerUpdate(); });
         onValue(feedsRef, (snapshot) => { rssFeeds = snapshot.val() || {}; triggerUpdate(); });
