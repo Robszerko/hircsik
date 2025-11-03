@@ -12,7 +12,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js" type="module"></script>
     <script src="https://unpkg.com/suncalc@1.8.0/suncalc.js"></script>
 
-    <!-- A CSS VÁLTOZATLAN MARADT -->
     <style>
         :root {
             --accent-main: #00838F;
@@ -24,206 +23,225 @@
         }
 
         /* --- DINAMIKUS NAPSZAK TÉMÁK --- */
-        body.theme-night    { --bg-main-gradient: linear-gradient(145deg, #020111, #191621); --bg-fade-start: #020111; --bg-fade-end: #191621; --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #3A3B3C; }
-        body.theme-predawn  { --bg-main-gradient: linear-gradient(145deg, #191621, #4a4969); --bg-fade-start: #191621; --bg-fade-end: #4a4969; --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #4a4969; }
-        body.theme-sunrise  { --bg-main-gradient: linear-gradient(145deg, #f7cac9, #ff9a3f); --bg-fade-start: #f7cac9; --bg-fade-end: #ff9a3f; --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #f7cac9; }
-        body.theme-morning  { --bg-main-gradient: linear-gradient(145deg, #E0F7FA, #87CEEB); --bg-fade-start: #E0F7FA; --bg-fade-end: #87CEEB; --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #B2EBF2; }
-        body.theme-day      { --bg-main-gradient: linear-gradient(145deg, #81D4FA, #29B6F6); --bg-fade-start: #81D4FA; --bg-fade-end: #29B6F6; --text-primary: #1C1E21; --text-secondary: #004D40; --border-color: #4FC3F7; }
-        body.theme-afternoon{ --bg-main-gradient: linear-gradient(145deg, #6DD5FA, #FFD700); --bg-fade-start: #6DD5FA; --bg-fade-end: #FFD700; --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #FFECB3; }
-        body.theme-sunset   { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #ff9a3f); --bg-fade-start: #d94e3c; --bg-fade-end: #ff9a3f; --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #ff9a3f; }
-        body.theme-dusk     { --bg-main-gradient: linear-gradient(145deg, #483D8B, #2c3e50); --bg-fade-start: #483D8B; --bg-fade-end: #2c3e50; --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #483D8B; }
+        body.theme-night    { --bg-main-gradient: linear-gradient(145deg, #020111, #191621); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #3A3B3C; --weather-bg-gradient: linear-gradient(145deg, rgba(25, 22, 33, 0.7), rgba(2, 1, 17, 0.7)); }
+        body.theme-predawn  { --bg-main-gradient: linear-gradient(145deg, #191621, #4a4969); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #4a4969; --weather-bg-gradient: linear-gradient(145deg, rgba(74, 73, 105, 0.7), rgba(25, 22, 33, 0.7)); }
+        body.theme-sunrise  { --bg-main-gradient: linear-gradient(145deg, #f7cac9, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #f7cac9; --weather-bg-gradient: linear-gradient(145deg, rgba(255, 154, 63, 0.6), rgba(247, 202, 201, 0.6)); }
+        body.theme-morning  { --bg-main-gradient: linear-gradient(145deg, #E0F7FA, #87CEEB); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #B2EBF2; --weather-bg-gradient: linear-gradient(145deg, rgba(135, 206, 235, 0.6), rgba(224, 247, 250, 0.6)); }
+        body.theme-day      { --bg-main-gradient: linear-gradient(145deg, #81D4FA, #29B6F6); --text-primary: #1C1E21; --text-secondary: #004D40; --border-color: #4FC3F7; --weather-bg-gradient: linear-gradient(145deg, rgba(41, 182, 246, 0.6), rgba(129, 212, 250, 0.6)); }
+        body.theme-afternoon{ --bg-main-gradient: linear-gradient(145deg, #6DD5FA, #FFD700); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #FFECB3; --weather-bg-gradient: linear-gradient(145deg, rgba(255, 215, 0, 0.6), rgba(109, 213, 250, 0.6)); }
+        body.theme-sunset   { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #ff9a3f; --weather-bg-gradient: linear-gradient(145deg, rgba(255, 154, 63, 0.6), rgba(217, 78, 60, 0.6)); }
+        body.theme-dusk     { --bg-main-gradient: linear-gradient(145deg, #483D8B, #2c3e50); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #483D8B; --weather-bg-gradient: linear-gradient(145deg, rgba(44, 62, 80, 0.7), rgba(72, 61, 139, 0.7)); }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: transparent; font-family: var(--font-body); }
+        body { background-color: #111; font-family: var(--font-body); }
         
         .news-ticker-container {
-            background: var(--bg-main-gradient);
-            display: flex; flex-direction: column;
-            border-radius: 6px; margin: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            min-height: 85px; /* Magasság helyett min-height, hogy a tartalom tördelődhessen */
-            height: auto; /* Magasság automatikus, ha a tartalom több helyet igényel */
+            background: var(--bg-main-gradient); display: flex;
+            border-radius: 6px; margin: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            overflow: hidden; border: 1px solid var(--border-color);
             transition: background 1.5s ease-in-out, border-color 1.5s ease-in-out;
         }
 
-        body.theme-night .news-ticker-container,
-        body.theme-predawn .news-ticker-container {
+        .ticker-body { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
+
+        body.theme-night .news-ticker-container, body.theme-predawn .news-ticker-container {
             background: var(--stars1), var(--stars2), var(--bg-main-gradient);
             background-repeat: repeat, repeat, no-repeat;
             background-size: 500px 500px, 800px 800px, 100% 100%;
         }
 
-        .ticker-main-row { display: flex; min-height: 55px; height: auto; align-items: stretch; }
-        .ticker-label {
-            background-color: #2C3E50; color: #ECF0F1; padding: 0 15px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            font-family: var(--font-display); border-right: 1px solid #444;
-            min-width: 210px;
-            flex-shrink: 0; /* Megakadályozza, hogy a label túlságosan összenyomódjon */
-        }
-        .label-top-row { display: flex; align-items: center; gap: 8px; }
-        .ticker-logo { 
-            width: 28px; height: 28px; flex-shrink: 0; stroke: #95A5A6; 
-            transition: width 0.4s ease-in-out, height 0.4s ease-in-out;
-        }
+        .ticker-main-row { display: flex; align-items: stretch; flex-grow: 1; min-height: 110px; }
+        .ticker-label { background-color: #2C3E50; color: #ECF0F1; padding: 0 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-display); border-right: 1px solid #444; min-width: 210px; flex-shrink: 0; position: relative; overflow: hidden; }
         
-        /* --- ÉJSZAKAI MŰSZAK STÍLUSOK --- */
-        body.night-mode-active .ticker-logo {
-            width: 24px;
-            height: 24px;
+        /* --- INTRO & LOADING ANIMATIONS --- */
+        #intro-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 10; transform: scaleX(1); transition: transform 0.8s cubic-bezier(0.86, 0, 0.07, 1) 1.2s; }
+        .color-bar { flex-grow: 1; }
+        body.loaded #intro-overlay { transform: scaleX(0); transform-origin: left; }
+        
+        .label-content { opacity: 0; transform: translateY(20px); transition: none; /* Old transition removed for new animation */ }
+        body.loaded .label-content { 
+            opacity: 1; 
+            transform: translateY(0);
+            animation: content-glitch-in 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
         }
-        .brand-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            line-height: 1.1;
-        }
-        .brand-name { font-size: 1.5rem; letter-spacing: 1px; font-weight: 400; color: #ECF0F1; }
-        #night-shift-container {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 2px;
-        }
-        #night-shift-label {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--accent-gold);
-            font-family: var(--font-body);
-        }
-        #night-mode-icon { 
-            color: var(--accent-gold); 
-            flex-shrink: 0;
-            width: 16px;
-            height: 16px;
-        }
-        /* --- ÉJSZAKAI MŰSZAK STÍLUSOK VÉGE --- */
 
-        #clock {
-            font-family: var(--font-body); font-size: 0.9rem; font-weight: 500;
-            color: var(--accent-main); letter-spacing: 0.5px; margin-top: 2px;
-            background-color: rgba(0,0,0,0.2); padding: 1px 6px;
-            border-radius: 4px; white-space: nowrap; transition: color 1.5s ease-in-out;
+        .ticker-label::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(200,200,200,0.15) 0%, rgba(200,200,200,0.1) 10%, transparent 30%),
+                repeating-linear-gradient(transparent 0, rgba(0,0,0,0.1) 1px, transparent 2px);
+            opacity: 0; z-index: 9;
+            pointer-events: none;
+            animation: static-move 0.15s steps(2) infinite;
         }
+
+        body.loaded .ticker-label::before {
+            animation: static-move 0.15s steps(2) infinite, 
+                       static-fade-in-out 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
+        }
+
+        .label-top-row { display: flex; align-items: center; gap: 8px; }
+        .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; stroke: #95A5A6; transition: width 0.4s ease, height 0.4s ease; }
+        
+        .ticker-logo.glitch-active { animation: glitch-logo 0.25s linear; }
+        @keyframes glitch-logo { 20% { transform: translate(-1px, 1px); } 40% { transform: translate(1px, -1px); } 60% { transform: translate(-1px, -1px); } 80% { transform: translate(1px, 1px); } 100% { transform: translate(0, 0); } }
+
+        .brand-name.glitch-text-active { animation: glitch-text 0.3s linear; }
+        @keyframes glitch-text {
+            0%, 100% { text-shadow: 1px 1px 0 cyan, -1px -1px 0 red; }
+            25% { text-shadow: -1px -1px 0 cyan, 1px 1px 0 red; }
+            50% { text-shadow: 1px -1px 0 cyan, -1px 1px 0 red; }
+            75% { text-shadow: -1px 1px 0 cyan, 1px -1px 0 red; }
+        }
+
+        body.night-mode-active .ticker-logo { width: 24px; height: 24px; }
+        .brand-container { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
+        .brand-name { font-size: 1.5rem; letter-spacing: 1px; font-weight: 400; color: #ECF0F1; }
+        
+        #night-shift-container { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 6px; 
+            margin-top: 3px;
+            width: 100%;
+        }
+        #night-shift-label { font-size: 0.85rem; font-weight: 500; color: var(--accent-gold); font-family: var(--font-body); }
+        #night-mode-icon { color: var(--accent-gold); flex-shrink: 0; width: 16px; height: 16px; }
+
+        #clock { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; color: var(--accent-main); letter-spacing: 0.5px; margin-top: 2px; background-color: rgba(0,0,0,0.2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; transition: color 1.5s ease-in-out; }
         #clock .clock-colon { animation: blink 1.2s step-end infinite; }
+        #nameday { font-size: 0.8rem; color: #95A5A6; margin-top: 3px; white-space: nowrap; display: none; width: 100%; text-align: center; padding: 0 5px; }
+
+        #loading-indicator { position: absolute; z-index: 5; font-family: var(--font-display); font-size: 1rem; color: var(--accent-main); display: none; justify-content: center; align-items: center; width: 100%; }
+        .dot { opacity: 0; animation: loading-dots 1s infinite; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes loading-dots { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
         
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
-        .ticker-wrap::before, .ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 60px; z-index: 2; pointer-events: none; transition: background 1.5s ease-in-out; }
-        .ticker-wrap::before { left: 0; background: linear-gradient(to right, var(--bg-fade-start, transparent), transparent); }
-        .ticker-wrap::after { right: 0; background: linear-gradient(to left, var(--bg-fade-end, transparent), transparent); }
-        
-        .ticker-track {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0; transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
-            will-change: opacity, transform; transform: translateY(10px);
-        }
+        .ticker-track { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; will-change: opacity, transform; transform: translateY(10px); display: flex; align-items: center; justify-content: center; }
         .ticker-track.visible { opacity: 1; transform: translateY(0); }
-        .ticker-content { display: inline-block; white-space: nowrap; padding-top: 16px; will-change: transform; animation: ticker-scroll 300s linear infinite; animation-play-state: running; }
-        .ticker-track:hover .ticker-content { animation-play-state: paused !important; }
+        .ticker-content { position: relative; width: 100%; height: 100%; }
 
-        .ticker-item { display: inline-flex; align-items: center; margin: 0 1rem; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); transition: color 1.5s ease-in-out, background-color 0.2s; padding: 2px 5px; border-radius: 4px;}
-        .ticker-item:hover { background-color: rgba(0,0,0,0.1); }
-        .ticker-item::after { content: '|'; color: var(--border-color); margin: 0 2rem; font-size: 1.1rem; font-weight: 300; transition: color 1.5s ease-in-out; }
-        .ticker-item:last-child::after { content: ''; }
-        .ticker-item .meta { color: var(--text-secondary); margin-right: 0.5rem; font-weight: 400; display: flex; align-items: center; transition: color 1.5s ease-in-out; }
+        .ticker-item { display: flex; flex-direction: column; align-items: flex-start; text-align: left; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); padding: 5px 15px; border-radius: 4px; position: absolute; top: 50%; left: 50%; width: 95%; height: 90%; justify-content: center; background-color: transparent; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0.5s; transform: translate(-50%, -50%); }
+        .ticker-item.visible { opacity: 1; visibility: visible; animation: flip-in 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+        .ticker-item.calendar-item, .ticker-item.quote-item { align-items: center; text-align: center; }
+        
+        .ticker-item-header { display: flex; align-items: center; margin-bottom: 4px; width: 100%; }
+        .ticker-item .meta { color: var(--text-secondary); margin-right: 0.5rem; font-weight: 400; display: flex; align-items: center; white-space: nowrap; }
         .favicon-img { width: 16px; height: 16px; margin-right: 6px; border-radius: 3px; }
         .ticker-item .source { font-weight: 700; color: var(--accent-gold); }
-        .ticker-item a { color: var(--text-primary); text-decoration: none; transition: all 0.3s, color 1.5s ease-in-out; }
+        .ticker-item a { color: var(--text-primary); text-decoration: none; font-weight: 700; transition: all 0.3s, color 1.5s ease-in-out; width: 100%; }
         .ticker-item a:hover { color: var(--accent-main); }
-        .ticker-item.breaking-highlight { font-weight: 700; color: var(--text-primary); animation: pulse-bg 2s infinite; }
-        @keyframes pulse-bg { 0% { background-color: rgba(211, 47, 47, 0.1); } 50% { background-color: rgba(211, 47, 47, 0.25); } 100% { background-color: rgba(211, 47, 47, 0.1); } }
+        .ticker-item-description { font-size: 0.9rem; font-weight: 400; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
+        .ticker-item.breaking-highlight { font-weight: 700; color: var(--text-primary); animation: pulse-bg 2s infinite, flip-in 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
         .ticker-item svg { width: 16px; height: 16px; margin-right: 10px; flex-shrink: 0; stroke-width: 2; }
-        .ticker-item.news-intro-item, .ticker-item.calendar-item, .ticker-item.weather-item { color: var(--text-primary); transition: color 1.5s ease-in-out; }
-        .ticker-item.quote-item { color: var(--accent-main); font-style: italic; transition: color 1.5s ease-in-out; }
+        .ticker-item.news-intro-item, .ticker-item.calendar-item, .ticker-item.quote-item { color: var(--text-primary); transition: color 1.5s ease-in-out; }
         
-        #breaking-indicator { position: absolute; top: 8px; left: 8px; width: 10px; height: 10px; background-color: #D32F2F; border-radius: 50%; display: none; border: 2px solid #2C3E50; box-shadow: 0 0 10px #D32F2F; }
+        #breaking-indicator { position: absolute; top: 8px; left: 8px; width: 10px; height: 10px; background-color: #D32F2F; border-radius: 50%; display: none; border: 2px solid #2C3E50; box-shadow: 0 0 10px #D32F2F; z-index: 10; }
         #breaking-indicator.active { display: block; animation: pulse 1.5s infinite; }
         
-        @keyframes ticker-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes static-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 4px 6px; }
+        }
+
+        @keyframes static-fade-in-out {
+            0% { opacity: 0; }
+            10% { opacity: 0.8; }
+            85% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes content-glitch-in {
+            0% { opacity: 0; transform: translateY(20px) scale(1.02); text-shadow: -2px -2px 0 red, 2px 2px 0 cyan; }
+            15% { opacity: 0.4; transform: translateY(18px) scale(1) skew(-3deg); text-shadow: 2px 2px 0 red, -2px -2px 0 cyan; }
+            30% { opacity: 0.1; transform: translateY(20px) scale(1.01) skew(3deg); }
+            45% { opacity: 0.7; transform: translateY(10px) scale(1) skew(0deg); text-shadow: 1px 1px 0 red, -1px -1px 0 cyan; }
+            60% { opacity: 0.5; transform: translateY(15px); }
+            85% { opacity: 0.9; transform: translateY(5px); text-shadow: none; }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes flip-in { 0% { transform: translate(-50%, -50%) perspective(600px) rotateY(90deg); opacity: 0; } 100% { transform: translate(-50%, -50%) perspective(600px) rotateY(0); opacity: 1; } }
         @keyframes blink { 50% { opacity: 0; } }
         @keyframes pulse { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); } 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
+        @keyframes pulse-bg { 0% { background-color: rgba(211, 47, 47, 0.1); } 50% { background-color: rgba(211, 47, 47, 0.25); } 100% { background-color: rgba(211, 47, 47, 0.1); } }
+        @keyframes weatherFade { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
 
-        .ticker-controls { 
-            min-height: 30px; height: auto; /* Magasság automatikus */
-            background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); 
-            display: flex; align-items: center; justify-content: space-between;
-            flex-wrap: wrap; /* Engedélyezi a sortörést kisebb képernyőn */
-            padding: 5px 15px; gap: 15px; 
-            transition: border-color 1.5s ease-in-out; 
-        }
+        .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 5px 15px; gap: 15px; transition: border-color 1.5s ease-in-out; }
         .control-group { display: flex; align-items: center; gap: 5px; }
+        #filter-controls { display: flex; gap: 5px; flex-wrap: wrap; }
         .control-group-label { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); transition: color 1.5s ease-in-out; white-space: nowrap; }
-        .ticker-controls button { background-color: transparent; border: 1px solid var(--text-secondary); color: var(--text-secondary); border-radius: 4px; padding: 2px 8px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; transition: all 0.2s, color 1.5s ease-in-out, border-color 1.5s ease-in-out; text-transform: capitalize; }
+        .ticker-controls button { background-color: transparent; border: 1px solid var(--text-secondary); color: var(--text-secondary); border-radius: 4px; padding: 2px 8px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; transition: all 0.2s, color 1.5s ease-in-out, border-color 1.5s ease-in-out; text-transform: capitalize; display: flex; align-items: center; gap: 5px; }
         .ticker-controls button:hover { background-color: var(--text-secondary); color: #000; }
         .ticker-controls button.active { background-color: var(--accent-main); color: white; border-color: var(--accent-main); }
-        
-        #night-mode-message { 
-            font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); 
-            transition: color 1.5s ease-in-out;
-            text-align: right; 
-        }
+        .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+        #night-mode-message { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); transition: color 1.5s ease-in-out; text-align: right; }
 
-        /* --- RESZPONZÍV FEJLESZTÉSEK --- */
-        @media (max-width: 768px) {
-            .ticker-label { min-width: 180px; padding: 0 10px; }
-            .brand-name { font-size: 1.3rem; }
-            .ticker-wrap::before, .ticker-wrap::after { width: 40px; }
-            .ticker-controls { justify-content: flex-start; }
-            #night-mode-message { text-align: left; }
-        }
-        @media (max-width: 520px) {
-            .ticker-main-row { flex-direction: column; height: auto; }
-            .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; padding: 5px 10px; }
-            #clock { margin-top: 0; }
-            #night-shift-label { font-size: 0.8rem; }
-            .ticker-wrap { height: 55px; }
-            .ticker-content { padding-top: 18px; }
-            .ticker-controls { padding: 8px 10px; }
-            .control-group { margin-bottom: 5px; }
-            #night-mode-message { line-height: 1.4; flex-basis: 100%; }
-        }
-        @media (max-width: 380px) {
-            .label-top-row { gap: 5px; }
-            .brand-name { font-size: 1.1rem; }
-            body.night-mode-active .ticker-logo { width: 20px; height: 20px; }
-            .ticker-logo { width: 22px; height: 22px; }
-            #clock { font-size: 0.8rem; }
-            .control-group-label { display: none; }
-            .control-group { gap: 8px; }
-            .ticker-controls { gap: 10px; }
-        }
+        #world-weather-container { flex-shrink: 0; width: 200px; border-left: 1px solid var(--border-color); padding: 8px; display: flex; flex-direction: column; justify-content: center; gap: 8px; transition: border-color 1.5s ease-in-out, background 1.5s ease-in-out; background: var(--weather-bg-gradient); backdrop-filter: blur(5px); }
+        .weather-list { animation: weatherFade 0.6s ease-in-out; }
+        .weather-title { font-size: 0.7rem; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; padding-bottom: 4px; border-bottom: 1px solid var(--border-color); margin-bottom: 4px; }
+        .weather-city { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--text-primary); transition: color 1.5s ease-in-out; }
+        .weather-city-name { font-weight: 700; font-size: 0.9rem; }
+        .weather-details { font-weight: 400; font-size: 0.85rem; color: var(--text-secondary); white-space: nowrap; }
+        #world-weather-container .placeholder { font-size: 0.8rem; color: var(--text-secondary); text-align: center; }
+
+        @media (max-width: 950px) { .news-ticker-container { flex-direction: column; } #world-weather-container { width: 100%; border-left: none; border-top: 1px solid var(--border-color); flex-direction: row; flex-wrap: wrap; justify-content: space-around; } .weather-group { display: flex; flex-direction: column; gap: 8px; } }
+        @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0 10px; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } }
+        @media (max-width: 520px) { .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; padding: 5px 10px; } #clock { margin-top: 0; } #night-shift-label { font-size: 0.8rem; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; } }
+        @media (max-width: 380px) { .label-top-row { gap: 5px; } .brand-name { font-size: 1.1rem; } body.night-mode-active .ticker-logo { width: 20px; height: 20px; } .ticker-logo { width: 22px; height: 22px; } #clock { font-size: 0.8rem; } .control-group-label { display: none; } }
     </style>
 </head>
 <body>
     <section class="news-ticker-container">
-        <div class="ticker-main-row">
-            <div class="ticker-label" id="ticker-label">
-                <div id="breaking-indicator"></div>
-                <div class="label-top-row">
-                    <svg class="ticker-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="5"><circle cx="50" cy="50" r="45" /><ellipse cx="50" cy="50" rx="45" ry="18" /><path d="M50,5 C 30,30 30,70 50,95" /><path d="M50,5 C 70,30 70,70 50,95" /></svg>
-                    <div class="brand-container">
-                        <span class="brand-name">TKP NEWS</span>
+        <div class="ticker-body">
+            <div class="ticker-main-row">
+                <div class="ticker-label" id="ticker-label">
+                    <div id="intro-overlay">
+                        <div class="color-bar" style="background-color: #c0c0c0;"></div> <div class="color-bar" style="background-color: #c0c000;"></div> <div class="color-bar" style="background-color: #00c0c0;"></div> <div class="color-bar" style="background-color: #00c000;"></div> <div class="color-bar" style="background-color: #c000c0;"></div> <div class="color-bar" style="background-color: #c00000;"></div> <div class="color-bar" style="background-color: #0000c0;"></div>
+                    </div>
+                    <div id="breaking-indicator"></div>
+                    <div id="loading-indicator">
+                        Friss hírek betöltése<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+                    </div>
+                    <div class="label-content">
+                        <div class="label-top-row">
+                            <svg class="ticker-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="5"><circle cx="50" cy="50" r="45" /><ellipse cx="50" cy="50" rx="45" ry="18" /><path d="M50,5 C 30,30 30,70 50,95" /><path d="M50,5 C 70,30 70,70 50,95" /></svg>
+                            <div class="brand-container">
+                                <span class="brand-name">TKP NEWS</span>
+                            </div>
+                        </div>
+                        <div id="clock">--.--.--. ------ --:--</div>
                         <div id="night-shift-container" style="display: none;">
                             <svg id="night-mode-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                             <span id="night-shift-label">Éjszakai műszak</span>
                         </div>
+                        <div id="nameday"></div>
                     </div>
                 </div>
-                <div id="clock">--.--.--. ------ --:--</div>
+                <div class="ticker-wrap" id="ticker-wrap">
+                    <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
+                    <div id="ticker-b" class="ticker-track"><div class="ticker-content"></div></div>
+                </div>
             </div>
-            <div class="ticker-wrap">
-                <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"><div class="ticker-item">Rendszer indul...</div></div></div>
-                <div id="ticker-b" class="ticker-track"><div class="ticker-content"></div></div>
+            <div class="ticker-controls">
+                <div class="control-group">
+                    <button id="prev-btn" title="Előző hír"><svg class="icon-button" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg><span>Előző</span></button>
+                    <button id="next-btn" title="Következő hír"><svg class="icon-button" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg><span>Következő</span></button>
+                </div>
+                <div class="control-group" id="filter-control-group">
+                    <span class="control-group-label">Szűrő:</span>
+                    <div id="filter-controls"></div>
+                </div>
+                <span id="night-mode-message" style="display: none;">Friss hírek legközelebb reggel 6-tól éjfélig, addig is megtekintheted a tegnapi nap összefoglalóját.</span>
             </div>
         </div>
-        <div class="ticker-controls">
-            <div class="control-group" id="filter-control-group">
-                <span class="control-group-label">Szűrő:</span>
-                <div id="filter-controls"></div>
-            </div>
-            <span id="night-mode-message" style="display: none;">Friss hírek legközelebb reggel 6-tól éjfélig, addig is megtekintheted a tegnapi nap összefoglalóját.</span>
+        <div id="world-weather-container">
+            <div class="placeholder">Időjárás betöltése...</div>
         </div>
     </section>
 
@@ -233,269 +251,321 @@
         
         const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
         const weatherComApiKey = 'e1f10a1e78da46f5b10a1e78da96f525';
-        const PWS_STATIONS = { NYIREGYHAZI_UT: { id: 'INYREG26', displayName: 'Nyíregyházi út' }, KOSSUTH: { id: 'INYREG42', displayName: 'Kossuth út' }, KERT_UTCA: { id: 'INYREG37', displayName: 'Kert u.' } };
         const CORS_PROXY = "https://corsproxy.io/?";
         const BREAKING_KEYWORDS = ['rendkívüli', 'fontos bejelentés', 'most érkezett', 'élőben', 'percről percre', 'breaking', 'rakétacsapás', 'háború'];
         
-        const CATEGORY_KEYWORDS = {
-            belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'],
-            külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'],
-            gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac'],
-            sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs'],
-            tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'],
-            'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás']
-        };
+        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Nyíregyháza', lat: 47.95, lon: 21.71 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Hajdúböszörmény', lat: 47.67, lon: 21.51 }, { name: 'Kiskunfélegyháza', lat: 46.71, lon: 19.85 }, { name: 'Orosháza', lat: 46.56, lon: 20.67 }, { name: 'Ajka', lat: 47.10, lon: 17.55 }, { name: 'Mosonmagyaróvár', lat: 47.87, lon: 17.27 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Gyula', lat: 46.64, lon: 21.28 }, { name: 'Kiskunhalas', lat: 46.43, lon: 19.48 }, { name: 'Jászberény', lat: 47.50, lon: 19.91 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Sátoraljaújhely', lat: 48.39, lon: 21.66 }, { name: 'Komló', lat: 46.19, lon: 18.26 }, { name: 'Makó', lat: 46.21, lon: 20.47 }, { name: 'Karcag', lat: 47.31, lon: 20.92 }, { name: 'Hatvan', lat: 47.66, lon: 19.68 }, { name: 'Kisvárda', lat: 48.22, lon: 22.08 }, { name: 'Mátészalka', lat: 47.95, lon: 22.32 }, { name: 'Paks', lat: 46.62, lon: 18.85 }, { name: 'Mezőtúr', lat: 47.00, lon: 20.62 }, { name: 'Kalocsa', lat: 46.53, lon: 18.98 }, { name: 'Mohács', lat: 45.99, lon: 18.68 }, { name: 'Komárom', lat: 47.74, lon: 18.12 }, { name: 'Balassagyarmat', lat: 48.07, lon: 19.29 }, { name: 'Törökszentmiklós', lat: 47.18, lon: 20.41 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 }, { name: 'Tapolca', lat: 46.88, lon: 17.44 }, { name: 'Berettyóújfalu', lat: 47.22, lon: 21.55 }, { name: 'Sárvár', lat: 47.25, lon: 16.93 }, { name: 'Dombóvár', lat: 46.37, lon: 18.13 } ];
+        const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 } ];
 
+        const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
         const QUOTES = [ "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít." ];
         const ICON_CALENDAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
-        const ICON_WEATHER = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 17a5 5 0 0 0-3-8h-1.26A8 8 0 1 0 4 16.25"></path></svg>`;
         const ICON_NEWS = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`;
         const ICON_ANNOUNCEMENT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-        const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "10-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"10-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-11": ["Árpád"],"12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
+        const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "01-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"10-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-11": ["Árpád"],"12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
         const feedsRef = ref(database, 'feeds');
         const announcementsRef = ref(database, 'announcements');
+
+        HUNGARIAN_CITIES.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+        FOREIGN_CITIES.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
+
         const tracks = { a: document.getElementById('ticker-a'), b: document.getElementById('ticker-b') };
+        const tickerWrap = document.getElementById('ticker-wrap');
         const breakingIndicator = document.getElementById('breaking-indicator');
         const filterControls = document.getElementById('filter-controls');
         const bodyEl = document.body;
         const filterControlGroup = document.getElementById('filter-control-group');
         const nightModeMessage = document.getElementById('night-mode-message');
         const nightShiftContainer = document.getElementById('night-shift-container');
+        const worldWeatherContainer = document.getElementById('world-weather-container');
+        const tickerLogo = document.querySelector('.ticker-logo');
+        const brandNameEl = document.querySelector('.brand-name');
+        const nameDayEl = document.getElementById('nameday');
+        const labelContent = document.querySelector('.label-content');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
-        let speedMultiplier = 1, activeFilter = 'all';
+        let activeFilter = 'all';
         let currentMode = new Date().getHours() < 6 ? 'summary' : 'normal';
-        let retryIntervalId = null, retryTimeoutId = null;
+
+        let flipTimeoutId = null, currentItemIndex = 0, flipStartTime = 0, flipRemainingTime = 0;
+        const FLIP_INTERVAL_REGULAR = 15000;
+        const FLIP_INTERVAL_SHORT = 8000;
+        const FLIP_INTERVAL_VERY_SHORT = 3000;
+
+        let weatherDisplayInterval = null, weatherFetchInterval = null;
+        let domesticWeatherCache = [], foreignWeatherDataCache = [];
+        let domesticWeatherIndex = 0, foreignWeatherIndex = 0;
+        let isShowingDomesticWeather = true;
+        const WEATHER_DISPLAY_INTERVAL_DURATION = 10000;
         
-        // OPTIMIZATION: Pre-compile regexes for faster category matching
-        const CATEGORY_REGEX = {};
-        for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-            CATEGORY_REGEX[category] = new RegExp(keywords.map(k => k.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|'), 'i');
+        let logoGlitchTimeout = null;
+        let textGlitchTimeout = null;
+
+        const stripHtml = (html) => { let doc = new DOMParser().parseFromString(html, 'text/html'); return doc.body.textContent || ""; };
+        const getSmartDescription = (text, maxLength = 220) => {
+            if (!text || text.length <= maxLength) return text;
+            let truncated = text.substring(0, maxLength);
+            let lastPunctuation = Math.max(truncated.lastIndexOf('.'), truncated.lastIndexOf('!'), truncated.lastIndexOf('?'));
+            if (lastPunctuation > maxLength / 2) { return truncated.substring(0, lastPunctuation + 1); }
+            let lastSpace = truncated.lastIndexOf(' ');
+            return truncated.substring(0, lastSpace > 0 ? lastSpace : maxLength) + '...';
+        };
+
+        async function fetchAllWeatherData() {
+            const fetchList = async (list) => {
+                const promises = list.map(async (city) => {
+                    try {
+                        const url = `https://api.weather.com/v3/wx/observations/current?geocode=${city.lat},${city.lon}&format=json&units=m&language=hu-HU&apiKey=${weatherComApiKey}`;
+                        const response = await fetch(CORS_PROXY + url);
+                        if (!response.ok) return null;
+                        const data = await response.json();
+                        return { name: city.name, temp: data.temperature };
+                    } catch (error) { console.error(`Időjárás API hiba (${city.name}):`, error); return null; }
+                });
+                return (await Promise.all(promises)).filter(r => r !== null);
+            };
+            [domesticWeatherCache, foreignWeatherDataCache] = await Promise.all([ fetchList(HUNGARIAN_CITIES), fetchList(FOREIGN_CITIES) ]);
+            if ((domesticWeatherCache.length > 0 || foreignWeatherDataCache.length > 0) && document.visibilityState === 'visible') {
+                displayNextWeatherGroup(); 
+            }
         }
-        const BREAKING_REGEX = new RegExp(BREAKING_KEYWORDS.join('|'), 'i');
+
+        function displayNextWeatherGroup() {
+            let citiesToShow = [];
+            let title = '';
+            
+            if (isShowingDomesticWeather && domesticWeatherCache.length > 0) {
+                title = "Hazai állomások most";
+                for (let i = 0; i < 3; i++) { citiesToShow.push(domesticWeatherCache[(domesticWeatherIndex + i) % domesticWeatherCache.length]); }
+                domesticWeatherIndex = (domesticWeatherIndex + 3) % domesticWeatherCache.length;
+                 if(domesticWeatherIndex === 0) { // Körbeért
+                    setTimeout(fetchAllWeatherData, 2000); // Kis késleltetés a frissítés előtt
+                }
+            } else if (!isShowingDomesticWeather && foreignWeatherDataCache.length > 0) {
+                title = "Külföldi állomások most";
+                for (let i = 0; i < 3; i++) { citiesToShow.push(foreignWeatherDataCache[(foreignWeatherIndex + i) % foreignWeatherDataCache.length]); }
+                foreignWeatherIndex = (foreignWeatherIndex + 3) % foreignWeatherDataCache.length;
+            }
+
+            if (citiesToShow.length > 0) {
+                const weatherList = document.createElement('div');
+                weatherList.className = 'weather-list weather-fade-in';
+                weatherList.innerHTML = `<div class="weather-title">${title}</div>` + citiesToShow.map(city => city ? `<div class="weather-city"><span class="weather-city-name">${city.name}</span><span class="weather-details">${city.temp} fok</span></div>` : '').join('');
+                worldWeatherContainer.innerHTML = '';
+                worldWeatherContainer.appendChild(weatherList);
+            }
+            isShowingDomesticWeather = !isShowingDomesticWeather;
+        }
 
         function updateDynamicTheme() {
-            const now = new Date();
-            const lat = 47.5; const lon = 19.0;
-            const times = SunCalc.getTimes(now, lat, lon);
+            const now = new Date(); const lat = 47.5; const lon = 19.0; const times = SunCalc.getTimes(now, lat, lon);
             const themeClasses = ['theme-night', 'theme-predawn', 'theme-sunrise', 'theme-morning', 'theme-day', 'theme-afternoon', 'theme-sunset', 'theme-dusk'];
-            let currentThemeClass = '';
+            let currentThemeClass = 'theme-dusk';
             if (now > times.dusk || now < times.dawn) { currentThemeClass = 'theme-night'; }
             else if (now < times.sunrise) { currentThemeClass = 'theme-predawn'; }
             else if (now < times.sunriseEnd) { currentThemeClass = 'theme-sunrise'; }
             else if (now < times.solarNoon) { currentThemeClass = 'theme-morning'; }
             else if (now < times.sunsetStart) { currentThemeClass = 'theme-afternoon'; }
             else if (now < times.sunset) { currentThemeClass = 'theme-sunset'; }
-            else { currentThemeClass = 'theme-dusk'; }
-            if (!bodyEl.classList.contains(currentThemeClass)) {
-                bodyEl.classList.remove(...themeClasses);
-                bodyEl.classList.add(currentThemeClass);
-            }
+            if (!bodyEl.classList.contains(currentThemeClass)) { bodyEl.classList.remove(...themeClasses); bodyEl.classList.add(currentThemeClass); }
         }
         
         function updateClock() {
-            const now = new Date();
-            const year = now.getFullYear(), month = String(now.getMonth() + 1).padStart(2, '0'), day = String(now.getDate()).padStart(2, '0'), dayOfWeek = CALENDAR_DATA.napok[now.getDay()], hours = String(now.getHours()).padStart(2, '0'), minutes = String(now.getMinutes()).padStart(2, '0');
+            const now = new Date(); const year = now.getFullYear(), month = String(now.getMonth() + 1).padStart(2, '0'), day = String(now.getDate()).padStart(2, '0'), dayOfWeek = CALENDAR_DATA.napok[now.getDay()], hours = String(now.getHours()).padStart(2, '0'), minutes = String(now.getMinutes()).padStart(2, '0');
             document.getElementById('clock').innerHTML = `${year}.${month}.${day}. ${dayOfWeek} ${hours}<span class="clock-colon">:</span>${minutes}`;
-            const newMode = now.getHours() < 6 ? 'summary' : 'normal';
-            if (newMode !== currentMode) { currentMode = newMode; stopNightlyRetryProcess(); triggerUpdate(); }
+            const newMode = new Date().getHours() < 6 ? 'summary' : 'normal';
+            if (newMode !== currentMode) { currentMode = newMode; triggerUpdate(); }
         }
 
         function setFilter(target) { if (target.tagName !== 'BUTTON') return; activeFilter = target.dataset.filter; const currentActive = filterControls.querySelector('.active'); if(currentActive) currentActive.classList.remove('active'); target.classList.add('active'); triggerUpdate(); }
         function getFaviconUrl(newsUrl) { try { const url = new URL(newsUrl); return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=32`; } catch { return ''; } }
-        
-        // OPTIMIZATION: Faster tagging using pre-compiled regexes
-        function tagNewsItems(newsItems) { 
-            return newsItems.map(item => { 
-                const title = item.title;
-                item.categories = []; 
-                for (const category in CATEGORY_REGEX) {
-                    if (CATEGORY_REGEX[category].test(title)) {
-                        item.categories.push(category);
-                    }
-                }
-                return item; 
-            }); 
-        }
-
-        function updateFilterButtons(newsItems) { const availableCategories = new Set(); newsItems.forEach(item => { if (item.categories) item.categories.forEach(cat => availableCategories.add(cat)); }); filterControls.innerHTML = ''; const allBtn = document.createElement('button'); allBtn.dataset.filter = 'all'; allBtn.textContent = 'Összes'; filterControls.appendChild(allBtn); availableCategories.forEach(cat => { const btn = document.createElement('button'); btn.dataset.filter = cat; btn.textContent = cat; filterControls.appendChild(btn); }); let activeBtn = filterControls.querySelector(`[data-filter="${activeFilter}"]`); if (!activeBtn) { activeFilter = 'all'; activeBtn = filterControls.querySelector('[data-filter="all"]'); } activeBtn.classList.add('active'); }
+        function tagNewsItems(newsItems) { return newsItems.map(item => { const title = item.title.toLowerCase(); item.categories = []; for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) { if (keywords.some(keyword => title.includes(keyword))) item.categories.push(category); } return item; }); }
+        function updateFilterButtons(newsItems) { const availableCategories = new Set(newsItems.flatMap(item => item.categories || [])); filterControls.innerHTML = ''; const allBtn = document.createElement('button'); allBtn.dataset.filter = 'all'; allBtn.textContent = 'Összes'; filterControls.appendChild(allBtn); availableCategories.forEach(cat => { const btn = document.createElement('button'); btn.dataset.filter = cat; btn.textContent = cat; filterControls.appendChild(btn); }); let activeBtn = filterControls.querySelector(`[data-filter="${activeFilter}"]`) || filterControls.querySelector('[data-filter="all"]'); activeFilter = activeBtn.dataset.filter; activeBtn.classList.add('active'); }
         function filterNews(newsItems, category) { if (category === 'all') return newsItems; return newsItems.filter(item => item.categories && item.categories.includes(category)); }
         const getSourceName = (url) => { if (url.includes('index.hu')) return 'Index'; if (url.includes('telex.hu')) return 'Telex'; if (url.includes('hvg.hu')) return 'HVG'; if (url.includes('24.hu')) return '24.hu'; try { return new URL(url).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch { return 'Ismeretlen'; } };
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
-        const formatValue = (value, unit = '') => (value === null || typeof value === 'undefined' || isNaN(value)) ? 'N/A' : `${Number(value).toFixed(1)}${unit}`;
-        const degreesToCardinal = (deg) => { if (deg === null || typeof deg === 'undefined' || isNaN(deg)) return ''; const directions = ['É', 'ÉK', 'K', 'DK', 'D', 'DNy', 'Ny', 'ÉNy']; const index = Math.round(deg / 45) % 8; return ` (${directions[index]})`; };
-        async function fetchPwsData() { const promises = Object.values(PWS_STATIONS).map(async (station) => { try { const url = `https://api.weather.com/v2/pws/observations/current?apiKey=${weatherComApiKey}&stationId=${station.id}&numericPrecision=decimal&format=json&units=m`; const response = await fetch(url); if (!response.ok) return null; const data = await response.json(); const obs = data?.observations?.[0]; if (!obs) return null; const metric = obs.metric; const humidity = obs.humidity ?? obs.relativeHumidity ?? null; return { name: station.displayName, temp: metric?.temp, humidity: humidity, windSpeed: metric?.windSpeed, windDir: obs.winddir }; } catch (error) { console.error(`Hiba az időjárási adatok lekérésekor (${station.displayName}):`, error); return null; } }); return (await Promise.all(promises)).filter(r => r !== null); }
-        function setTickerSpeed(contentElement) { if (!contentElement) return; const pixelsPerSecond = 100; const distance = contentElement.offsetWidth / 2; if (distance > 0) { const duration = distance / (pixelsPerSecond * speedMultiplier); contentElement.style.animationDuration = `${duration}s`; } }
+
+        function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; } }
+        function resumeFlipCycle() { if (flipRemainingTime > 0 && !flipTimeoutId && tracks[activeTrackKey].querySelectorAll('.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); } }
         
-        function stopNightlyRetryProcess() { if (retryIntervalId) clearInterval(retryIntervalId); if (retryTimeoutId) clearTimeout(retryTimeoutId); retryIntervalId = null; retryTimeoutId = null; }
-        async function retryFailedFeeds(failedUrls) {
-            console.log(`Újrapróbálkozás ${failedUrls.length} sikertelen feeddel...`);
-            const promises = failedUrls.map(async (url) => { try { const res = await fetch(CORS_PROXY + encodeURIComponent(url)); return res.ok ? { success: true, url } : { success: false, url }; } catch { return { success: false, url }; } });
-            const results = await Promise.all(promises);
-            const stillFailing = results.filter(r => !r.success).map(r => r.url);
-            if (stillFailing.length === 0) { console.log("Minden feed sikeresen betöltve az újrapróbálkozás során!"); stopNightlyRetryProcess(); triggerUpdate(); } 
-            else { console.log(`${stillFailing.length} feed továbbra is sikertelen.`); }
-        }
-        function startNightlyRetryProcess(failedUrls) {
-            stopNightlyRetryProcess();
-            const twentyMinutes = 20 * 60 * 1000; const twoMinutes = 2 * 60 * 1000;
-            console.log(`Éjszakai újrapróbálkozó ciklus indul ${failedUrls.length} feedre.`);
-            retryTimeoutId = setTimeout(() => { console.log("A 20 perces újrapróbálkozási ablak lejárt."); stopNightlyRetryProcess(); }, twentyMinutes);
-            retryIntervalId = setInterval(() => retryFailedFeeds(failedUrls), twoMinutes);
-        }
+        function showItemAtIndex(index, isManual = false) {
+            pauseFlipCycle();
+            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item');
+            if(items.length === 0) return;
 
-        // OPTIMIZATION: Create a dedicated function to build a ticker item element
-        // This avoids large innerHTML strings and improves performance.
-        function createTickerItem(itemData) {
-            const itemEl = document.createElement('div');
-            itemEl.className = 'ticker-item';
+            items[currentItemIndex]?.classList.remove('visible');
+            currentItemIndex = (index + items.length) % items.length;
+            const currentItem = items[currentItemIndex];
+            requestAnimationFrame(() => { currentItem?.classList.add('visible'); });
 
-            switch (itemData.type) {
-                case 'news-intro':
-                case 'calendar':
-                case 'weather':
-                case 'quote':
-                case 'announcement':
-                case 'empty':
-                    itemEl.classList.add(`${itemData.type}-item`);
-                    itemEl.innerHTML = itemData.html;
-                     if(itemData.style) {
-                        for(const [key, value] of Object.entries(itemData.style)) {
-                            itemEl.style[key] = value;
-                        }
-                    }
-                    break;
-                case 'news':
-                    const data = itemData.data;
-                    if (BREAKING_REGEX.test(data.title)) {
-                        itemEl.classList.add('breaking-highlight');
-                    }
-                    const faviconUrl = getFaviconUrl(data.link);
-
-                    itemEl.innerHTML = `
-                        <span class="meta">
-                            ${faviconUrl ? `<img src="${faviconUrl}" class="favicon-img" alt="">` : ''}
-                            [<span class="source">${data.source}</span> | ${formatTime(new Date(data.pubDate))}]
-                        </span> 
-                        <a href="${data.link}" target="_blank" rel="noopener noreferrer">${data.title}</a>`;
-                    break;
-            }
-            return itemEl;
-        }
-
-        // OPTIMIZATION: Use DocumentFragment for efficient DOM updates.
-        // This builds the entire ticker content off-screen and adds it to the DOM in a single operation,
-        // reducing reflows and repaints that cause stuttering.
-        function renderContentToTrack(items, trackElement) {
-            const contentEl = trackElement.querySelector('.ticker-content');
-            const fragment = document.createDocumentFragment();
+            let duration = FLIP_INTERVAL_REGULAR;
+            if (currentItem?.classList.contains('news-intro-item')) { duration = FLIP_INTERVAL_VERY_SHORT; }
+            else if (currentItem?.classList.contains('calendar-item') || currentItem?.classList.contains('quote-item')) { duration = FLIP_INTERVAL_SHORT; }
             
-            if (items.length === 0) {
-                 items.push({ type: 'empty', html: `Nincsenek megjeleníthető hírek a(z) '${activeFilter}' kategóriában.` });
+            flipRemainingTime = duration;
+            if(!isManual) { 
+                resumeFlipCycle();
             }
+        }
 
-            items.forEach(itemData => {
-                const itemEl = createTickerItem(itemData);
-                fragment.appendChild(itemEl);
-            });
+        function cycleItems() { showItemAtIndex(currentItemIndex + 1); }
+        
+        function startFlipCycle() {
+            if (flipTimeoutId) clearTimeout(flipTimeoutId);
+            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item');
+            currentItemIndex = 0;
+            if (items.length > 0) {
+                items.forEach((item, index) => item.classList.toggle('visible', index === 0));
+                const firstItem = items[0];
+                let duration = FLIP_INTERVAL_REGULAR;
+                if (firstItem?.classList.contains('news-intro-item')) { duration = FLIP_INTERVAL_VERY_SHORT; }
+                else if (firstItem?.classList.contains('calendar-item') || firstItem?.classList.contains('quote-item')) { duration = FLIP_INTERVAL_SHORT; }
+                flipRemainingTime = duration;
+                resumeFlipCycle();
+            } else {
+                flipRemainingTime = 0;
+            }
+        }
+        
+        function triggerLogoGlitch() { if (document.visibilityState !== 'visible') return; tickerLogo.classList.add('glitch-active'); setTimeout(() => { tickerLogo.classList.remove('glitch-active'); }, 250); logoGlitchTimeout = setTimeout(triggerLogoGlitch, Math.random() * 5000 + 4000); }
+        function triggerTextGlitch() { if (document.visibilityState !== 'visible') return; brandNameEl.classList.add('glitch-text-active'); setTimeout(() => { brandNameEl.classList.remove('glitch-text-active'); }, 300); textGlitchTimeout = setTimeout(triggerTextGlitch, Math.random() * 13000 + 7000); }
+        function stopGlitchEffects() { clearTimeout(logoGlitchTimeout); clearTimeout(textGlitchTimeout); logoGlitchTimeout = null; textGlitchTimeout = null; }
+        function startGlitchEffects() { stopGlitchEffects(); triggerLogoGlitch(); triggerTextGlitch(); }
 
-            // For seamless scroll animation, we need to duplicate the content
-            const fragmentClone = fragment.cloneNode(true);
-            
-            // Clear previous content and append the new fragments
-            contentEl.innerHTML = '';
-            contentEl.appendChild(fragment);
-            contentEl.appendChild(fragmentClone);
+        function showLoadingState(isLoading) {
+            loadingIndicator.style.display = isLoading ? 'flex' : 'none';
+            labelContent.style.visibility = isLoading ? 'hidden' : 'visible';
+            labelContent.style.opacity = isLoading ? '0' : '1';
         }
 
         async function fetchAndDisplayContent() {
+            pauseFlipCycle();
+            showLoadingState(true);
+
             if (currentMode === 'summary') {
                 nightShiftContainer.style.display = 'flex';
                 bodyEl.classList.add('night-mode-active');
+                nameDayEl.style.display = 'none';
+                filterControlGroup.style.display = 'none';
+                nightModeMessage.style.display = 'block';
             } else {
                 nightShiftContainer.style.display = 'none';
                 bodyEl.classList.remove('night-mode-active');
+                nameDayEl.style.display = 'block';
+                filterControlGroup.style.display = 'flex';
+                nightModeMessage.style.display = 'none';
+                
+                const today = new Date(); const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                const names = CALENDAR_DATA.nameDays[nameDayKey] || [];
+                nameDayEl.textContent = names.length > 0 ? `${names.join(' és ')} névnapja` : '';
             }
-            
-            filterControlGroup.style.display = currentMode === 'summary' ? 'none' : 'flex';
-            nightModeMessage.style.display = currentMode === 'summary' ? 'block' : 'none';
             updateDynamicTheme();
 
-            const newsPromises = Object.values(rssFeeds).map(async (url) => { try { const sourceName = getSourceName(url); const res = await fetch(CORS_PROXY + encodeURIComponent(url)); if (!res.ok) return { success: false, url }; const str = await res.text(); const data = new window.DOMParser().parseFromString(str, "text/xml"); if (data.querySelector("parsererror")) return { success: false, url }; const items = [...data.querySelectorAll("item")].map(item => ({ title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, source: sourceName })); return { success: true, data: items }; } catch { return { success: false, url }; } });
+            const newsPromises = Object.values(rssFeeds).map(async (url) => { try { const res = await fetch(CORS_PROXY + url); if (!res.ok) return { success: false, url }; const str = await res.text(); const data = new window.DOMParser().parseFromString(str, "text/xml"); if (data.querySelector("parsererror")) return { success: false, url }; return { success: true, data: [...data.querySelectorAll("item")].map(item => ({ title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, description: stripHtml(item.querySelector("description")?.textContent || ''), source: getSourceName(url) })) }; } catch { return { success: false, url }; } });
             const fetchResults = await Promise.all(newsPromises);
-            const successfulFetches = fetchResults.filter(r => r.success).flatMap(r => r.data);
-            const failedFeeds = fetchResults.filter(r => !r.success).map(r => r.url);
-            
-            if (currentMode === 'summary' && failedFeeds.length > 0 && !retryIntervalId) { startNightlyRetryProcess(failedFeeds); } 
-            else if (failedFeeds.length === 0) { stopNightlyRetryProcess(); }
-
-            const [pwsWeatherData] = await Promise.all([fetchPwsData()]);
-            const allNewsItems = tagNewsItems(successfulFetches);
+            const allNewsItems = tagNewsItems(fetchResults.filter(r => r.success).flatMap(r => r.data));
             if (currentMode === 'normal') updateFilterButtons(allNewsItems);
             
-            // OPTIMIZATION: Build a structured data array instead of an HTML string array.
-            // This is more memory-efficient and separates data from presentation.
-            let contentData = [], newsToDisplay = [];
+            let contentItems = [], newsToDisplay = [];
             
             if (currentMode === 'summary') {
-                const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); const yesterdayStart = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 0, 0, 0); const yesterdayEnd = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59);
-                newsToDisplay = filterNews(allNewsItems, 'all').filter(item => { if (!item.pubDate) return false; const itemDate = new Date(item.pubDate); return itemDate >= yesterdayStart && itemDate <= yesterdayEnd; }).sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
-                if (newsToDisplay.length > 0) contentData.push({ type: 'news-intro', html: `${ICON_NEWS} A tegnapi nap (${yesterday.toLocaleDateString('hu-HU')}) hírei időrendben:` });
+                const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStart = new Date(yesterday.setHours(0, 0, 0, 0));
+                const yesterdayEnd = new Date(yesterday.setHours(23, 59, 59, 999));
+                newsToDisplay = filterNews(allNewsItems, 'all').filter(item => item.pubDate && new Date(item.pubDate) >= yesterdayStart && new Date(item.pubDate) <= yesterdayEnd).sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
+                if (newsToDisplay.length > 0) contentItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS} A tegnapi nap (${new Date(yesterdayStart).toLocaleDateString('hu-HU')}) hírei időrendben:</div>`);
                 breakingIndicator.classList.remove('active');
             } else {
                 const filteredByCategory = filterNews(allNewsItems, activeFilter);
-                if (activeFilter === 'all') { const twoHoursAgo = new Date(); twoHoursAgo.setHours(twoHoursAgo.getHours() - 2); newsToDisplay = filteredByCategory.filter(item => item.pubDate && new Date(item.pubDate) >= twoHoursAgo).sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-                } else { const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0); newsToDisplay = filteredByCategory.filter(item => item.pubDate && new Date(item.pubDate) >= todayStart).sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate)); }
+
+                if (activeFilter === 'all') {
+                    const timeLimit = new Date();
+                    timeLimit.setHours(timeLimit.getHours() - 2);
+                    newsToDisplay = filteredByCategory
+                        .filter(item => item.pubDate && new Date(item.pubDate) >= timeLimit)
+                        .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                } else {
+                    const timeLimit = new Date();
+                    timeLimit.setHours(0, 0, 0, 0); // Mai nap éjfél
+                    newsToDisplay = filteredByCategory
+                        .filter(item => item.pubDate && new Date(item.pubDate) >= timeLimit)
+                        .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                }
+
+                breakingIndicator.classList.toggle(allNewsItems.slice(0, 10).some(item => BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k))), true);
                 
-                const isBreakingOverall = allNewsItems.slice(0, 10).some(item => BREAKING_REGEX.test(item.title));
-                breakingIndicator.classList.toggle('active', isBreakingOverall);
-                
-                const today = new Date(); const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`; const names = (CALENDAR_DATA.nameDays && CALENDAR_DATA.nameDays[nameDayKey]) ? CALENDAR_DATA.nameDays[nameDayKey] : []; const nameDayString = names.length > 0 ? `Mai névnap: ${names.join(' és ')}.` : "";
-                contentData.push({ type: 'calendar', html: `${ICON_CALENDAR} Ma ${today.getFullYear()}. ${CALENDAR_DATA.honapok[today.getMonth()]} ${today.getDate()}. ${CALENDAR_DATA.napok[today.getDay()]} van. ${nameDayString}` });
-                pwsWeatherData.forEach(pws => { const windDirection = degreesToCardinal(pws.windDir); const weatherString = `Időjárás - ${pws.name}: ${formatValue(pws.temp, '°C')} | Páratartalom: ${formatValue(pws.humidity, '%')} | Szél: ${formatValue(pws.windSpeed, ' km/h')}${windDirection}`; contentData.push({ type: 'weather', html: `${ICON_WEATHER} ${weatherString}` }); });
-                if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { contentData.push({ type: 'announcement', html: `${ICON_ANNOUNCEMENT} ${ann.text}`, style: { color: ann.color || 'var(--accent-main)'} }); }); }
-                const quote = QUOTES[new Date().getDate() % QUOTES.length];
-                contentData.push({ type: 'quote', html: `Nap idézete: "${quote}"` });
-                if (newsToDisplay.length > 0) { contentData.push({ type: 'news-intro', html: `${ICON_NEWS}${activeFilter === 'all' ? ' A legfrissebb hírek:' : ` Napi hírek: '${activeFilter}'` }` }); }
+                if(activeFilter === 'all') {
+                    const today = new Date(); const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`; const names = (CALENDAR_DATA.nameDays[nameDayKey] || []); const nameDayString = names.length > 0 ? `Mai névnap: ${names.join(' és ')}.` : "";
+                    contentItems.push(`<div class="ticker-item calendar-item">${ICON_CALENDAR} Ma ${today.getFullYear()}. ${CALENDAR_DATA.honapok[today.getMonth()]} ${today.getDate()}. ${CALENDAR_DATA.napok[today.getDay()]} van. ${nameDayString}</div>`);
+                    if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { contentItems.push(`<div class="ticker-item custom-announcement" style="color: ${ann.color || 'var(--accent-main)'};">${ICON_ANNOUNCEMENT} ${ann.text}</div>`); }); }
+                    contentItems.push(`<div class="ticker-item quote-item">Nap idézete: "${QUOTES[new Date().getDate() % QUOTES.length]}"</div>`);
+                }
+
+                if (newsToDisplay.length > 0) { contentItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? ' A legfrissebb hírek:' : ` Napi hírek: '${activeFilter}'` }</div>`); }
             }
             
-            const sliceLimit = (currentMode === 'summary') ? Infinity : 40;
-            newsToDisplay.slice(0, sliceLimit).forEach(item => {
-                contentData.push({ type: 'news', data: item });
+            newsToDisplay.slice(0, 40).forEach(item => {
+                const time = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
+                const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
+                const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
+                contentItems.push(`<div class="ticker-item ${isBreaking ? 'breaking-highlight' : ''}"> <div class="ticker-item-header"> <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span> </div> <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a> <span class="ticker-item-description">${getSmartDescription(item.description)}</span></div>`);
             });
             
             const standbyTrackKey = activeTrackKey === 'a' ? 'b' : 'a';
-            const standbyTrack = tracks[standbyTrackKey];
-            
-            renderContentToTrack(contentData, standbyTrack);
+            const standbyContent = tracks[standbyTrackKey].querySelector('.ticker-content');
+            standbyContent.innerHTML = contentItems.length > 0 ? contentItems.join('') : `<div class="ticker-item visible">${(currentMode === 'summary') ? 'Nincsenek tegnapi hírek.' : `Nincsenek megjeleníthető hírek a(z) '${activeFilter}' kategóriában.`}</div>`;
             
             requestAnimationFrame(() => {
-                setTickerSpeed(standbyTrack.querySelector('.ticker-content'));
-                standbyTrack.classList.add('visible');
+                showLoadingState(false);
+                tracks[standbyTrackKey].classList.add('visible');
                 tracks[activeTrackKey].classList.remove('visible');
                 activeTrackKey = standbyTrackKey;
+                startFlipCycle();
             });
             scheduleNextUpdate();
         };
 
-        const scheduleNextUpdate = () => { 
-            if (updateTimeout) clearTimeout(updateTimeout);
-            if (currentMode === 'summary' && !retryIntervalId) { updateTimeout = setTimeout(triggerUpdate, 60 * 60 * 1000); } 
-            else if (currentMode === 'normal') { const now = new Date(); const delay = ((5 - (now.getMinutes() % 5)) * 60 - now.getSeconds()) * 1000 + 2000; updateTimeout = setTimeout(triggerUpdate, delay > 0 ? delay : 300000); }
-        };
+        const scheduleNextUpdate = () => { if (updateTimeout) clearTimeout(updateTimeout); if (currentMode === 'normal') { const now = new Date(); const delay = ((15 - (now.getMinutes() % 15)) * 60 - now.getSeconds()) * 1000 + 2000; updateTimeout = setTimeout(triggerUpdate, delay > 0 ? delay : 900000); } };
         const triggerUpdate = () => { clearTimeout(debounceTimeout); debounceTimeout = setTimeout(() => { if (document.visibilityState === 'visible') fetchAndDisplayContent(); }, 500); };
-        const startSystem = () => triggerUpdate();
-        const stopSystem = () => { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); stopNightlyRetryProcess(); };
         
+        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopGlitchEffects(); };
+        function startAllTimers() { 
+            triggerUpdate();
+            if (!weatherFetchInterval) { fetchAllWeatherData(); }
+            if (!weatherDisplayInterval) { displayNextWeatherGroup(); weatherDisplayInterval = setInterval(displayNextWeatherGroup, WEATHER_DISPLAY_INTERVAL_DURATION); }
+            startGlitchEffects();
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => { document.body.classList.add('loaded'); }, 200);
+            
             updateClock(); setInterval(updateClock, 1000);
             updateDynamicTheme(); setInterval(updateDynamicTheme, 5 * 60 * 1000);
-            if (document.visibilityState === 'visible') startSystem();
+            
+            if (document.visibilityState === 'visible') { startAllTimers(); }
+
+            tickerWrap.addEventListener('mouseenter', pauseFlipCycle);
+            tickerWrap.addEventListener('mouseleave', resumeFlipCycle);
+            prevBtn.addEventListener('click', () => showItemAtIndex(currentItemIndex - 1, true));
+            nextBtn.addEventListener('click', () => showItemAtIndex(currentItemIndex + 1, true));
+
+            document.addEventListener('visibilitychange', () => { 
+                if (document.visibilityState === 'visible') {
+                    resumeFlipCycle();
+                    startAllTimers();
+                } else {
+                    stopAllTimers();
+                }
+            });
         });
-        document.addEventListener('visibilitychange', () => { document.visibilityState === 'visible' ? startSystem() : stopSystem(); });
+
         filterControls.addEventListener('click', (e) => setFilter(e.target));
         onValue(announcementsRef, (snapshot) => { customAnnouncements = snapshot.val() ? Object.values(snapshot.val()) : []; triggerUpdate(); });
         onValue(feedsRef, (snapshot) => { rssFeeds = snapshot.val() || {}; triggerUpdate(); });
