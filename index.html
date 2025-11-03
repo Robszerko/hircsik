@@ -130,6 +130,38 @@
         .ticker-item.visible { opacity: 1; visibility: visible; animation: flip-in 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
         .ticker-item.calendar-item, .ticker-item.quote-item { align-items: center; text-align: center; }
         
+        /* --- NEW STYLES FOR RSS IMAGE --- */
+        .ticker-item.has-image {
+            flex-direction: row;
+            gap: 15px;
+            align-items: center;
+        }
+        .ticker-item-image-container {
+            width: 85px;
+            height: 85px;
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 5px;
+        }
+        .ticker-item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: rgba(0,0,0,0.1);
+        }
+        .ticker-item-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            min-width: 0;
+            height: 100%;
+            justify-content: center;
+        }
+        .ticker-item.has-image .ticker-item-description {
+            -webkit-line-clamp: 2;
+        }
+        /* --- END OF NEW STYLES --- */
+
         .ticker-item-header { display: flex; align-items: center; margin-bottom: 4px; width: 100%; }
         .ticker-item .meta { color: var(--text-secondary); margin-right: 0.5rem; font-weight: 400; display: flex; align-items: center; white-space: nowrap; }
         .favicon-img { width: 16px; height: 16px; margin-right: 6px; border-radius: 3px; }
@@ -309,6 +341,7 @@
         let textGlitchTimeout = null;
 
         const stripHtml = (html) => { let doc = new DOMParser().parseFromString(html, 'text/html'); return doc.body.textContent || ""; };
+        
         const getSmartDescription = (text, maxLength = 220) => {
             if (!text || text.length <= maxLength) return text;
             let truncated = text.substring(0, maxLength);
@@ -316,6 +349,31 @@
             if (lastPunctuation > maxLength / 2) { return truncated.substring(0, lastPunctuation + 1); }
             let lastSpace = truncated.lastIndexOf(' ');
             return truncated.substring(0, lastSpace > 0 ? lastSpace : maxLength) + '...';
+        };
+
+        const extractImageUrl = (item, fullDescriptionHtml) => {
+            // 1. Check for media:content
+            const mediaContent = item.querySelector('media\\:content, content');
+            if (mediaContent && mediaContent.getAttribute('medium') === 'image' && mediaContent.getAttribute('url')) {
+                return mediaContent.getAttribute('url');
+            }
+            if (mediaContent && /\.(jpg|jpeg|png|webp)$/i.test(mediaContent.getAttribute('url'))) {
+                 return mediaContent.getAttribute('url');
+            }
+            // 2. Check for enclosure
+            const enclosure = item.querySelector('enclosure');
+            if (enclosure && enclosure.getAttribute('type')?.startsWith('image') && enclosure.getAttribute('url')) {
+                return enclosure.getAttribute('url');
+            }
+            // 3. Check for an <img> tag inside the description
+            try {
+                const doc = new DOMParser().parseFromString(fullDescriptionHtml, 'text/html');
+                const img = doc.querySelector('img');
+                if (img && img.src) {
+                    return img.src;
+                }
+            } catch (e) { /* Parsing might fail, just ignore */ }
+            return null; // No image found
         };
 
         async function fetchAllWeatherData() {
@@ -468,7 +526,7 @@
             }
             updateDynamicTheme();
 
-            const newsPromises = Object.values(rssFeeds).map(async (url) => { try { const res = await fetch(CORS_PROXY + url); if (!res.ok) return { success: false, url }; const str = await res.text(); const data = new window.DOMParser().parseFromString(str, "text/xml"); if (data.querySelector("parsererror")) return { success: false, url }; return { success: true, data: [...data.querySelectorAll("item")].map(item => ({ title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, description: stripHtml(item.querySelector("description")?.textContent || ''), source: getSourceName(url) })) }; } catch { return { success: false, url }; } });
+            const newsPromises = Object.values(rssFeeds).map(async (url) => { try { const res = await fetch(CORS_PROXY + url); if (!res.ok) return { success: false, url }; const str = await res.text(); const data = new window.DOMParser().parseFromString(str, "text/xml"); if (data.querySelector("parsererror")) return { success: false, url }; return { success: true, data: [...data.querySelectorAll("item")].map(item => { const fullDescriptionHtml = item.querySelector("description")?.textContent || ''; const imageUrl = extractImageUrl(item, fullDescriptionHtml); return { title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, description: stripHtml(fullDescriptionHtml), source: getSourceName(url), imageUrl: imageUrl }; }) }; } catch { return { success: false, url }; } });
             const fetchResults = await Promise.all(newsPromises);
             const allNewsItems = tagNewsItems(fetchResults.filter(r => r.success).flatMap(r => r.data));
             if (currentMode === 'normal') updateFilterButtons(allNewsItems);
@@ -515,7 +573,24 @@
                 const time = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
-                contentItems.push(`<div class="ticker-item ${isBreaking ? 'breaking-highlight' : ''}"> <div class="ticker-item-header"> <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span> </div> <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a> <span class="ticker-item-description">${getSmartDescription(item.description)}</span></div>`);
+                
+                let imageHtml = '';
+                let itemClass = `ticker-item ${isBreaking ? 'breaking-highlight' : ''}`;
+                if (item.imageUrl) {
+                    imageHtml = `<div class="ticker-item-image-container"><img src="${CORS_PROXY}${item.imageUrl}" class="ticker-item-image" alt="" loading="lazy"></div>`;
+                    itemClass += ' has-image';
+                }
+
+                const contentHtml = `
+                    <div class="ticker-item-content-wrapper">
+                        <div class="ticker-item-header">
+                            <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span>
+                        </div>
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>
+                        <span class="ticker-item-description">${getSmartDescription(item.description)}</span>
+                    </div>`;
+
+                contentItems.push(`<div class="${itemClass}">${imageHtml}${contentHtml}</div>`);
             });
             
             const standbyTrackKey = activeTrackKey === 'a' ? 'b' : 'a';
