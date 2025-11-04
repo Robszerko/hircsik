@@ -1005,9 +1005,9 @@
             setInterval(() => {
                 const now = new Date();
                 const minutes = now.getMinutes();
-                if (currentMode === 'normal' && minutes % 2 === 0 && minutes !== lastUpdateMinute) {
+                if (currentMode === 'normal' && (minutes % 15 === 0) && minutes !== lastUpdateMinute) {
                     if (document.visibilityState === 'visible') {
-                        console.log("Automatikus frissítés (2 percenként)...");
+                        console.log("Automatikus frissítés (negyedóránként)...");
                         sessionStorage.removeItem('newsCache');
                         triggerUpdate();
                     }
