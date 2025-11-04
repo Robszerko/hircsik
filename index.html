@@ -232,7 +232,17 @@
             background-size: cover;
             background-position: center;
             transition: background 1.2s ease-in-out, border-color 1.5s ease-in-out;
+            position: relative;
         }
+        /* Added overlay for better text readability */
+        #world-weather-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
         .weather-bg-default { background: linear-gradient(145deg, #757F9A, #D7DDE8); }
         .weather-bg-sunny { background: linear-gradient(145deg, #56CCF2, #2F80ED); }
         .weather-bg-night-clear { background: linear-gradient(145deg, #0F2027, #203A43, #2C5364); }
@@ -243,12 +253,23 @@
         .weather-bg-fog { background: linear-gradient(145deg, #BCC1C6, #D8DBE0); }
 
         .weather-widget {
-            color: var(--text-primary);
             animation: widget-fade-in 0.8s ease-in-out;
             display: flex;
             flex-direction: column;
             text-align: center;
+            position: relative; /* To be on top of the overlay */
+            z-index: 2;
         }
+        
+        /* Force white/light text and add shadow for readability */
+        #world-weather-container .weather-widget,
+        #world-weather-container .weather-widget .weather-time,
+        #world-weather-container .weather-widget .weather-description,
+        #world-weather-container .weather-widget .weather-details {
+            color: #ffffff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
         .weather-header {
             text-align: center;
             margin-bottom: 5px;
@@ -264,7 +285,6 @@
         .weather-time {
             font-size: 0.7rem;
             font-weight: 500;
-            color: var(--text-secondary);
         }
         .weather-main-content {
             display: flex;
@@ -275,6 +295,7 @@
         .weather-main-icon svg {
             width: 52px;
             height: 52px;
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
         }
         .weather-temp {
             font-family: var(--font-display);
@@ -284,15 +305,13 @@
         .weather-description {
             font-size: 0.75rem;
             font-weight: 400;
-            color: var(--text-secondary);
             margin-top: 2px;
         }
         .weather-details {
             display: flex;
             justify-content: space-around;
             font-size: 0.75rem;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid rgba(255, 255, 255, 0.3); /* Lighter border */
             margin-top: 6px;
             padding-top: 6px;
             opacity: 0.9;
@@ -305,11 +324,14 @@
         .weather-detail-item svg {
             width: 14px;
             height: 14px;
+            filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.6));
         }
         #world-weather-container .placeholder {
             font-size: 0.8rem;
             color: var(--text-secondary);
             text-align: center;
+            position: relative;
+            z-index: 2;
         }
         @media (max-width: 950px) {
             .news-ticker-container { flex-direction: column; }
@@ -537,12 +559,11 @@
         }
 
         function displayWeather() {
-            let currentCity, title;
+            let currentCity;
 
             if (isDisplayingDomestic) {
                 if (domesticWeatherCache.length === 0) return;
                 currentCity = domesticWeatherCache[domesticWeatherIndex];
-                title = "Hazai";
                 domesticWeatherIndex++;
                 if (domesticWeatherIndex >= domesticWeatherCache.length) {
                     domesticWeatherIndex = 0;
@@ -552,7 +573,6 @@
             } else {
                 if (foreignWeatherDataCache.length === 0) return;
                 currentCity = foreignWeatherDataCache[foreignWeatherIndex];
-                title = "Külföldi";
                 foreignWeatherIndex++;
                 if (foreignWeatherIndex >= foreignWeatherDataCache.length) {
                     foreignWeatherIndex = 0;
@@ -572,7 +592,7 @@
                 <div class="weather-widget">
                     <div class="weather-header">
                         <div class="weather-location" title="${currentCity.name}">${currentCity.name}</div>
-                        <div class="weather-time">${localTimeStr} · ${title}</div>
+                        <div class="weather-time">${localTimeStr}</div>
                     </div>
                     <div class="weather-main-content">
                         <div class="weather-main-icon">${getWeatherIcon(currentCity.icon)}</div>
