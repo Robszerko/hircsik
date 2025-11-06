@@ -28,7 +28,7 @@
         body.theme-dawn       { --bg-main-gradient: linear-gradient(145deg, #2c2a4f, #7c4d8e, #d192a0); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #7c4d8e; }
         body.theme-sunrise    { --bg-main-gradient: linear-gradient(145deg, #f7cac9, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #f7cac9; }
         body.theme-morning    { --bg-main-gradient: linear-gradient(145deg, #E0F7FA, #87CEEB); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #B2EBF2; }
-        body.theme-day        { --bg-main-gradient: linear-gradient(145deg, #81D4FA, #29B6F6); --text-primary: #1C1E21; --text-secondary: #004D40; --border-color: #4FC3F7; }
+        body.theme-day        { --bg-main-gradient: linear-gradient(145deg, #81D4FA, #29B6F6); --text-primary: #1C1E21; --text-secondary: #005689; --border-color: #4FC3F7; }
         body.theme-afternoon  { --bg-main-gradient: linear-gradient(145deg, #29B6F6, #FFD700); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #FFECB3; }
         body.theme-sunset     { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #ff9a3f; }
         body.theme-dusk       { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #483D8B); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #483D8B; }
@@ -485,7 +485,7 @@
         const CORS_PROXY = "https://corsproxy.io/?";
         const BREAKING_KEYWORDS = ['rendkívüli', 'fontos bejelentés', 'most érkezett', 'élőben', 'percről percre', 'breaking', 'rakétacsapás', 'háború'];
         
-        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Hajdúböszörmény', lat: 47.67, lon: 21.51 }, { name: 'Kiskunfélegyháza', lat: 46.71, lon: 19.85 }, { name: 'Orosháza', lat: 46.56, lon: 20.67 }, { name: 'Ajka', lat: 47.10, lon: 17.55 }, { name: 'Mosonmagyaróvár', lat: 47.87, lon: 17.27 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Gyula', lat: 46.64, lon: 21.28 }, { name: 'Kiskunhalas', lat: 46.43, lon: 19.48 }, { name: 'Jászberény', lat: 47.50, lon: 19.91 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Sátoraljaújhely', lat: 48.39, lon: 21.66 }, { name: 'Komló', lat: 46.19, lon: 18.26 }, { name: 'Makó', lat: 46.21, lon: 20.47 }, { name: 'Karcag', lat: 47.31, lon: 20.92 }, { name: 'Hatvan', lat: 47.66, lon: 19.68 }, { name: 'Kisvárda', lat: 48.22, lon: 22.08 }, { name: 'Mátészalka', lat: 47.95, lon: 22.32 }, { name: 'Paks', lat: 46.62, lon: 18.85 }, { name: 'Mezőtúr', lat: 47.00, lon: 20.62 }, { name: 'Kalocsa', lat: 46.53, lon: 18.98 }, { name: 'Mohács', lat: 45.99, lon: 18.68 }, { name: 'Komárom', lat: 47.74, lon: 18.12 }, { name: 'Balassagyarmat', lat: 48.07, lon: 19.29 }, { name: 'Törökszentmiklós', lat: 47.18, lon: 20.41 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 }, { name: 'Tapolca', lat: 46.88, lon: 17.44 }, { name: 'Berettyóújfalu', lat: 47.22, lon: 21.55 }, { name: 'Sárvár', lat: 47.25, lon: 16.93 }, { name: 'Dombóvár', lat: 46.37, lon: 18.13 } ];
+        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Nyíregyháza', lat: 47.95, lon: 21.71 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 } ];
         const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 } ];
         const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
         const QUOTES = [ "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít." ];
@@ -550,6 +550,7 @@
         let refreshAnimationTriggeredForMinute = -1;
         let fetchStartTime = 0;
         let loadingTimeout = null;
+        let isInfoMessageActive = false;
 
         const stripHtml = (html) => { let doc = new DOMParser().parseFromString(html, 'text/html'); return doc.body.textContent || ""; };
         
@@ -737,6 +738,25 @@
             }
         }
         
+        function displayInfoMessage() {
+            if (isInfoMessageActive) return;
+            isInfoMessageActive = true;
+            pauseFlipCycle();
+            
+            showRefreshState(true);
+            
+            const infoHtml = `<div class="ticker-item announcement-item visible">
+                <div class="label-top-row">
+                    <svg class="ticker-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="5"><circle cx="50" cy="50" r="45" /><ellipse cx="50" cy="50" rx="45" ry="18" /><path d="M50,5 C 30,30 30,70 50,95" /><path d="M50,5 C 70,30 70,70 50,95" /></svg>
+                    <div class="brand-container"><span class="brand-name">TKP NEWS</span></div>
+                </div>
+                <p>Napközben (06-00h) a legfrissebb híreket, éjjel (00-06h) pedig az előző nap eseményeit követheted nyomon.</p>
+            </div>`;
+
+            const activeContent = tracks[activeTrackKey].querySelector('.ticker-content');
+            activeContent.innerHTML = infoHtml;
+        }
+
         function updateClock() {
             const now = new Date(); 
             const year = now.getFullYear(), month = String(now.getMonth() + 1).padStart(2, '0'), day = String(now.getDate()).padStart(2, '0'), dayOfWeek = CALENDAR_DATA.napok[now.getDay()], hours = String(now.getHours()).padStart(2, '0'), minutes = String(now.getMinutes()).padStart(2, '0');
@@ -744,19 +764,26 @@
             
             const newMode = now.getHours() < 6 ? 'summary' : 'normal';
             if (newMode !== currentMode) { 
-                currentMode = newMode; 
+                currentMode = newMode;
+                isInfoMessageActive = false;
                 sessionStorage.removeItem('newsCache');
                 triggerUpdate();
+                return; 
             }
             
             const seconds = now.getSeconds();
-            if (currentMode === 'normal' && (minutes % 15 === 14) && seconds >= 50 && refreshAnimationTriggeredForMinute !== minutes) {
-                refreshAnimationTriggeredForMinute = minutes;
-                console.log("Automatikus frissítés előkészítése...");
-                showRefreshState(true);
-            }
 
-            if (currentMode === 'normal' && (minutes % 15 === 0) && minutes !== lastUpdateMinute) {
+            if (currentMode === 'normal') {
+                if (((minutes === 29 || minutes === 59) && seconds === 30)) {
+                    displayInfoMessage();
+                }
+
+                if (minutes === 59 && seconds === 55) {
+                    showRefreshState(true);
+                }
+            }
+            
+            if (minutes % 15 === 0 && minutes !== lastUpdateMinute) {
                 lastUpdateMinute = minutes;
                  if (document.visibilityState === 'visible') {
                     console.log("Automatikus frissítés (negyedóránként)...");
@@ -764,7 +791,8 @@
                     triggerUpdate();
                 } else {
                     showRefreshState(false);
-                    refreshAnimationTriggeredForMinute = -1; 
+                    refreshAnimationTriggeredForMinute = -1;
+                    isInfoMessageActive = false;
                 }
             }
         }
@@ -779,7 +807,7 @@
             }
         }
 
-        function setFilter(target) { if (target.tagName !== 'BUTTON') return; activeFilter = target.dataset.filter; const currentActive = filterControls.querySelector('.active'); if(currentActive) currentActive.classList.remove('active'); target.classList.add('active'); triggerUpdate(); }
+        function setFilter(target) { if (target.tagName !== 'BUTTON' || isInfoMessageActive) return; activeFilter = target.dataset.filter; const currentActive = filterControls.querySelector('.active'); if(currentActive) currentActive.classList.remove('active'); target.classList.add('active'); triggerUpdate(); }
         function getFaviconUrl(newsUrl) { try { const url = new URL(newsUrl); return `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=32`; } catch { return ''; } }
         function tagNewsItems(newsItems) { return newsItems.map(item => { const title = item.title.toLowerCase(); item.categories = []; for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) { if (keywords.some(keyword => title.includes(keyword))) item.categories.push(category); } return item; }); }
         function updateFilterButtons(newsItems) { const availableCategories = new Set(newsItems.flatMap(item => item.categories || [])); filterControls.innerHTML = ''; const allBtn = document.createElement('button'); allBtn.dataset.filter = 'all'; allBtn.textContent = 'Összes'; filterControls.appendChild(allBtn); availableCategories.forEach(cat => { const btn = document.createElement('button'); btn.dataset.filter = cat; btn.textContent = cat; filterControls.appendChild(btn); }); let activeBtn = filterControls.querySelector(`[data-filter="${activeFilter}"]`) || filterControls.querySelector('[data-filter="all"]'); activeFilter = activeBtn.dataset.filter; activeBtn.classList.add('active'); }
@@ -788,9 +816,10 @@
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; } }
-        function resumeFlipCycle() { if (flipRemainingTime > 0 && !flipTimeoutId && tracks[activeTrackKey].querySelectorAll('.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); } }
+        function resumeFlipCycle() { if (flipRemainingTime > 0 && !flipTimeoutId && !isInfoMessageActive && tracks[activeTrackKey].querySelectorAll('.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); } }
         
         function showItemAtIndex(index, isManual = false) {
+            if (isInfoMessageActive) return;
             pauseFlipCycle();
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item');
             if(items.length === 0) return;
@@ -818,7 +847,10 @@
             resumeFlipCycle();
         }
 
-        function cycleItems() { showItemAtIndex(currentItemIndex + 1); }
+        function cycleItems() { 
+            if (isInfoMessageActive) return;
+            showItemAtIndex(currentItemIndex + 1); 
+        }
         
         function startFlipCycle() {
             if (flipTimeoutId) clearTimeout(flipTimeoutId);
@@ -848,6 +880,7 @@
         function startGlitchEffects() { stopGlitchEffects(); triggerLogoGlitch(); triggerTextGlitch(); }
 
         async function fetchAndDisplayContent() {
+            isInfoMessageActive = false;
             fetchStartTime = Date.now();
             clearTimeout(loadingTimeout);
             showRefreshState(true);
