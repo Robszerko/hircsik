@@ -272,7 +272,7 @@
 
         .weather-header {
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         .weather-location {
             font-size: 1.0rem;
@@ -285,21 +285,24 @@
         .weather-time {
             font-size: 0.7rem;
             font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
         }
         .weather-main-content {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            margin: 2px 0;
         }
         .weather-main-icon svg {
-            width: 52px;
-            height: 52px;
+            width: 48px;
+            height: 48px;
             filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.5));
         }
         .weather-temp {
             font-family: var(--font-display);
-            font-size: 2.4rem;
+            font-size: 2.2rem;
             line-height: 1;
         }
         .weather-description {
@@ -309,21 +312,24 @@
         }
         .weather-details {
             display: flex;
-            justify-content: space-around;
-            font-size: 0.75rem;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            font-size: 0.7rem;
             border-top: 1px solid rgba(255, 255, 255, 0.3);
-            margin-top: 6px;
-            padding-top: 6px;
+            margin-top: 5px;
+            padding-top: 5px;
             opacity: 0.9;
         }
         .weather-detail-item {
             display: flex;
             align-items: center;
             gap: 4px;
+            flex-basis: 50%;
         }
         .weather-detail-item svg {
             width: 14px;
             height: 14px;
+            flex-shrink: 0;
             filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.6));
         }
         #world-weather-container .placeholder {
@@ -485,7 +491,7 @@
         const CORS_PROXY = "https://corsproxy.io/?";
         const BREAKING_KEYWORDS = ['rendkívüli', 'fontos bejelentés', 'most érkezett', 'élőben', 'percről percre', 'breaking', 'rakétacsapás', 'háború'];
         
-        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Nyíregyháza', lat: 47.95, lon: 21.71 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 } ];
+        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 } ];
         const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 } ];
         const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
         const QUOTES = [ "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít." ];
@@ -607,14 +613,14 @@
                         const response = await fetch(CORS_PROXY + url);
                         if (!response.ok) return null;
                         const data = await response.json();
-                        return { name: city.name, temp: data.temperature, icon: data.iconCode, desc: data.wxPhraseLong, localTime: data.validTimeLocal, humidity: data.relativeHumidity, windSpeed: data.windSpeed };
+                        return { name: city.name, temp: data.temperature, icon: data.iconCode, desc: data.wxPhraseLong, localTime: data.validTimeLocal, humidity: data.relativeHumidity, windSpeed: data.windSpeed, lat: city.lat, lon: city.lon };
                     } catch (error) { console.error(`Időjárás API hiba (${city.name}):`, error); return null; }
                 });
                 return (await Promise.all(promises)).filter(r => r !== null);
             };
             [domesticWeatherCache, foreignWeatherDataCache] = await Promise.all([ fetchList(HUNGARIAN_CITIES), fetchList(FOREIGN_CITIES) ]);
         }
-
+        
         function displayWeather() {
             let currentCity;
 
@@ -638,18 +644,23 @@
             }
             if (!currentCity) return;
             
-            const localTimeStr = new Date(currentCity.localTime).toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+            const localTime = new Date(currentCity.localTime);
+            const localTimeStr = localTime.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+            const sunTimes = SunCalc.getTimes(localTime, currentCity.lat, currentCity.lon);
+            const sunriseStr = sunTimes.sunrise.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+            const sunsetStr = sunTimes.sunset.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
             
             const backgroundClass = getWeatherBackgroundClass(currentCity.icon);
             worldWeatherContainer.className = '';
             worldWeatherContainer.classList.add(backgroundClass);
 
-
             const widgetHtml = `
                 <div class="weather-widget">
                     <div class="weather-header">
                         <div class="weather-location" title="${currentCity.name}">${currentCity.name}</div>
-                        <div class="weather-time">${localTimeStr}</div>
+                        <div class="weather-time">
+                           <span>${localTimeStr}</span>
+                        </div>
                     </div>
                     <div class="weather-main-content">
                         <div class="weather-main-icon">${getWeatherIcon(currentCity.icon)}</div>
@@ -661,9 +672,17 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
                             ${currentCity.humidity}%
                         </span>
+                         <span class="weather-detail-item" title="Napkelte">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
+                            ${sunriseStr}
+                        </span>
                         <span class="weather-detail-item" title="Szélsebesség">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
                              ${currentCity.windSpeed} km/h
+                        </span>
+                        <span class="weather-detail-item" title="Napnyugta">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg>
+                            ${sunsetStr}
                         </span>
                     </div>
                 </div>`;
