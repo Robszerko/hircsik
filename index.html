@@ -100,8 +100,8 @@
         .ticker-track.visible { opacity: 1; transform: translateY(0); }
         .ticker-content { position: relative; width: 100%; height: 100%; }
 
-        .ticker-item { display: flex; flex-direction: column; align-items: flex-start; text-align: left; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); padding: 5px 15px; border-radius: 4px; position: absolute; top: 50%; left: 50%; width: 95%; height: 90%; justify-content: center; background-color: transparent; opacity: 0; visibility: hidden; transition: opacity 0.5s, visibility 0.5s; transform: translate(-50%, -50%); }
-        .ticker-item.visible { opacity: 1; visibility: visible; animation: flip-in 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+        .ticker-item { display: flex; flex-direction: column; align-items: flex-start; text-align: left; font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); padding: 5px 15px; border-radius: 4px; position: absolute; top: 50%; left: 50%; width: 95%; height: 90%; justify-content: center; background-color: transparent; opacity: 0; visibility: hidden; /* When hiding, change visibility instantly AFTER the opacity transition */ transition: opacity 0.5s, visibility 0s linear 0.5s; transform: translate(-50%, -50%); }
+        .ticker-item.visible { opacity: 1; visibility: visible; /* When showing, change visibility instantly and transition opacity */ transition: opacity 0.5s; animation: flip-in 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
         .ticker-item.calendar-item, .ticker-item.quote-item { align-items: center; text-align: center; }
         
         .ticker-item.has-image { flex-direction: row; gap: 15px; align-items: center; }
@@ -843,17 +843,21 @@
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item');
             if(items.length === 0) return;
 
-            items[currentItemIndex]?.classList.remove('visible');
+            // Robusztusabb megoldás: Először minden elemet elrejtünk, hogy elkerüljük az átfedéseket
+            items.forEach(item => item.classList.remove('visible'));
+            
             currentItemIndex = (index + items.length) % items.length;
             const currentItem = items[currentItemIndex];
             
-            requestAnimationFrame(() => { 
-                currentItem?.classList.add('visible');
-                updateCounter();
-                if (currentMode === 'summary') {
-                    updateTimeline();
-                }
-            });
+            if(currentItem) {
+                requestAnimationFrame(() => { 
+                    currentItem.classList.add('visible');
+                    updateCounter();
+                    if (currentMode === 'summary') {
+                        updateTimeline();
+                    }
+                });
+            }
 
             let duration = FLIP_INTERVAL_REGULAR;
              if (currentItem?.classList.contains('announcement-item')) {
@@ -899,6 +903,12 @@
         function startGlitchEffects() { stopGlitchEffects(); triggerLogoGlitch(); triggerTextGlitch(); }
 
         async function fetchAndDisplayContent() {
+            // Javítás: Csak akkor fusson le, ha már betöltődtek a feed-ek, elkerülve a korai hibaüzenetet.
+            if (Object.keys(rssFeeds).length === 0) {
+                console.log("Várakozás az RSS feedek listájára...");
+                return;
+            }
+
             isInfoMessageActive = false;
             fetchStartTime = Date.now();
             clearTimeout(loadingTimeout);
