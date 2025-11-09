@@ -27,11 +27,11 @@
         body.theme-night      { --bg-main-gradient: linear-gradient(145deg, #020111, #191621); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #3A3B3C; }
         body.theme-predawn    { --bg-main-gradient: linear-gradient(145deg, #191621, #2c2a4f); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #2c2a4f; }
         body.theme-dawn       { --bg-main-gradient: linear-gradient(145deg, #2c2a4f, #7c4d8e, #d192a0); --text-primary: #E4E6EB; --text-secondary: #BCCCDC; --border-color: #7c4d8e; }
-        body.theme-sunrise    { --bg-main-gradient: linear-gradient(145deg, #f7cac9, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #f7cac9; }
+        body.theme-sunrise    { --bg-main-gradient: linear-gradient(145deg, #f7cac9, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #5D4037; --border-color: #f7cac9; }
         body.theme-morning    { --bg-main-gradient: linear-gradient(145deg, #E0F7FA, #87CEEB); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #B2EBF2; }
         body.theme-day        { --bg-main-gradient: linear-gradient(145deg, #81D4FA, #29B6F6); --text-primary: #1C1E21; --text-secondary: #005689; --border-color: #4FC3F7; }
-        body.theme-afternoon  { --bg-main-gradient: linear-gradient(145deg, #29B6F6, #FFD700); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #FFECB3; }
-        body.theme-sunset     { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #ff9a3f; }
+        body.theme-afternoon  { --bg-main-gradient: linear-gradient(145deg, #29B6F6, #FFD700); --text-primary: #1C1E21; --text-secondary: #424242; --border-color: #FFECB3; }
+        body.theme-sunset     { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #4E342E; --border-color: #ff9a3f; }
         body.theme-dusk       { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #483D8B); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #483D8B; }
         body.theme-civil-dusk { --bg-main-gradient: linear-gradient(145deg, #483D8B, #2c3e50); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #2c3e50; }
 
@@ -61,7 +61,7 @@
         .color-bar { flex-grow: 1; }
         body.loaded #intro-overlay { transform: scaleX(0); transform-origin: left; }
         
-        .label-content { opacity: 0; transform: translateY(20px); transition: none; }
+        .label-content { display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(20px); transition: none; }
         body.loaded .label-content { 
             opacity: 1; 
             transform: translateY(0);
@@ -78,7 +78,7 @@
             animation: static-move 0.15s steps(2) infinite, static-fade-in-out 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
         }
 
-        .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 14px; }
+        .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 0px; }
         .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; transition: width 0.4s ease, height 0.4s ease; }
         #eyelid, #eyelid-2 { transform-origin: center; transition: transform 0.1s ease-in-out; }
 
@@ -92,6 +92,24 @@
         #clock { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; color: var(--accent-main); letter-spacing: 0.5px; margin-top: 2px; background-color: rgba(0,0,0,0.2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; transition: color 1.5s ease-in-out; }
         #clock .clock-colon { animation: blink 1.2s step-end infinite; }
         #nameday { font-size: 0.8rem; color: #95A5A6; margin-top: 3px; white-space: nowrap; display: none; width: 100%; text-align: center; padding: 0 5px; }
+        #manual-refresh-trigger {
+            display: none;
+            cursor: pointer;
+            margin-top: 5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: rgba(0,0,0,0.2);
+            color: var(--accent-gold);
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+        }
+        #manual-refresh-trigger:hover {
+            background-color: var(--accent-gold);
+            color: #111;
+        }
+
 
         #loading-indicator { position: absolute; z-index: 5; font-family: var(--font-display); font-size: 1rem; color: var(--accent-main); display: none; justify-content: center; align-items: center; width: 100%; }
         .dot { opacity: 0; animation: loading-dots 1s infinite; }
@@ -163,36 +181,72 @@
         }
 
         /* --- KREATÍV HÍRELEM STÍLUSOK --- */
-        .ticker-item.calendar-item {
-            flex-direction: row;
+        .ticker-item.news-intro-item {
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            text-align: center;
+            gap: 10px;
+            background: rgba(0,0,0,0.15);
+            border-left: 4px solid var(--accent-gold);
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+        .news-intro-item svg {
+            width: 32px;
+            height: 32px;
+            stroke-width: 1.5;
+            stroke: var(--accent-gold);
+            margin-right: 0;
+        }
+        .ticker-item.calendar-item {
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 20px;
             background: rgba(0,0,0,0.1);
             border-left: 4px solid var(--accent-main);
             padding: 10px 20px;
         }
         .calendar-item .calendar-icon {
             stroke: var(--accent-main);
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             flex-shrink: 0;
         }
         .calendar-item .date-wrapper {
             display: flex;
             flex-direction: column;
             text-align: left;
-            line-height: 1.2;
+            line-height: 1.3;
         }
-        .calendar-item .date-day-month {
+        .calendar-item .date-full {
             font-family: var(--font-display);
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: var(--text-primary);
         }
-        .calendar-item .date-year-dayname {
-            font-size: 0.9rem;
+        .calendar-item .date-dayname {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .creative-info-wrapper {
+            margin-left: auto;
+            padding-left: 20px;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            height: 60%;
+            font-size: 0.85rem;
             color: var(--text-secondary);
         }
+        .creative-info-text {
+             white-space: nowrap;
+        }
+
 
         .ticker-item.quote-item {
             justify-content: center;
@@ -239,7 +293,6 @@
         @keyframes blink { 50% { opacity: 0; } }
         @keyframes pulse { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); } 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
         @keyframes pulse-bg { 0% { background-color: rgba(211, 47, 47, 0.1); } 50% { background-color: rgba(211, 47, 47, 0.25); } 100% { background-color: rgba(211, 47, 47, 0.1); } }
-        @keyframes loading-dots { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
         @keyframes widget-fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; padding: 5px 15px; gap: 10px; transition: border-color 1.5s ease-in-out; }
@@ -372,6 +425,7 @@
             position: absolute; top: 0; left: 0;
             z-index: 15; opacity: 0; visibility: hidden;
             transition: opacity 0.4s ease, visibility 0.4s ease;
+            gap: 10px;
         }
         #refresh-overlay.visible { opacity: 1; visibility: visible; }
         .analog-clock {
@@ -386,7 +440,7 @@
             border-radius: 2px; z-index: 2;
         }
         .analog-clock .hour-hand { width: 3px; height: 25px; margin-left: -1.5px; }
-        .analog-clock .minute-hand { width: 2px; height: 32px; margin-left: -1px; transition: transform 0.2s cubic-bezier(0.4, 1.8, 0.5, 0.75); }
+        .analog-clock .minute-hand { width: 2px; height: 32px; margin-left: -1px; }
         .analog-clock .second-hand { width: 1px; height: 35px; background-color: var(--accent-gold); margin-left: -0.5px; }
         .analog-clock .center-dot {
             position: absolute; top: 50%; left: 50%;
@@ -396,16 +450,72 @@
             z-index: 3;
         }
         #digital-clock-overlay {
-            margin-top: 6px; font-family: var(--font-body);
+            font-family: var(--font-body);
             font-size: 0.8rem; font-weight: 700;
             color: #fff; background-color: rgba(0,0,0,0.4);
             padding: 1px 4px; border-radius: 3px;
             letter-spacing: 0.5px;
         }
         .refresh-text {
-            margin-top: 4px; font-size: 0.8rem;
+            font-size: 0.8rem;
             font-family: var(--font-body); color: var(--accent-main);
             font-weight: 500;
+        }
+
+        /* --- REFRESH ANIMATION --- */
+        #animation-wrapper, #clock-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        #animated-logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            height: 40px;
+        }
+        #animated-logo-container .ticker-logo {
+            width: 28px; height: 28px;
+            position: absolute;
+        }
+        #animated-logo-container #animated-eye-logo-1 { left: calc(50% - 60px); }
+        #animated-logo-container #animated-eye-logo-2 { left: calc(50% + 32px); }
+
+        #animated-logo-container .brand-name {
+            font-size: 1.5rem; letter-spacing: 1px;
+            visibility: hidden;
+            color: #ECF0F1;
+        }
+        
+        @keyframes eye-close-in-1 { from { transform: translateX(0); } to { transform: translateX(30px); } }
+        @keyframes eye-close-in-2 { from { transform: translateX(0); } to { transform: translateX(-30px); } }
+        @keyframes eye-open-out-1 { from { transform: translateX(30px); } to { transform: translateX(0); } }
+        @keyframes eye-open-out-2 { from { transform: translateX(-30px); } to { transform: translateX(0); } }
+        @keyframes brand-name-appear {
+            from { opacity: 0; transform: translateY(10px); letter-spacing: 5px; }
+            to { opacity: 1; transform: translateY(0); letter-spacing: 1px; }
+        }
+        @keyframes animated-eyelid-blink { 50% { transform: scaleY(0.1); } }
+
+        #refresh-overlay.animation-active #animated-eye-logo-1 {
+            animation: eye-close-in-1 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
+                       eye-open-out-1 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 3.5s forwards;
+        }
+        #refresh-overlay.animation-active #animated-eye-logo-2 {
+            animation: eye-close-in-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
+                       eye-open-out-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 3.5s forwards;
+        }
+        #refresh-overlay.animation-active #animated-brand-name {
+            visibility: visible;
+            animation: brand-name-appear 0.8s ease-out 1.5s forwards;
+        }
+        #refresh-overlay.animation-active .eyelid-anim {
+            transform-origin: center;
+            animation: animated-eyelid-blink 0.2s linear 0.9s 2;
         }
         
         @media (max-width: 950px) {
@@ -440,6 +550,7 @@
              .weather-main-content, .weather-details { order: 0; }
              .weather-details { grid-template-columns: 1fr 1fr; }
              .weather-header, .weather-description { display: block; }
+             .creative-info-wrapper { display: none; }
         }
         @media (max-width: 380px) { .label-top-row { gap: 5px; } .brand-name { font-size: 1.1rem; } body.night-mode-active .ticker-logo { width: 20px; height: 20px; } .ticker-logo { width: 22px; height: 22px; } #clock { font-size: 0.8rem; } .control-group-label { display: none; } }
     </style>
@@ -455,13 +566,34 @@
                     <div id="breaking-indicator"></div>
                     
                     <div id="refresh-overlay">
-                        <div class="analog-clock">
-                            <div class="hand hour-hand" id="hour-hand"></div>
-                            <div class="hand minute-hand" id="minute-hand"></div>
-                            <div class="hand second-hand" id="second-hand"></div>
-                            <div class="center-dot"></div>
+                        <div id="animation-wrapper" style="display: none;">
+                            <div id="animated-logo-container">
+                                <svg class="ticker-logo" id="animated-eye-logo-1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                   <defs><linearGradient id="animatedEyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient></defs>
+                                   <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#animatedEyeGrad)" stroke-width="1.5" fill="none"/>
+                                   <circle cx="12" cy="12" r="3" fill="url(#animatedEyeGrad)"/>
+                                   <path class="eyelid-anim" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" />
+                               </svg>
+                               <div class="brand-container">
+                                   <span class="brand-name" id="animated-brand-name">TKP NEWS</span>
+                               </div>
+                               <svg class="ticker-logo" id="animated-eye-logo-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                   <use href="#animatedEyeGrad"/>
+                                   <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#animatedEyeGrad)" stroke-width="1.5" fill="none"/>
+                                   <circle cx="12" cy="12" r="3" fill="url(#animatedEyeGrad)"/>
+                                   <path class="eyelid-anim" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" />
+                               </svg>
+                            </div>
                         </div>
-                        <div id="digital-clock-overlay">--:--:--</div>
+                        <div id="clock-wrapper" style="display: none;">
+                            <div class="analog-clock">
+                                <div class="hand hour-hand" id="hour-hand"></div>
+                                <div class="hand minute-hand" id="minute-hand"></div>
+                                <div class="hand second-hand" id="second-hand"></div>
+                                <div class="center-dot"></div>
+                            </div>
+                            <div id="digital-clock-overlay">--:--:--</div>
+                        </div>
                         <div class="refresh-text">Hírek frissítése...</div>
                     </div>
 
@@ -486,6 +618,7 @@
                         <div id="clock">--.--.--. ------ --:--</div>
                         
                         <div id="nameday"></div>
+                        <div id="manual-refresh-trigger" title="Hírek azonnali frissítése"></div>
                         <div id="night-shift-container" style="display: none;">
                             <svg id="night-mode-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                             <span id="night-shift-label">Éjszakai műszak</span>
@@ -562,6 +695,9 @@
         const nextBtn = document.getElementById('next-btn');
         const newsCounter = document.getElementById('news-counter');
         const timelineContainer = document.getElementById('timeline-container');
+        const animationWrapper = document.getElementById('animation-wrapper');
+        const clockWrapper = document.getElementById('clock-wrapper');
+        const manualRefreshTriggerEl = document.getElementById('manual-refresh-trigger');
 
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
@@ -572,7 +708,7 @@
         
         let flipTimeoutId = null, currentItemIndex = 0, flipStartTime = 0, flipRemainingTime = 0;
         const FLIP_INTERVAL_REGULAR = 15000;
-        const FLIP_INTERVAL_INFO = 8000; // Increased for better readability of new designs
+        const FLIP_INTERVAL_INFO = 10000;
         const FLIP_INTERVAL_ANNOUNCEMENT = 15000;
 
         let weatherDisplayInterval = null, weatherFetchInterval = null;
@@ -588,6 +724,8 @@
         let fetchStartTime = 0;
         let loadingTimeout = null;
         let isInfoMessageActive = false;
+        let currentNewsLinks = new Set();
+        let newsCheckInterval = null;
 
         const stripHtml = (html) => { let doc = new DOMParser().parseFromString(html, 'text/html'); return doc.body.textContent || ""; };
         
@@ -794,39 +932,42 @@
             const minutes = now.getMinutes();
             const hours = now.getHours();
 
+            // More precise degree calculation
             const secondDeg = (seconds / 60) * 360;
-            const minuteDeg = (minutes / 60) * 360; 
-            const hourDeg = (hours / 12) * 360 + (minutes / 60) * 30;
+            const minuteDeg = ((minutes * 60 + seconds) / 3600) * 360;
+            const hourDeg = (((hours % 12) * 3600 + minutes * 60 + seconds) / 43200) * 360;
 
             document.getElementById('second-hand').style.transform = `rotate(${secondDeg}deg)`;
-            if (seconds === 0) { 
-                 document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
-            }
+            document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
             document.getElementById('hour-hand').style.transform = `rotate(${hourDeg}deg)`;
+            
             document.getElementById('digital-clock-overlay').textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
         }
-
-        function showRefreshState(show) {
+        
+        function showRefreshState(show, mode = 'clock') {
             if (show) {
-                labelContent.style.visibility = 'hidden';
-                labelContent.style.opacity = '0';
+                labelContent.style.display = 'none';
                 refreshOverlay.classList.add('visible');
-                if (!analogClockInterval) {
-                    const now = new Date();
-                    const minuteDeg = (now.getMinutes() / 60) * 360;
-                    document.getElementById('minute-hand').style.transition = 'none'; 
-                    document.getElementById('minute-hand').style.transform = `rotate(${minuteDeg}deg)`;
-                    requestAnimationFrame(() => {
-                         document.getElementById('minute-hand').style.transition = 'transform 0.2s cubic-bezier(0.4, 1.8, 0.5, 0.75)';
-                    });
 
-                    updateAnalogClock();
-                    analogClockInterval = setInterval(updateAnalogClock, 1000);
+                if (mode === 'animation') {
+                    clockWrapper.style.display = 'none';
+                    animationWrapper.style.display = 'flex';
+                    // Force restart animation
+                    refreshOverlay.classList.remove('animation-active');
+                    void refreshOverlay.offsetWidth; // Trigger reflow
+                    refreshOverlay.classList.add('animation-active');
+                } else { // 'clock' or default
+                    animationWrapper.style.display = 'none';
+                    clockWrapper.style.display = 'flex';
+                    refreshOverlay.classList.remove('animation-active');
+                    if (!analogClockInterval) {
+                        updateAnalogClock();
+                        analogClockInterval = setInterval(updateAnalogClock, 1000);
+                    }
                 }
             } else {
-                labelContent.style.visibility = 'visible';
-                labelContent.style.opacity = '1';
-                refreshOverlay.classList.remove('visible');
+                labelContent.style.display = ''; // Revert to default display
+                refreshOverlay.classList.remove('visible', 'animation-active');
                 if (analogClockInterval) {
                     clearInterval(analogClockInterval);
                     analogClockInterval = null;
@@ -839,7 +980,7 @@
             isInfoMessageActive = true;
             pauseFlipCycle();
             
-            showRefreshState(true);
+            showRefreshState(true, 'clock');
             
             const infoHtml = `<div class="ticker-item announcement-item visible">
                 <div class="label-top-row">
@@ -879,24 +1020,28 @@
             const seconds = now.getSeconds();
 
             if (currentMode === 'normal') {
-                if (((minutes === 29 || minutes === 59) && seconds === 30)) {
-                    displayInfoMessage();
+                if ((minutes % 15 === 14) && seconds === 55) {
+                    if (document.visibilityState === 'visible' && !refreshOverlay.classList.contains('visible')) {
+                        showRefreshState(true, 'animation');
+                    }
                 }
 
-                if (minutes === 59 && seconds === 55) {
-                    showRefreshState(true);
-                }
-                
-                if (minutes % 15 === 0 && minutes !== lastUpdateMinute) {
+                if (minutes % 15 === 0 && seconds === 0 && minutes !== lastUpdateMinute) {
                     lastUpdateMinute = minutes;
                     if (document.visibilityState === 'visible') {
                         console.log("Automatikus frissítés (negyedóránként)...");
                         sessionStorage.removeItem('newsCache');
-                        triggerUpdate();
+                        triggerUpdate(true);
                     } else {
-                        showRefreshState(false);
+                        if (refreshOverlay.classList.contains('visible')) {
+                            showRefreshState(false);
+                        }
                         isInfoMessageActive = false;
                     }
+                }
+
+                if (((minutes === 29 || minutes === 59) && seconds === 30)) {
+                    displayInfoMessage();
                 }
             }
         }
@@ -959,18 +1104,21 @@
             showItemAtIndex(currentItemIndex + 1); 
         }
         
-        function startFlipCycle() {
+        function startFlipCycle(startAtFirst = true) {
             if (flipTimeoutId) clearTimeout(flipTimeoutId);
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item');
-            currentItemIndex = 0;
+            currentItemIndex = startAtFirst ? 0 : currentItemIndex;
+            
             if (items.length > 0) {
-                items.forEach((item, index) => item.classList.toggle('visible', index === 0));
+                if (startAtFirst) {
+                    items.forEach((item, index) => item.classList.toggle('visible', index === 0));
+                }
                 updateCounter();
-                const firstItem = items[0];
+                const currentItem = items[currentItemIndex];
                 let duration = FLIP_INTERVAL_REGULAR;
-                if (firstItem?.classList.contains('announcement-item')) {
+                if (currentItem?.classList.contains('announcement-item')) {
                     duration = FLIP_INTERVAL_ANNOUNCEMENT;
-                } else if (firstItem?.classList.contains('news-intro-item') || firstItem?.classList.contains('calendar-item') || firstItem?.classList.contains('quote-item')) {
+                } else if (currentItem?.classList.contains('news-intro-item') || currentItem?.classList.contains('calendar-item') || currentItem?.classList.contains('quote-item')) {
                     duration = FLIP_INTERVAL_INFO;
                 }
                 flipRemainingTime = duration;
@@ -1018,7 +1166,20 @@
             triggerTextGlitch(); 
         }
 
-        async function fetchAndDisplayContent() {
+        const getDayOfYear = (date) => {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        };
+        const getDaysLeftInYear = (date) => {
+            const end = new Date(date.getFullYear(), 11, 31);
+            const diff = end - date;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.ceil(diff / oneDay);
+        };
+
+        async function fetchAndDisplayContent(isManualTrigger = false) {
             if (Object.keys(rssFeeds).length === 0) {
                 console.log("Várakozás az RSS feedek listájára...");
                 return;
@@ -1027,7 +1188,13 @@
             isInfoMessageActive = false;
             fetchStartTime = Date.now();
             clearTimeout(loadingTimeout);
-            showRefreshState(true);
+            
+            if (!refreshOverlay.classList.contains('visible')) {
+                showRefreshState(true, isManualTrigger ? 'animation' : 'clock');
+            }
+            
+            stopNewsCheckCycle();
+            manualRefreshTriggerEl.style.display = 'none';
 
             loadingTimeout = setTimeout(() => {
                 showRefreshState(false);
@@ -1047,13 +1214,11 @@
             const CACHE_EXPIRATION_MS = currentMode === 'summary' ? 6 * 60 * 60 * 1000 : 10 * 60 * 1000;
             let allNewsItems;
             
-            try {
-                const cachedData = JSON.parse(sessionStorage.getItem(CACHE_KEY));
-                if (cachedData && (Date.now() - cachedData.timestamp < CACHE_EXPIRATION_MS)) {
-                    allNewsItems = cachedData.news;
-                    console.log("Hírek betöltve a gyorsítótárból.");
-                }
-            } catch (e) { console.error("Gyorsítótár olvasási hiba:", e); }
+            const cachedData = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+            if (!isManualTrigger && cachedData && (Date.now() - cachedData.timestamp < CACHE_EXPIRATION_MS)) {
+                allNewsItems = cachedData.news;
+                console.log("Hírek betöltve a gyorsítótárból.");
+            }
 
             if (!allNewsItems) {
                 console.log("Hírek letöltése a hálózatról...");
@@ -1105,9 +1270,14 @@
                 tracks[standbyTrackKey].classList.add('visible');
                 tracks[activeTrackKey].classList.remove('visible');
                 activeTrackKey = standbyTrackKey;
-                newsFetchRetryTimeout = setTimeout(fetchAndDisplayContent, 15000);
+                newsFetchRetryTimeout = setTimeout(() => triggerUpdate(true), 15000);
                 return;
             }
+            
+            currentNewsLinks.clear();
+            allNewsItems.forEach(item => {
+                if(item.link) currentNewsLinks.add(item.link);
+            });
 
             const today = new Date(); const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const names = CALENDAR_DATA.nameDays[nameDayKey] || [];
@@ -1193,13 +1363,20 @@
                     const monthName = CALENDAR_DATA.honapok[today.getMonth()];
                     const year = today.getFullYear();
                     const dayName = CALENDAR_DATA.napok[today.getDay()];
+                    
+                    const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
+                    const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
 
                     const calendarHtml = `
                     <div class="ticker-item calendar-item">
                         ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
                         <div class="date-wrapper">
-                            <span class="date-day-month">${monthName} ${dayOfMonth}.</span>
-                            <span class="date-year-dayname">${year}, ${dayName}</span>
+                            <span class="date-full">${formattedDate}</span>
+                            <span class="date-dayname">${dayNameDisplay}</span>
+                        </div>
+                        <div class="creative-info-wrapper">
+                             <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
+                             <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
                         </div>
                     </div>`;
                     preliminaryItems.push(calendarHtml);
@@ -1212,7 +1389,7 @@
                     </div>`;
                     preliminaryItems.push(quoteHtml);
                 }
-                if (newsToDisplay.length > 0) { preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? ' A legfrissebb hírek:' : ` Napi hírek: '${activeFilter}'` }</div>`); }
+                if (newsToDisplay.length > 0) { preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? 'A legfrissebb hírek' : `Napi hírek: '${activeFilter}'` }</div>`); }
                 newsToDisplay = [...preliminaryItems, ...newsToDisplay];
             }
             
@@ -1256,7 +1433,7 @@
             standbyContent.innerHTML = contentItems.join('');
             
             const fetchDuration = Date.now() - fetchStartTime;
-            const minDisplayTime = 5000;
+            const minDisplayTime = isManualTrigger ? 1000 : 5000;
             const remainingTime = Math.max(0, minDisplayTime - fetchDuration);
 
             setTimeout(() => {
@@ -1265,10 +1442,71 @@
                     tracks[standbyTrackKey].classList.add('visible');
                     tracks[activeTrackKey].classList.remove('visible');
                     activeTrackKey = standbyTrackKey;
-                    startFlipCycle();
+                    startFlipCycle(true); // Always start from the first item after a refresh
                 });
+                startNewsCheckCycle();
+
             }, remainingTime);
         };
+
+        async function checkForNewNews() {
+            if (currentMode !== 'normal' || document.visibilityState !== 'visible' || Object.keys(rssFeeds).length === 0) {
+                return;
+            }
+
+            try {
+                const newsPromises = Object.values(rssFeeds).map(url => fetch(CORS_PROXY + url, { signal: AbortSignal.timeout(10000) }).then(res => res.ok ? res.text() : Promise.reject()));
+                const results = await Promise.allSettled(newsPromises);
+                
+                let newNewsCount = 0;
+                const newLinks = new Set();
+                
+                for (const result of results) {
+                    if (result.status === 'fulfilled') {
+                        const data = new window.DOMParser().parseFromString(result.value, "text/xml");
+                        const items = data.querySelectorAll("item");
+                        const timeLimit = new Date();
+                        timeLimit.setHours(timeLimit.getHours() - 2);
+
+                        items.forEach(item => {
+                            const pubDate = new Date(item.querySelector("pubDate")?.textContent);
+                            if (pubDate >= timeLimit) {
+                                const link = item.querySelector("link")?.textContent;
+                                if (link && !currentNewsLinks.has(link) && !newLinks.has(link)) {
+                                    newLinks.add(link);
+                                    newNewsCount++;
+                                }
+                            }
+                        });
+                    }
+                }
+
+                if (newNewsCount > 0) {
+                    manualRefreshTriggerEl.textContent = `${newNewsCount} új hír érhető el. Frissítés`;
+                    manualRefreshTriggerEl.style.display = 'block';
+                } else {
+                    manualRefreshTriggerEl.style.display = 'none';
+                }
+            } catch (error) {
+                console.warn("Hiba az új hírek ellenőrzésekor:", error);
+                manualRefreshTriggerEl.style.display = 'none';
+            }
+        }
+
+        function startNewsCheckCycle() {
+            stopNewsCheckCycle(); // Clear any existing interval
+            if (currentMode === 'normal') {
+                setTimeout(checkForNewNews, 2 * 60 * 1000); // Initial check after 2 minutes
+                newsCheckInterval = setInterval(checkForNewNews, 2 * 60 * 1000); // Then check every 2 minutes
+            }
+        }
+
+        function stopNewsCheckCycle() {
+            if (newsCheckInterval) {
+                clearInterval(newsCheckInterval);
+                newsCheckInterval = null;
+            }
+        }
 
         function generateTimeline() {
             const newsItems = masterNewsList.filter(item => typeof item !== 'string' && !item.isAnnouncement);
@@ -1305,16 +1543,16 @@
             }
         }
 
-        const triggerUpdate = (force = false) => {
+        const triggerUpdate = (force = false, isManual = false) => {
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(() => {
                 if (force || document.visibilityState === 'visible') {
-                    fetchAndDisplayContent();
+                    fetchAndDisplayContent(isManual);
                 }
             }, 500);
         };
         
-        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); };
+        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); };
         
         async function startAllTimers() { 
             triggerUpdate();
@@ -1347,6 +1585,14 @@
             prevBtn.addEventListener('click', () => showItemAtIndex(currentItemIndex - 1, true));
             nextBtn.addEventListener('click', () => showItemAtIndex(currentItemIndex + 1, true));
             
+            manualRefreshTriggerEl.addEventListener('click', () => {
+                if (!refreshOverlay.classList.contains('visible')) {
+                    console.log("Manuális frissítés...");
+                    sessionStorage.removeItem('newsCache');
+                    triggerUpdate(true, true);
+                }
+            });
+
             timelineContainer.addEventListener('click', (e) => {
                 if (e.target.tagName === 'BUTTON') {
                     const hour = parseInt(e.target.dataset.hour, 10);
@@ -1369,8 +1615,8 @@
         });
 
         filterControls.addEventListener('click', (e) => setFilter(e.target));
-        onValue(announcementsRef, (snapshot) => { customAnnouncements = snapshot.val() ? Object.values(snapshot.val()) : []; sessionStorage.removeItem('newsCache'); triggerUpdate(); });
-        onValue(feedsRef, (snapshot) => { rssFeeds = snapshot.val() || {}; sessionStorage.removeItem('newsCache'); triggerUpdate(); });
+        onValue(announcementsRef, (snapshot) => { customAnnouncements = snapshot.val() ? Object.values(snapshot.val()) : []; sessionStorage.removeItem('newsCache'); triggerUpdate(true); });
+        onValue(feedsRef, (snapshot) => { rssFeeds = snapshot.val() || {}; sessionStorage.removeItem('newsCache'); triggerUpdate(true); });
 
     </script>
 </body>
