@@ -6,7 +6,7 @@
     <title>Dinamikus Napszak Hírszalag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js" type="module"></script>
@@ -18,6 +18,7 @@
             --accent-gold: #B8860B;
             --font-display: 'Oswald', sans-serif;
             --font-body: 'Roboto', sans-serif;
+            --font-quote: 'Playfair Display', serif;
             --stars1: radial-gradient(1px 1px at 20px 30px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 40px 70px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 50px 160px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 90px 40px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 130px 80px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 160px 120px, white, rgba(255,255,255,0));
             --stars2: radial-gradient(1.5px 1.5px at 10px 90px, white, rgba(255,255,255,0)), radial-gradient(1.5px 1.5px at 70px 20px, white, rgba(255,255,255,0)), radial-gradient(1.5px 1.5px at 120px 140px, white, rgba(255,255,255,0));
         }
@@ -25,7 +26,6 @@
         /* --- DINAMIKUS NAPSZAK TÉMÁK --- */
         body.theme-night      { --bg-main-gradient: linear-gradient(145deg, #020111, #191621); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #3A3B3C; }
         body.theme-predawn    { --bg-main-gradient: linear-gradient(145deg, #191621, #2c2a4f); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #2c2a4f; }
-        /* JAVÍTVA: Világos szöveg a lila háttéren a jobb olvashatóságért */
         body.theme-dawn       { --bg-main-gradient: linear-gradient(145deg, #2c2a4f, #7c4d8e, #d192a0); --text-primary: #E4E6EB; --text-secondary: #BCCCDC; --border-color: #7c4d8e; }
         body.theme-sunrise    { --bg-main-gradient: linear-gradient(145deg, #f7cac9, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #606770; --border-color: #f7cac9; }
         body.theme-morning    { --bg-main-gradient: linear-gradient(145deg, #E0F7FA, #87CEEB); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #B2EBF2; }
@@ -55,7 +55,7 @@
         }
 
         .ticker-main-row { display: flex; align-items: stretch; flex-grow: 1; min-height: 110px; }
-        .ticker-label { background-color: #2C3E50; color: #ECF0F1; padding: 0 15px 0 25px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; font-family: var(--font-display); border-right: 1px solid #444; min-width: 210px; flex-shrink: 0; position: relative; overflow: hidden; }
+        .ticker-label { background-color: #2C3E50; color: #ECF0F1; padding: 0 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-display); border-right: 1px solid #444; min-width: 210px; flex-shrink: 0; position: relative; overflow: hidden; }
         
         #intro-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 10; transform: scaleX(1); transition: transform 0.8s cubic-bezier(0.86, 0, 0.07, 1) 1.2s; }
         .color-bar { flex-grow: 1; }
@@ -78,12 +78,13 @@
             animation: static-move 0.15s steps(2) infinite, static-fade-in-out 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
         }
 
-        .label-top-row { display: flex; align-items: center; gap: 8px; }
-        .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; stroke: #95A5A6; transition: width 0.4s ease, height 0.4s ease; }
-        .ticker-logo.glitch-active { animation: glitch-logo 0.25s linear; }
+        .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 14px; }
+        .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; transition: width 0.4s ease, height 0.4s ease; }
+        #eyelid, #eyelid-2 { transform-origin: center; transition: transform 0.1s ease-in-out; }
+
         .brand-name.glitch-text-active { animation: glitch-text 0.3s linear; }
         body.night-mode-active .ticker-logo { width: 24px; height: 24px; }
-        .brand-container { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.1; }
+        .brand-container { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
         .brand-name { font-size: 1.5rem; letter-spacing: 1px; font-weight: 400; color: #ECF0F1; }
         #night-shift-container { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 3px; width: 100%; }
         #night-shift-label { font-size: 0.85rem; font-weight: 500; color: var(--accent-gold); font-family: var(--font-body); }
@@ -120,8 +121,6 @@
             visibility: visible;
             transition: opacity 0.4s ease-in-out;
         }
-
-        .ticker-item.calendar-item, .ticker-item.quote-item { align-items: center; text-align: center; }
         
         .ticker-item.has-image { flex-direction: row; gap: 15px; align-items: center; }
         .ticker-item-image-container { width: 85px; height: 85px; flex-shrink: 0; overflow: hidden; border-radius: 5px; }
@@ -155,7 +154,6 @@
         .announcement-item .ticker-logo {
             width: 24px;
             height: 24px;
-            stroke: var(--text-secondary);
         }
         .announcement-item p {
             font-size: 0.9rem;
@@ -164,11 +162,77 @@
             max-width: 80%;
         }
 
+        /* --- KREATÍV HÍRELEM STÍLUSOK --- */
+        .ticker-item.calendar-item {
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0,0,0,0.1);
+            border-left: 4px solid var(--accent-main);
+            padding: 10px 20px;
+        }
+        .calendar-item .calendar-icon {
+            stroke: var(--accent-main);
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        }
+        .calendar-item .date-wrapper {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            line-height: 1.2;
+        }
+        .calendar-item .date-day-month {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+        .calendar-item .date-year-dayname {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .ticker-item.quote-item {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px 25px;
+            position: relative;
+        }
+        .quote-item blockquote {
+            font-family: var(--font-quote);
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            z-index: 2;
+            position: relative;
+        }
+        .quote-item::before, .quote-item::after {
+            position: absolute;
+            font-family: serif;
+            font-size: 6rem;
+            opacity: 0.08;
+            color: var(--text-secondary);
+            z-index: 1;
+        }
+        .quote-item::before {
+            content: '“';
+            top: 0;
+            left: 10px;
+        }
+        .quote-item::after {
+            content: '”';
+            bottom: -20px;
+            right: 10px;
+        }
+
+
         #breaking-indicator { position: absolute; top: 8px; left: 8px; width: 10px; height: 10px; background-color: #D32F2F; border-radius: 50%; display: none; border: 2px solid #2C3E50; box-shadow: 0 0 10px #D32F2F; z-index: 10; }
         #breaking-indicator.active { display: block; animation: pulse 1.5s infinite; }
         
-        @keyframes glitch-logo { 20% { transform: translate(-1px, 1px); } 40% { transform: translate(1px, -1px); } 60% { transform: translate(-1px, -1px); } 80% { transform: translate(1px, 1px); } 100% { transform: translate(0, 0); } }
-        @keyframes glitch-text { 0%, 100% { text-shadow: 1px 1px 0 cyan, -1px -1px 0 red; } 25% { text-shadow: -1px -1px 0 cyan, 1px 1px 0 red; } 50% { text-shadow: 1px -1px 0 cyan, -1px 1px 0 red; } 75% { text-shadow: -1px 1px 0 cyan, 1px -1px 0 red; } }
+        @keyframes glitch-text { 0%, 100% { text-shadow: 1px 1px 0 #00FFFF, -1px -1px 0 #FF00FF; opacity: 1; } 5% { opacity: 0.8; } 10% { opacity: 1; } 15% { opacity: 0.6; } 20% { opacity: 1; text-shadow: -1px -1px 0 #00FFFF, 1px 1px 0 #FF00FF; } 25% { opacity: 0.9; } 30% { opacity: 1; } 50% { text-shadow: 1px -1px 0 #00FFFF, -1px 1px 0 #FF00FF; } 75% { text-shadow: -1px 1px 0 #00FFFF, 1px -1px 0 #FF00FF; } }
         @keyframes static-move { 0% { background-position: 0 0; } 100% { background-position: 4px 6px; } }
         @keyframes static-fade-in-out { 0% { opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.6; } 100% { opacity: 0; } }
         @keyframes content-glitch-in { 0% { opacity: 0; transform: translateY(20px) scale(1.02); text-shadow: -2px -2px 0 red, 2px 2px 0 cyan; } 15% { opacity: 0.4; transform: translateY(18px) scale(1) skew(-3deg); text-shadow: 2px 2px 0 red, -2px -2px 0 cyan; } 30% { opacity: 0.1; transform: translateY(20px) scale(1.01) skew(3deg); } 45% { opacity: 0.7; transform: translateY(10px) scale(1) skew(0deg); text-shadow: 1px 1px 0 red, -1px -1px 0 cyan; } 60% { opacity: 0.5; transform: translateY(15px); } 85% { opacity: 0.9; transform: translateY(5px); text-shadow: none; } 100% { opacity: 1; transform: translateY(0); } }
@@ -239,81 +303,6 @@
             background-color: var(--accent-gold);
             border-color: var(--accent-gold);
             color: #000;
-        }
-
-        /* --- ÉLŐ ESŐADATOK STÍLUSAI --- */
-        #live-precip-widget {
-            display: none;
-            flex-direction: column;
-            gap: 4px;
-            margin-top: 6px;
-            animation: widget-fade-in 0.5s ease-out;
-            width: 100%;
-        }
-        .live-header {
-            text-align: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #ECF0F1;
-            padding: 4px;
-            background-color: rgba(0,0,0,0.2);
-            border-radius: 4px;
-        }
-        .live-badge {
-            background-color: #D32F2F;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 800;
-            margin-right: 5px;
-            animation: pulse 1.5s infinite;
-        }
-        .precip-station-grid {
-            display: flex;
-            gap: 4px;
-        }
-        .precip-station-card {
-            flex: 1;
-            background-color: rgba(0,0,0,0.15);
-            border: 1px solid #444;
-            border-radius: 6px;
-            padding: 5px;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .station-card-name {
-            font-weight: 700;
-            font-size: 11px;
-            color: #bdc3c7;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .station-card-main { text-align: center; }
-        .station-card-total-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: #ecf0f1;
-            line-height: 1;
-        }
-        .station-card-total-value span {
-            font-size: 0.6em;
-            font-weight: 500;
-            color: #95a5a6;
-        }
-        .station-card-footer-info {
-            font-size: 9px;
-            text-align: center;
-            font-weight: 500;
-            color: #95a5a6;
-            min-height: 10px;
-        }
-        .station-card-footer-info.live-intensity {
-            color: #f1c40f;
-            font-weight: 600;
         }
         
         #world-weather-container {
@@ -444,7 +433,6 @@
         @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0 10px; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } }
         @media (max-width: 520px) {
             .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; padding: 5px 10px; } #clock { margin-top: 0; } #night-shift-label { font-size: 0.8rem; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; }
-            #live-precip-widget { display: none !important; } /* Hide on very small screens */
             .weather-widget {
                 flex-direction: column;
                 text-align: center;
@@ -479,15 +467,24 @@
 
                     <div class="label-content">
                         <div class="label-top-row">
-                            <svg class="ticker-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="5"><circle cx="50" cy="50" r="45" /><ellipse cx="50" cy="50" rx="45" ry="18" /><path d="M50,5 C 30,30 30,70 50,95" /><path d="M50,5 C 70,30 70,70 50,95" /></svg>
+                             <svg class="ticker-logo" id="eye-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <defs><linearGradient id="eyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient></defs>
+                                <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
+                                <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                                <path id="eyelid" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" style="transform: scaleY(0);"/>
+                            </svg>
                             <div class="brand-container">
                                 <span class="brand-name">TKP NEWS</span>
                             </div>
+                            <svg class="ticker-logo" id="eye-logo-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <use href="#eyeGrad"/>
+                                <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
+                                <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                                <path id="eyelid-2" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" style="transform: scaleY(0);"/>
+                            </svg>
                         </div>
                         <div id="clock">--.--.--. ------ --:--</div>
                         
-                        <div id="live-precip-widget"></div>
-
                         <div id="nameday"></div>
                         <div id="night-shift-container" style="display: none;">
                             <svg id="night-mode-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -527,18 +524,12 @@
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
         
         const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
-        const weatherComApiKey = 'e1f10a1e78da46f5b10a1e78da96f525';
         const CORS_PROXY = "https://corsproxy.io/?";
         const BREAKING_KEYWORDS = ['rendkívüli', 'fontos bejelentés', 'most érkezett', 'élőben', 'percről percre', 'breaking', 'rakétacsapás', 'háború'];
         
-        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Nyíregyháza', lat: 47.95, lon: 21.71 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Hajdúböszörmény', lat: 47.67, lon: 21.51 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Mosonmagyaróvár', lat: 47.88, lon: 17.27 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Kiskunfélegyháza', lat: 46.71, lon: 19.85 }, { name: 'Gyula', lat: 46.64, lon: 21.28 }, { name: 'Ajka', lat: 47.10, lon: 17.56 }, { name: 'Orosháza', lat: 46.56, lon: 20.66 }, { name: 'Szentes', lat: 46.65, lon: 20.26 }, { name: 'Kiskunhalas', lat: 46.43, lon: 19.48 }, { name: 'Jászberény', lat: 47.50, lon: 19.91 }, { name: 'Sátoraljaújhely', lat: 48.39, lon: 21.66 }, { name: 'Komló', lat: 46.19, lon: 18.26 }, { name: 'Makó', lat: 46.21, lon: 20.47 }, { name: 'Nagykőrös', lat: 47.03, lon: 19.78 }, { name: 'Karcag', lat: 47.31, lon: 20.92 }, { name: 'Törökszentmiklós', lat: 47.18, lon: 20.31 }, { name: 'Hatvan', lat: 47.66, lon: 19.68 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 }, { name: 'Hajdúszoboszló', lat: 47.45, lon: 21.39 }, { name: 'Komárom', lat: 47.74, lon: 18.12 }, { name: 'Békés', lat: 46.77, lon: 21.13 }, { name: 'Paks', lat: 46.62, lon: 18.85 }, { name: 'Csongrád', lat: 46.71, lon: 20.14 }, { name: 'Mohács', lat: 45.99, lon: 18.68 }, { name: 'Kalocsa', lat: 46.52, lon: 18.98 }, { name: 'Mezőtúr', lat: 47.00, lon: 20.61 }, { name: 'Tiszaújváros', lat: 47.92, lon: 21.04 }, { name: 'Berettyóújfalu', lat: 47.21, lon: 21.55 } ];
-        const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Johannesburg', lat: -26.20, lon: 28.04 }, { name: 'Szentpétervár', lat: 59.93, lon: 30.33 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 }, { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Genf', lat: 46.20, lon: 6.14 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Szao Paulo', lat: -23.55, lon: -46.63 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Bogotá', lat: 4.71, lon: -74.07 }, { name: 'Santiago', lat: -33.44, lon: -70.66 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 }, { name: 'Lagos', lat: 6.52, lon: 3.37 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Ho Si Minh-város', lat: 10.82, lon: 106.62 }, { name: 'Kuala Lumpur', lat: 3.13, lon: 101.68 }, { name: 'Abu-Dzabi', lat: 24.45, lon: 54.37 }, { name: 'Doha', lat: 25.28, lon: 51.53 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Montreal', lat: 45.50, lon: -73.56 }, { name: 'Wellington', lat: -41.28, lon: 174.77 } ];
+        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Nyíregyháza', lat: 47.95, lon: 21.71 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Hajdúböszörmény', lat: 47.67, lon: 21.51 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Mosonmagyaróvár', lat: 47.88, lon: 17.27 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Kiskunfélegyháza', lat: 46.71, lon: 19.85 }, { name: 'Gyula', lat: 46.64, lon: 21.28 }, { name: 'Ajka', lat: 47.10, lon: 17.56 }, { name: 'Orosháza', lat: 46.56, lon: 20.66 }, { name: 'Szentes', lat: 46.65, lon: 20.26 }, { name: 'Kiskunhalas', lat: 46.43, lon: 19.48 }, { name: 'Jászberény', lat: 47.50, lon: 19.91 }, { name: 'Sátoraljaújhely', lat: 48.39, lon: 21.66 }, { name: 'Komló', lat: 46.19, lon: 18.26 }, { name: 'Makó', lat: 46.21, lon: 20.47 }, { name: 'Nagykőrös', lat: 47.03, lon: 19.78 }, { name: 'Karcag', lat: 47.31, lon: 20.92 }, { name: 'Törökszentmiklós', lat: 47.18, lon: 20.31 }, { name: 'Hatvan', lat: 47.66, lon: 19.68 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 }, { name: 'Hajdúszoboszló', lat: 47.45, lon: 21.39 }, { name: 'Komárom', lat: 47.74, lon: 18.12 }, { name: 'Békés', lat: 46.77, lon: 21.13 }, { name: 'Paks', lat: 46.62, lon: 18.85 }, { name: 'Csongrád', lat: 46.71, lon: 20.14 }, { name: 'Mohács', lat: 45.99, lon: 18.68 }, { name: 'Kalocsa', lat: 46.52, lon: 18.98 }, { name: 'Mezőtúr', lat: 47.00, lon: 20.61 }, { name: 'Tiszaújváros', lat: 47.92, lon: 21.04 }, { name: 'Berettyóújfalu', lat: 47.21, lon: 21.55 }, { name: 'Tata', lat: 47.64, lon: 18.32 }, { name: 'Szentendre', lat: 47.66, lon: 19.07 }, { name: 'Balatonfüred', lat: 46.95, lon: 17.89 }, { name: 'Visegrád', lat: 47.79, lon: 18.97 }, { name: 'Tokaj', lat: 48.12, lon: 21.41 }, { name: 'Sárvár', lat: 47.25, lon: 16.93 }, { name: 'Villány', lat: 45.87, lon: 18.45 } ];
+        const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Johannesburg', lat: -26.20, lon: 28.04 }, { name: 'Szentpétervár', lat: 59.93, lon: 30.33 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 }, { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Genf', lat: 46.20, lon: 6.14 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Szao Paulo', lat: -23.55, lon: -46.63 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Bogotá', lat: 4.71, lon: -74.07 }, { name: 'Santiago', lat: -33.44, lon: -70.66 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 }, { name: 'Lagos', lat: 6.52, lon: 3.37 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Ho Si Minh-város', lat: 10.82, lon: 106.62 }, { name: 'Kuala Lumpur', lat: 3.13, lon: 101.68 }, { name: 'Abu-Dzabi', lat: 24.45, lon: 54.37 }, { name: 'Doha', lat: 25.28, lon: 51.53 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Montreal', lat: 45.50, lon: -73.56 }, { name: 'Wellington', lat: -41.28, lon: 174.77 }, { name: 'Kijev', lat: 50.45, lon: 30.52 }, { name: 'Belgrád', lat: 44.78, lon: 20.44 }, { name: 'Bukarest', lat: 44.42, lon: 26.10 }, { name: 'Ljubljana', lat: 46.05, lon: 14.50 }, { name: 'Szarajevó', lat: 43.85, lon: 18.41 }, { name: 'Szófia', lat: 42.69, lon: 23.32 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Ankara', lat: 39.93, lon: 32.85 }, { name: 'San Francisco', lat: 37.77, lon: -122.41 }, { name: 'Seattle', lat: 47.60, lon: -122.33 }, { name: 'Boston', lat: 42.36, lon: -71.05 }, { name: 'Edinburgh', lat: 55.95, lon: -3.18 }, { name: 'Jeruzsálem', lat: 31.76, lon: 35.21 } ];
         
-        const LIVE_STATIONS = { 
-            NYIREGYHAZI_UT: { id: 'INYREG26', name: 'Nyíregyházi út', data: null }, 
-            KOSSUTH: { id: 'INYREG42', name: 'Kossuth út', data: null } 
-        };
-
         const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
         const QUOTES = [ "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít." ];
         const ICON_CALENDAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
@@ -563,7 +554,6 @@
         const nightModeMessage = document.getElementById('night-mode-message');
         const nightShiftContainer = document.getElementById('night-shift-container');
         const worldWeatherContainer = document.getElementById('world-weather-container');
-        const tickerLogo = document.querySelector('.ticker-logo');
         const brandNameEl = document.querySelector('.brand-name');
         const nameDayEl = document.getElementById('nameday');
         const labelContent = document.querySelector('.label-content');
@@ -582,7 +572,7 @@
         
         let flipTimeoutId = null, currentItemIndex = 0, flipStartTime = 0, flipRemainingTime = 0;
         const FLIP_INTERVAL_REGULAR = 15000;
-        const FLIP_INTERVAL_INFO = 5000;
+        const FLIP_INTERVAL_INFO = 8000; // Increased for better readability of new designs
         const FLIP_INTERVAL_ANNOUNCEMENT = 15000;
 
         let weatherDisplayInterval = null, weatherFetchInterval = null;
@@ -591,7 +581,6 @@
         let isDisplayingDomestic = true;
         const WEATHER_DISPLAY_INTERVAL_DURATION = 8000;
         
-        let logoGlitchTimeout = null;
         let textGlitchTimeout = null;
         let lastUpdateMinute = -1;
         
@@ -854,8 +843,16 @@
             
             const infoHtml = `<div class="ticker-item announcement-item visible">
                 <div class="label-top-row">
-                    <svg class="ticker-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="5"><circle cx="50" cy="50" r="45" /><ellipse cx="50" cy="50" rx="45" ry="18" /><path d="M50,5 C 30,30 30,70 50,95" /><path d="M50,5 C 70,30 70,70 50,95" /></svg>
+                    <svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <defs><linearGradient id="eyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient></defs>
+                        <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                    </svg>
                     <div class="brand-container"><span class="brand-name">TKP NEWS</span></div>
+                     <svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <use href="#eyeGrad"/>
+                        <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
+                        <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                    </svg>
                 </div>
                 <p>Napközben (06-00h) a legfrissebb híreket, éjjel (00-06h) pedig az előző nap eseményeit követheted nyomon.</p>
             </div>`;
@@ -984,10 +981,42 @@
             }
         }
         
-        function triggerLogoGlitch() { if (document.visibilityState !== 'visible') return; tickerLogo.classList.add('glitch-active'); setTimeout(() => { tickerLogo.classList.remove('glitch-active'); }, 250); logoGlitchTimeout = setTimeout(triggerLogoGlitch, Math.random() * 5000 + 4000); }
-        function triggerTextGlitch() { if (document.visibilityState !== 'visible') return; brandNameEl.classList.add('glitch-text-active'); setTimeout(() => { brandNameEl.classList.remove('glitch-text-active'); }, 300); textGlitchTimeout = setTimeout(triggerTextGlitch, Math.random() * 13000 + 7000); }
-        function stopGlitchEffects() { clearTimeout(logoGlitchTimeout); clearTimeout(textGlitchTimeout); logoGlitchTimeout = null; textGlitchTimeout = null; }
-        function startGlitchEffects() { stopGlitchEffects(); triggerLogoGlitch(); triggerTextGlitch(); }
+        function triggerEyeBlink() {
+            const eyelid1 = document.getElementById('eyelid');
+            const eyelid2 = document.getElementById('eyelid-2');
+            if (!eyelid1 || !eyelid2 || document.visibilityState !== 'visible') return;
+
+            eyelid1.style.transform = 'scaleY(1.2)'; // Close eye
+            eyelid2.style.transform = 'scaleY(1.2)';
+            setTimeout(() => {
+                eyelid1.style.transform = 'scaleY(0)'; // Open eye
+                eyelid2.style.transform = 'scaleY(0)';
+            }, 150);
+
+            const randomInterval = Math.random() * 7000 + 3000; // Blink every 3-10 seconds
+            setTimeout(triggerEyeBlink, randomInterval);
+        }
+
+        function triggerTextGlitch() { 
+            if (document.visibilityState !== 'visible') {
+                setTimeout(triggerTextGlitch, Math.random() * (20000 - 7000) + 7000);
+                return;
+            }; 
+            brandNameEl.classList.add('glitch-text-active'); 
+            setTimeout(() => { 
+                brandNameEl.classList.remove('glitch-text-active'); 
+            }, 300 + Math.random() * 200); 
+            textGlitchTimeout = setTimeout(triggerTextGlitch, Math.random() * (20000 - 7000) + 7000); // 7 to 20 seconds
+        }
+
+        function stopAllAnimatedEffects() { 
+            clearTimeout(textGlitchTimeout); textGlitchTimeout = null; 
+        }
+        
+        function startAllAnimatedEffects() { 
+            stopAllAnimatedEffects();
+            triggerTextGlitch(); 
+        }
 
         async function fetchAndDisplayContent() {
             if (Object.keys(rssFeeds).length === 0) {
@@ -1160,16 +1189,35 @@
                 
                 let preliminaryItems = [];
                 if(activeFilter === 'all') {
-                    preliminaryItems.push(`<div class="ticker-item calendar-item">${ICON_CALENDAR} Ma ${today.getFullYear()}. ${CALENDAR_DATA.honapok[today.getMonth()]} ${today.getDate()}. ${CALENDAR_DATA.napok[today.getDay()]} van.</div>`);
+                    const dayOfMonth = today.getDate();
+                    const monthName = CALENDAR_DATA.honapok[today.getMonth()];
+                    const year = today.getFullYear();
+                    const dayName = CALENDAR_DATA.napok[today.getDay()];
+
+                    const calendarHtml = `
+                    <div class="ticker-item calendar-item">
+                        ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
+                        <div class="date-wrapper">
+                            <span class="date-day-month">${monthName} ${dayOfMonth}.</span>
+                            <span class="date-year-dayname">${year}, ${dayName}</span>
+                        </div>
+                    </div>`;
+                    preliminaryItems.push(calendarHtml);
+
                     if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { preliminaryItems.push(`<div class="ticker-item custom-announcement" style="color: ${ann.color || 'var(--accent-main)'};">${ICON_ANNOUNCEMENT} ${ann.text}</div>`); }); }
-                    preliminaryItems.push(`<div class="ticker-item quote-item">Nap idézete: "${QUOTES[new Date().getDate() % QUOTES.length]}"</div>`);
+                    
+                    const quoteHtml = `
+                    <div class="ticker-item quote-item">
+                        <blockquote>"${QUOTES[new Date().getDate() % QUOTES.length]}"</blockquote>
+                    </div>`;
+                    preliminaryItems.push(quoteHtml);
                 }
                 if (newsToDisplay.length > 0) { preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? ' A legfrissebb hírek:' : ` Napi hírek: '${activeFilter}'` }</div>`); }
                 newsToDisplay = [...preliminaryItems, ...newsToDisplay];
             }
             
             masterNewsList = newsToDisplay;
-            const announcementHTML = `<div class="ticker-item announcement-item"><div class="label-top-row"><svg class="ticker-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="5"><circle cx="50" cy="50" r="45" /><ellipse cx="50" cy="50" rx="45" ry="18" /><path d="M50,5 C 30,30 30,70 50,95" /><path d="M50,5 C 70,30 70,70 50,95" /></svg><div class="brand-container"><span class="brand-name">TKP NEWS</span></div></div><p>Tudtad? Hírszalagunkon reggel 6 és éjfél között a legfrissebb híreket, míg éjfél és reggel 6 között az előző nap teljes összefoglalóját követheted nyomon.</p></div>`;
+            const announcementHTML = `<div class="ticker-item announcement-item"><div class="label-top-row"><svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="eyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient></defs><path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/></svg><div class="brand-container"><span class="brand-name">TKP NEWS</span></div><svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><use href="#eyeGrad"/><path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/></svg></div><p>Tudtad? Hírszalagunkon reggel 6 és éjfél között a legfrissebb híreket, míg éjfél és reggel 6 között az előző nap teljes összefoglalóját követheted nyomon.</p></div>`;
 
             newsToDisplay.forEach(item => {
                 if(typeof item === 'string') {
@@ -1266,7 +1314,7 @@
             }, 500);
         };
         
-        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopGlitchEffects(); };
+        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); };
         
         async function startAllTimers() { 
             triggerUpdate();
@@ -1278,60 +1326,8 @@
             if (!weatherDisplayInterval) {
                  weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
             }
-            startGlitchEffects();
+            startAllAnimatedEffects();
         };
-
-        const formatValue = (value, unit = '', precision = 1, notAvailableString = '--') => { if (value === null || typeof value === 'undefined' || (typeof value === 'number' && isNaN(value)) ) return notAvailableString; if (typeof value === 'number') { return `${value.toFixed(precision)}${unit}`; } return `${value}${unit}`; }
-        const getPrecipIntensityDescription = (rate) => { if (rate == null || rate <= 0) return ''; if (rate > 0 && rate <= 0.2) return 'Pár csepp'; if (rate > 0.2 && rate <= 0.5) return 'Szitálás'; if (rate > 0.5 && rate <= 1.0) return 'Enyhe eső'; if (rate > 1.0 && rate <= 4.0) return 'Mérsékelt eső'; if (rate > 4.0 && rate <= 10.0) return 'Intenzív eső'; if (rate > 10.0 && rate <= 25.0) return 'Zápor'; return 'Felhőszakadás'; }
-
-        async function fetchLiveRainData() {
-            const promises = Object.keys(LIVE_STATIONS).map(async (key) => {
-                const station = LIVE_STATIONS[key];
-                const url = `https://api.weather.com/v2/pws/observations/current?apiKey=${weatherComApiKey}&stationId=${station.id}&numericPrecision=decimal&format=json&units=m`;
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('PWS API Hiba');
-                    const data = await response.json();
-                    if (!data.observations || data.observations.length === 0) throw new Error('Nincs PWS adat.');
-                    station.data = data.observations[0];
-                } catch (error) {
-                    station.data = null;
-                    console.error(`Hiba a(z) ${station.name} állomás adatainak lekérésekor:`, error);
-                }
-            });
-            await Promise.allSettled(promises);
-        }
-
-        function updateLiveRainDisplay() {
-            const container = document.getElementById('live-precip-widget');
-            const stationsWithData = Object.values(LIVE_STATIONS).filter(s => s.data);
-            const isRainingAnywhere = stationsWithData.some(s => s.data.metric.precipRate > 0);
-
-            if (isRainingAnywhere) {
-                let cardsHTML = '';
-                stationsWithData.forEach(station => {
-                    const isRainingNow = station.data.metric.precipRate > 0;
-                    cardsHTML += `
-                        <div class="precip-station-card">
-                            <div class="station-card-name">${station.name}</div>
-                            <div class="station-card-main">
-                                <div class="station-card-total-value">${formatValue(station.data.metric.precipTotal, '', 1, '0.0')}<span>mm</span></div>
-                            </div>
-                            <div class="station-card-footer-info ${isRainingNow ? 'live-intensity' : ''}">
-                                ${isRainingNow ? getPrecipIntensityDescription(station.data.metric.precipRate) : ''}
-                            </div>
-                        </div>`;
-                });
-
-                container.innerHTML = `
-                    <div class="live-header"><span class="live-badge">ÉLŐ</span>Esőadatok</div>
-                    <div class="precip-station-grid">${cardsHTML}</div>
-                `;
-                container.style.display = 'flex';
-            } else {
-                container.style.display = 'none';
-            }
-        }
 
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { document.body.classList.add('loaded'); }, 200);
@@ -1341,7 +1337,10 @@
             updateDynamicTheme(); 
             setInterval(updateDynamicTheme, 5 * 60 * 1000);
             
-            if (document.visibilityState === 'visible') { startAllTimers(); }
+            if (document.visibilityState === 'visible') { 
+                startAllTimers();
+                triggerEyeBlink();
+            }
 
             tickerWrap.addEventListener('mouseenter', pauseFlipCycle);
             tickerWrap.addEventListener('mouseleave', resumeFlipCycle);
@@ -1367,13 +1366,6 @@
                     stopAllTimers();
                 }
             });
-            
-            const fetchAndRenderRain = async () => {
-                await fetchLiveRainData();
-                updateLiveRainDisplay();
-            };
-            fetchAndRenderRain();
-            setInterval(fetchAndRenderRain, 30000);
         });
 
         filterControls.addEventListener('click', (e) => setFilter(e.target));
