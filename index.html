@@ -78,7 +78,7 @@
             animation: static-move 0.15s steps(2) infinite, static-fade-in-out 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
         }
 
-        .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 0px; }
+        .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 0x; }
         .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; transition: width 0.4s ease, height 0.4s ease; }
         #eyelid, #eyelid-2 { transform-origin: center; transition: transform 0.1s ease-in-out; }
 
@@ -1358,38 +1358,40 @@
                 breakingIndicator.classList.toggle(allNewsItems.slice(0, 10).some(item => BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k))), true);
                 
                 let preliminaryItems = [];
-                if(activeFilter === 'all') {
-                    const dayOfMonth = today.getDate();
-                    const monthName = CALENDAR_DATA.honapok[today.getMonth()];
-                    const year = today.getFullYear();
-                    const dayName = CALENDAR_DATA.napok[today.getDay()];
-                    
-                    const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
-                    const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                if (!isManualTrigger) {
+                    if(activeFilter === 'all') {
+                        const dayOfMonth = today.getDate();
+                        const monthName = CALENDAR_DATA.honapok[today.getMonth()];
+                        const year = today.getFullYear();
+                        const dayName = CALENDAR_DATA.napok[today.getDay()];
+                        
+                        const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
+                        const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
 
-                    const calendarHtml = `
-                    <div class="ticker-item calendar-item">
-                        ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
-                        <div class="date-wrapper">
-                            <span class="date-full">${formattedDate}</span>
-                            <span class="date-dayname">${dayNameDisplay}</span>
-                        </div>
-                        <div class="creative-info-wrapper">
-                             <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
-                             <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
-                        </div>
-                    </div>`;
-                    preliminaryItems.push(calendarHtml);
+                        const calendarHtml = `
+                        <div class="ticker-item calendar-item">
+                            ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
+                            <div class="date-wrapper">
+                                <span class="date-full">${formattedDate}</span>
+                                <span class="date-dayname">${dayNameDisplay}</span>
+                            </div>
+                            <div class="creative-info-wrapper">
+                                 <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
+                                 <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
+                            </div>
+                        </div>`;
+                        preliminaryItems.push(calendarHtml);
 
-                    if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { preliminaryItems.push(`<div class="ticker-item custom-announcement" style="color: ${ann.color || 'var(--accent-main)'};">${ICON_ANNOUNCEMENT} ${ann.text}</div>`); }); }
-                    
-                    const quoteHtml = `
-                    <div class="ticker-item quote-item">
-                        <blockquote>"${QUOTES[new Date().getDate() % QUOTES.length]}"</blockquote>
-                    </div>`;
-                    preliminaryItems.push(quoteHtml);
+                        if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { preliminaryItems.push(`<div class="ticker-item custom-announcement" style="color: ${ann.color || 'var(--accent-main)'};">${ICON_ANNOUNCEMENT} ${ann.text}</div>`); }); }
+                        
+                        const quoteHtml = `
+                        <div class="ticker-item quote-item">
+                            <blockquote>"${QUOTES[new Date().getDate() % QUOTES.length]}"</blockquote>
+                        </div>`;
+                        preliminaryItems.push(quoteHtml);
+                    }
+                    if (newsToDisplay.length > 0) { preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? 'A legfrissebb hírek' : `Napi hírek: '${activeFilter}'` }</div>`); }
                 }
-                if (newsToDisplay.length > 0) { preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? 'A legfrissebb hírek' : `Napi hírek: '${activeFilter}'` }</div>`); }
                 newsToDisplay = [...preliminaryItems, ...newsToDisplay];
             }
             
