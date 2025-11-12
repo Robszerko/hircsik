@@ -61,7 +61,7 @@
         .color-bar { flex-grow: 1; }
         body.loaded #intro-overlay { transform: scaleX(0); transform-origin: left; }
         
-        .label-content { display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(20px); transition: none; }
+        .label-content { display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(20px); transition: opacity 0.4s, transform 0.4s; width: 100%; }
         body.loaded .label-content { 
             opacity: 1; 
             transform: translateY(0);
@@ -91,23 +91,46 @@
         #night-mode-icon { color: var(--accent-gold); flex-shrink: 0; width: 16px; height: 16px; }
         #clock { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; color: var(--accent-main); letter-spacing: 0.5px; margin-top: 2px; background-color: rgba(0,0,0,0.2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; transition: color 1.5s ease-in-out; }
         #clock .clock-colon { animation: blink 1.2s step-end infinite; }
-        #nameday { font-size: 0.8rem; color: #95A5A6; margin-top: 3px; white-space: nowrap; display: none; width: 100%; text-align: center; padding: 0 5px; }
-        #manual-refresh-trigger {
-            display: none;
-            cursor: pointer;
-            margin-top: 5px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background-color: rgba(0,0,0,0.2);
-            color: var(--accent-gold);
-            font-size: 0.8rem;
+        #thematic-block-display, #nameday, #manual-refresh-trigger {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
             font-weight: 500;
-            transition: background-color 0.3s, color 0.3s;
-            text-align: center;
+            color: var(--accent-gold);
+            background-color: rgba(0,0,0,0.25);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            box-sizing: border-box;
         }
-        #manual-refresh-trigger:hover {
-            background-color: var(--accent-gold);
-            color: #111;
+        #nameday { color: #95A5A6; background-color: transparent; font-size: 0.8rem; padding: 0 5px;}
+        #manual-refresh-trigger { font-size: 0.8rem; font-family: var(--font-body); cursor: pointer;}
+        
+        #schedule-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background-color: #2C3E50;
+            z-index: 20;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.4s, visibility 0.4s;
+            padding: 10px 5px;
+        }
+        #schedule-overlay.visible { opacity: 1; visibility: visible; }
+        .schedule-item {
+            display: flex; flex-direction: row; justify-content: center; align-items: baseline;
+            gap: 8px; margin-bottom: 6px; width: 100%; overflow: hidden;
+        }
+        .schedule-item .time {
+            font-family: var(--font-body); font-size: 1rem; font-weight: 700;
+            color: var(--accent-main); flex-shrink: 0;
+        }
+        .schedule-item .title {
+            font-family: var(--font-display); font-size: 0.95rem; color: #ECF0F1;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
 
@@ -239,12 +262,22 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
-            height: 60%;
+            height: 80%;
             font-size: 0.85rem;
             color: var(--text-secondary);
         }
         .creative-info-text {
              white-space: nowrap;
+        }
+        .sun-info-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sun-info-item svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent-gold);
         }
 
 
@@ -321,7 +354,15 @@
         .ticker-controls button:hover { background-color: var(--text-secondary); color: #000; }
         .ticker-controls button.active { background-color: var(--accent-main); color: white; border-color: var(--accent-main); }
         .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-        #night-mode-message { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); transition: color 1.5s ease-in-out; white-space: nowrap; margin-left: auto; }
+        #night-mode-message, #next-block-indicator {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: color 1.5s ease-in-out, opacity 0.5s;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+         #next-block-indicator { color: var(--accent-gold); }
         
         .nav-controls { display: flex; align-items: center; gap: 10px; }
         #news-counter {
@@ -539,6 +580,7 @@
                 margin: 0; padding: 0; gap: 5px;
             }
             .weather-header, .weather-description { display: none; }
+            #next-block-indicator { order: 3; flex-basis: 100%; text-align: center; margin-top: 5px; margin-left: 0; }
         }
         @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0 10px; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } }
         @media (max-width: 520px) {
@@ -573,7 +615,7 @@
                                    <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#animatedEyeGrad)" stroke-width="1.5" fill="none"/>
                                    <circle cx="12" cy="12" r="3" fill="url(#animatedEyeGrad)"/>
                                    <path class="eyelid-anim" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" />
-                               </svg>
+                                </svg>
                                <div class="brand-container">
                                    <span class="brand-name" id="animated-brand-name">TKP NEWS</span>
                                </div>
@@ -582,7 +624,7 @@
                                    <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#animatedEyeGrad)" stroke-width="1.5" fill="none"/>
                                    <circle cx="12" cy="12" r="3" fill="url(#animatedEyeGrad)"/>
                                    <path class="eyelid-anim" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" />
-                               </svg>
+                                </svg>
                             </div>
                         </div>
                         <div id="clock-wrapper" style="display: none;">
@@ -596,6 +638,8 @@
                         </div>
                         <div class="refresh-text">Hírek frissítése...</div>
                     </div>
+
+                    <div id="schedule-overlay"></div>
 
                     <div class="label-content">
                         <div class="label-top-row">
@@ -616,7 +660,7 @@
                             </svg>
                         </div>
                         <div id="clock">--.--.--. ------ --:--</div>
-                        
+                        <div id="thematic-block-display" style="display: none;"></div>
                         <div id="nameday"></div>
                         <div id="manual-refresh-trigger" title="Hírek azonnali frissítése"></div>
                         <div id="night-shift-container" style="display: none;">
@@ -644,6 +688,7 @@
                     </div>
                 </div>
                 <span id="night-mode-message" style="display: none;"></span>
+                <span id="next-block-indicator" style="display: none;"></span>
             </div>
         </div>
         
@@ -663,12 +708,25 @@
         const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Nyíregyháza', lat: 47.95, lon: 21.71 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Hajdúböszörmény', lat: 47.67, lon: 21.51 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Mosonmagyaróvár', lat: 47.88, lon: 17.27 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Kiskunfélegyháza', lat: 46.71, lon: 19.85 }, { name: 'Gyula', lat: 46.64, lon: 21.28 }, { name: 'Ajka', lat: 47.10, lon: 17.56 }, { name: 'Orosháza', lat: 46.56, lon: 20.66 }, { name: 'Szentes', lat: 46.65, lon: 20.26 }, { name: 'Kiskunhalas', lat: 46.43, lon: 19.48 }, { name: 'Jászberény', lat: 47.50, lon: 19.91 }, { name: 'Sátoraljaújhely', lat: 48.39, lon: 21.66 }, { name: 'Komló', lat: 46.19, lon: 18.26 }, { name: 'Makó', lat: 46.21, lon: 20.47 }, { name: 'Nagykőrös', lat: 47.03, lon: 19.78 }, { name: 'Karcag', lat: 47.31, lon: 20.92 }, { name: 'Törökszentmiklós', lat: 47.18, lon: 20.31 }, { name: 'Hatvan', lat: 47.66, lon: 19.68 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 }, { name: 'Hajdúszoboszló', lat: 47.45, lon: 21.39 }, { name: 'Komárom', lat: 47.74, lon: 18.12 }, { name: 'Békés', lat: 46.77, lon: 21.13 }, { name: 'Paks', lat: 46.62, lon: 18.85 }, { name: 'Csongrád', lat: 46.71, lon: 20.14 }, { name: 'Mohács', lat: 45.99, lon: 18.68 }, { name: 'Kalocsa', lat: 46.52, lon: 18.98 }, { name: 'Mezőtúr', lat: 47.00, lon: 20.61 }, { name: 'Tiszaújváros', lat: 47.92, lon: 21.04 }, { name: 'Berettyóújfalu', lat: 47.21, lon: 21.55 }, { name: 'Tata', lat: 47.64, lon: 18.32 }, { name: 'Szentendre', lat: 47.66, lon: 19.07 }, { name: 'Balatonfüred', lat: 46.95, lon: 17.89 }, { name: 'Visegrád', lat: 47.79, lon: 18.97 }, { name: 'Tokaj', lat: 48.12, lon: 21.41 }, { name: 'Sárvár', lat: 47.25, lon: 16.93 }, { name: 'Villány', lat: 45.87, lon: 18.45 } ];
         const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Johannesburg', lat: -26.20, lon: 28.04 }, { name: 'Szentpétervár', lat: 59.93, lon: 30.33 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 }, { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Genf', lat: 46.20, lon: 6.14 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Szao Paulo', lat: -23.55, lon: -46.63 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Bogotá', lat: 4.71, lon: -74.07 }, { name: 'Santiago', lat: -33.44, lon: -70.66 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 }, { name: 'Lagos', lat: 6.52, lon: 3.37 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Ho Si Minh-város', lat: 10.82, lon: 106.62 }, { name: 'Kuala Lumpur', lat: 3.13, lon: 101.68 }, { name: 'Abu-Dzabi', lat: 24.45, lon: 54.37 }, { name: 'Doha', lat: 25.28, lon: 51.53 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Montreal', lat: 45.50, lon: -73.56 }, { name: 'Wellington', lat: -41.28, lon: 174.77 }, { name: 'Kijev', lat: 50.45, lon: 30.52 }, { name: 'Belgrád', lat: 44.78, lon: 20.44 }, { name: 'Bukarest', lat: 44.42, lon: 26.10 }, { name: 'Ljubljana', lat: 46.05, lon: 14.50 }, { name: 'Szarajevó', lat: 43.85, lon: 18.41 }, { name: 'Szófia', lat: 42.69, lon: 23.32 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Ankara', lat: 39.93, lon: 32.85 }, { name: 'San Francisco', lat: 37.77, lon: -122.41 }, { name: 'Seattle', lat: 47.60, lon: -122.33 }, { name: 'Boston', lat: 42.36, lon: -71.05 }, { name: 'Edinburgh', lat: 55.95, lon: -3.18 }, { name: 'Jeruzsálem', lat: 31.76, lon: 35.21 } ];
         
-        const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
+        const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac', 'portfolio'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs', 'nemzeti sport'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
         const QUOTES = [ "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít." ];
         const ICON_CALENDAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
         const ICON_NEWS = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`;
         const ICON_ANNOUNCEMENT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
         const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "01-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"09-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-11": ["Árpád"],"12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
+        
+        const THEMATIC_BLOCKS = [
+            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday', categories: [] },
+            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',             categories: [] },
+            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',             categories: [] },
+            { start: 12,   name: 'Délidőben',            type: 'fresh',             categories: [] },
+            { start: 13,   name: 'Délutáni csúcs',      type: 'fresh',             categories: [] },
+            { start: 18,   name: 'Hazai Pálya',          type: 'summary_today',     categories: ['belföld'] },
+            { start: 19,   name: 'Esti gyors',           type: 'fresh',             categories: [] },
+            { start: 22,   name: 'Sportpercek',          type: 'summary_today',     categories: ['sport'] },
+            { start: 22.5, name: 'Gazdasági Negyed',     type: 'summary_today',     categories: ['gazdaság'] },
+            { start: 23,   name: 'Hazai Pálya+',         type: 'summary_today',     categories: ['belföld'] },
+        ];
 
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
@@ -698,11 +756,14 @@
         const animationWrapper = document.getElementById('animation-wrapper');
         const clockWrapper = document.getElementById('clock-wrapper');
         const manualRefreshTriggerEl = document.getElementById('manual-refresh-trigger');
+        const thematicBlockDisplayEl = document.getElementById('thematic-block-display');
+        const nextBlockIndicatorEl = document.getElementById('next-block-indicator');
+        const scheduleOverlayEl = document.getElementById('schedule-overlay');
 
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
         let activeFilter = 'all';
-        let currentMode = new Date().getHours() < 6 ? 'summary' : 'normal';
+        let currentThematicBlock = null;
         let newsFetchRetryTimeout = null;
         let masterNewsList = [];
         
@@ -726,6 +787,8 @@
         let isInfoMessageActive = false;
         let currentNewsLinks = new Set();
         let newsCheckInterval = null;
+        let lastNewsCheckTimestamp = 0;
+        let accumulatedNewNewsCount = 0;
 
         const stripHtml = (html) => { let doc = new DOMParser().parseFromString(html, 'text/html'); return doc.body.textContent || ""; };
         
@@ -932,7 +995,6 @@
             const minutes = now.getMinutes();
             const hours = now.getHours();
 
-            // More precise degree calculation
             const secondDeg = (seconds / 60) * 360;
             const minuteDeg = ((minutes * 60 + seconds) / 3600) * 360;
             const hourDeg = (((hours % 12) * 3600 + minutes * 60 + seconds) / 43200) * 360;
@@ -952,11 +1014,10 @@
                 if (mode === 'animation') {
                     clockWrapper.style.display = 'none';
                     animationWrapper.style.display = 'flex';
-                    // Force restart animation
                     refreshOverlay.classList.remove('animation-active');
-                    void refreshOverlay.offsetWidth; // Trigger reflow
+                    void refreshOverlay.offsetWidth;
                     refreshOverlay.classList.add('animation-active');
-                } else { // 'clock' or default
+                } else {
                     animationWrapper.style.display = 'none';
                     clockWrapper.style.display = 'flex';
                     refreshOverlay.classList.remove('animation-active');
@@ -966,40 +1027,57 @@
                     }
                 }
             } else {
-                labelContent.style.display = ''; // Revert to default display
                 refreshOverlay.classList.remove('visible', 'animation-active');
                 if (analogClockInterval) {
                     clearInterval(analogClockInterval);
                     analogClockInterval = null;
                 }
+                labelContent.style.display = ''; // Revert to default display style (flex)
             }
         }
         
-        function displayInfoMessage() {
-            if (isInfoMessageActive) return;
-            isInfoMessageActive = true;
-            pauseFlipCycle();
-            
-            showRefreshState(true, 'clock');
-            
-            const infoHtml = `<div class="ticker-item announcement-item visible">
-                <div class="label-top-row">
-                    <svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <defs><linearGradient id="eyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient></defs>
-                        <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
-                    </svg>
-                    <div class="brand-container"><span class="brand-name">TKP NEWS</span></div>
-                     <svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <use href="#eyeGrad"/>
-                        <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
-                        <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
-                    </svg>
-                </div>
-                <p>Napközben (06-00h) a legfrissebb híreket, éjjel (00-06h) pedig az előző nap eseményeit követheted nyomon.</p>
-            </div>`;
+        function showScheduleOverlay() {
+            if (!currentThematicBlock) return;
+            const currentIndex = THEMATIC_BLOCKS.findIndex(b => b.start === currentThematicBlock.start);
+            if (currentIndex === -1) return;
 
-            const activeContent = tracks[activeTrackKey].querySelector('.ticker-content');
-            activeContent.innerHTML = infoHtml;
+            let scheduleHTML = '';
+            for (let i = 1; i <= 3; i++) {
+                const nextBlockIndex = (currentIndex + i) % THEMATIC_BLOCKS.length;
+                const block = THEMATIC_BLOCKS[nextBlockIndex];
+                if (block.start === 0) break;
+                const startTime = formatBlockTime(block.start);
+                scheduleHTML += `<div class="schedule-item"><span class="time">${startTime}</span><span class="title">${block.name}</span></div>`;
+            }
+
+            scheduleOverlayEl.innerHTML = scheduleHTML;
+            scheduleOverlayEl.classList.add('visible');
+            labelContent.style.display = 'none';
+
+            setTimeout(() => {
+                scheduleOverlayEl.classList.remove('visible');
+                labelContent.style.display = '';
+            }, 60 * 1000);
+        }
+
+        function getCurrentAndNextBlocks(now) {
+            const currentTime = now.getHours() + now.getMinutes() / 60;
+            let currentBlockIndex = -1;
+
+            for (let i = THEMATIC_BLOCKS.length - 1; i >= 0; i--) {
+                if (currentTime >= THEMATIC_BLOCKS[i].start) {
+                    currentBlockIndex = i;
+                    break;
+                }
+            }
+            if (currentBlockIndex === -1) currentBlockIndex = THEMATIC_BLOCKS.length - 1;
+            
+            const nextBlockIndex = (currentBlockIndex + 1) % THEMATIC_BLOCKS.length;
+
+            return {
+                current: THEMATIC_BLOCKS[currentBlockIndex],
+                next: THEMATIC_BLOCKS[nextBlockIndex]
+            };
         }
 
         function updateClock() {
@@ -1007,42 +1085,40 @@
             const year = now.getFullYear(), month = String(now.getMonth() + 1).padStart(2, '0'), day = String(now.getDate()).padStart(2, '0'), dayOfWeek = CALENDAR_DATA.napok[now.getDay()], hours = String(now.getHours()).padStart(2, '0'), minutes = String(now.getMinutes()).padStart(2, '0');
             document.getElementById('clock').innerHTML = `${year}.${month}.${day}. ${dayOfWeek} ${hours}<span class="clock-colon">:</span>${minutes}`;
             
-            const newMode = now.getHours() < 6 ? 'summary' : 'normal';
-            if (newMode !== currentMode) { 
-                currentMode = newMode;
-                isInfoMessageActive = false;
+            const { current, next } = getCurrentAndNextBlocks(now);
+
+            if (currentThematicBlock === null || current.start !== currentThematicBlock.start) {
+                console.log(`Tematikus blokk váltás: ${current.name}`);
+                currentThematicBlock = current;
                 sessionStorage.removeItem('newsCache');
-                console.log(`Mód váltás: ${currentMode}. Frissítés kényszerítve.`);
                 triggerUpdate(true);
-                return; 
+                return;
             }
             
+            const nextStartTime = new Date(now);
+            nextStartTime.setHours(Math.floor(next.start), (next.start % 1) * 60, 0, 0);
+            if (next.start < current.start) nextStartTime.setDate(nextStartTime.getDate() + 1);
+            const timeToNext = nextStartTime - now;
+            if (timeToNext > 0 && timeToNext < 60 * 60 * 1000) {
+                const nextBlockStartTime = formatBlockTime(next.start);
+                nextBlockIndicatorEl.textContent = `Következik ${nextBlockStartTime}-tól: ${next.name}`;
+                nextBlockIndicatorEl.style.display = 'block';
+            } else {
+                nextBlockIndicatorEl.style.display = 'none';
+            }
+
             const seconds = now.getSeconds();
-
-            if (currentMode === 'normal') {
-                if ((minutes % 15 === 14) && seconds === 55) {
-                    if (document.visibilityState === 'visible' && !refreshOverlay.classList.contains('visible')) {
-                        showRefreshState(true, 'animation');
-                    }
+            if (current.type === 'fresh' && minutes % 15 === 0 && seconds === 0 && minutes !== lastUpdateMinute) {
+                lastUpdateMinute = minutes;
+                if (document.visibilityState === 'visible') {
+                    console.log("Automatikus frissítés (negyedóránként)...");
+                    sessionStorage.removeItem('newsCache');
+                    triggerUpdate(true);
                 }
-
-                if (minutes % 15 === 0 && seconds === 0 && minutes !== lastUpdateMinute) {
-                    lastUpdateMinute = minutes;
-                    if (document.visibilityState === 'visible') {
-                        console.log("Automatikus frissítés (negyedóránként)...");
-                        sessionStorage.removeItem('newsCache');
-                        triggerUpdate(true);
-                    } else {
-                        if (refreshOverlay.classList.contains('visible')) {
-                            showRefreshState(false);
-                        }
-                        isInfoMessageActive = false;
-                    }
-                }
-
-                if (((minutes === 29 || minutes === 59) && seconds === 30)) {
-                    displayInfoMessage();
-                }
+            }
+            
+            if (minutes % 10 === 0 && seconds === 0) {
+                 if (current.type !== 'summary_yesterday') showScheduleOverlay();
             }
         }
         
@@ -1061,11 +1137,11 @@
         function tagNewsItems(newsItems) { return newsItems.map(item => { const title = item.title.toLowerCase(); item.categories = []; for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) { if (keywords.some(keyword => title.includes(keyword))) item.categories.push(category); } return item; }); }
         function updateFilterButtons(newsItems) { const availableCategories = new Set(newsItems.flatMap(item => item.categories || [])); filterControls.innerHTML = ''; const allBtn = document.createElement('button'); allBtn.dataset.filter = 'all'; allBtn.textContent = 'Összes'; filterControls.appendChild(allBtn); availableCategories.forEach(cat => { const btn = document.createElement('button'); btn.dataset.filter = cat; btn.textContent = cat; filterControls.appendChild(btn); }); let activeBtn = filterControls.querySelector(`[data-filter="${activeFilter}"]`) || filterControls.querySelector('[data-filter="all"]'); activeFilter = activeBtn.dataset.filter; activeBtn.classList.add('active'); }
         function filterNews(newsItems, category) { if (category === 'all') return newsItems; return newsItems.filter(item => item.categories && item.categories.includes(category)); }
-        const getSourceName = (url) => { if (url.includes('index.hu')) return 'Index'; if (url.includes('telex.hu')) return 'Telex'; if (url.includes('hvg.hu')) return 'HVG'; if (url.includes('24.hu')) return '24.hu'; if (url.includes('ma.hu')) return 'ma.hu'; try { return new URL(url).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch { return 'Ismeretlen'; } };
+        const getSourceName = (url) => { if (url.includes('index.hu')) return 'Index'; if (url.includes('telex.hu')) return 'Telex'; if (url.includes('hvg.hu')) return 'HVG'; if (url.includes('24.hu')) return '24.hu'; if (url.includes('ma.hu')) return 'ma.hu'; if (url.includes('portfolio.hu')) return 'Portfolio'; if (url.includes('origo.hu')) return 'Origo'; if (url.includes('nemzetisport.hu')) return 'NSO'; try { return new URL(url).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch { return 'Ismeretlen'; } };
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; } }
-        function resumeFlipCycle() { if (flipRemainingTime > 0 && !flipTimeoutId && !isInfoMessageActive && tracks[activeTrackKey].querySelectorAll('.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); } }
+        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && tracks[activeTrackKey].querySelectorAll('.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); } }
         
         function showItemAtIndex(index, isManual = false) {
             if (isInfoMessageActive) return;
@@ -1082,7 +1158,7 @@
                 requestAnimationFrame(() => { 
                     currentItem.classList.add('visible');
                     updateCounter();
-                    if (currentMode === 'summary') {
+                    if (currentThematicBlock.type === 'summary_yesterday') {
                         updateTimeline();
                     }
                 });
@@ -1134,14 +1210,14 @@
             const eyelid2 = document.getElementById('eyelid-2');
             if (!eyelid1 || !eyelid2 || document.visibilityState !== 'visible') return;
 
-            eyelid1.style.transform = 'scaleY(1.2)'; // Close eye
+            eyelid1.style.transform = 'scaleY(1.2)';
             eyelid2.style.transform = 'scaleY(1.2)';
             setTimeout(() => {
-                eyelid1.style.transform = 'scaleY(0)'; // Open eye
+                eyelid1.style.transform = 'scaleY(0)';
                 eyelid2.style.transform = 'scaleY(0)';
             }, 150);
 
-            const randomInterval = Math.random() * 7000 + 3000; // Blink every 3-10 seconds
+            const randomInterval = Math.random() * 7000 + 3000;
             setTimeout(triggerEyeBlink, randomInterval);
         }
 
@@ -1154,7 +1230,7 @@
             setTimeout(() => { 
                 brandNameEl.classList.remove('glitch-text-active'); 
             }, 300 + Math.random() * 200); 
-            textGlitchTimeout = setTimeout(triggerTextGlitch, Math.random() * (20000 - 7000) + 7000); // 7 to 20 seconds
+            textGlitchTimeout = setTimeout(triggerTextGlitch, Math.random() * (20000 - 7000) + 7000);
         }
 
         function stopAllAnimatedEffects() { 
@@ -1180,8 +1256,8 @@
         };
 
         async function fetchAndDisplayContent(isManualTrigger = false) {
-            if (Object.keys(rssFeeds).length === 0) {
-                console.log("Várakozás az RSS feedek listájára...");
+            if (Object.keys(rssFeeds).length === 0 || !currentThematicBlock) {
+                console.log("Várakozás a feedekre vagy a blokk információra...");
                 return;
             }
 
@@ -1195,6 +1271,7 @@
             
             stopNewsCheckCycle();
             manualRefreshTriggerEl.style.display = 'none';
+            accumulatedNewNewsCount = 0;
 
             loadingTimeout = setTimeout(() => {
                 showRefreshState(false);
@@ -1211,7 +1288,7 @@
             timelineContainer.innerHTML = '';
             
             const CACHE_KEY = 'newsCache';
-            const CACHE_EXPIRATION_MS = currentMode === 'summary' ? 6 * 60 * 60 * 1000 : 10 * 60 * 1000;
+            const CACHE_EXPIRATION_MS = 10 * 60 * 1000;
             let allNewsItems;
             
             const cachedData = JSON.parse(sessionStorage.getItem(CACHE_KEY));
@@ -1275,138 +1352,123 @@
             }
             
             currentNewsLinks.clear();
-            allNewsItems.forEach(item => {
-                if(item.link) currentNewsLinks.add(item.link);
-            });
+            allNewsItems.forEach(item => { if(item.link) currentNewsLinks.add(item.link); });
 
             const today = new Date(); const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             const names = CALENDAR_DATA.nameDays[nameDayKey] || [];
             nameDayEl.textContent = names.length > 0 ? `${names.join(' és ')} névnapja` : '';
             nameDayEl.style.display = 'block';
 
-            if (currentMode === 'summary') {
+            if (currentThematicBlock.type === 'summary_yesterday') {
                 nightShiftContainer.style.display = 'flex';
+                thematicBlockDisplayEl.style.display = 'none';
                 bodyEl.classList.add('night-mode-active');
                 filterControlGroup.style.display = 'none';
                 nightModeMessage.textContent = "Előző nap hírei. Friss hírek: 6:00-tól.";
                 nightModeMessage.style.display = 'block';
             } else {
                 nightShiftContainer.style.display = 'none';
+                thematicBlockDisplayEl.textContent = currentThematicBlock.name;
+                thematicBlockDisplayEl.style.display = 'block';
                 bodyEl.classList.remove('night-mode-active');
                 filterControlGroup.style.display = 'flex';
                 nightModeMessage.style.display = 'none';
+                 updateFilterButtons(allNewsItems);
             }
             updateDynamicTheme();
 
-            if (currentMode === 'normal') updateFilterButtons(allNewsItems);
+            let contentItems = [];
+            let newsToDisplay;
+            let preliminaryItems = [];
             
-            let contentItems = [], newsToDisplay = [];
-            
-            if (currentMode === 'summary') {
-                const timeLimit = new Date();
-                timeLimit.setHours(timeLimit.getHours() - 30);
-                
+            const timeLimit = new Date();
+            if (currentThematicBlock.type === 'fresh') {
+                timeLimit.setHours(timeLimit.getHours() - 2);
+            } else if (currentThematicBlock.type === 'summary_today') {
+                timeLimit.setHours(0, 0, 0, 0);
+            } else if (currentThematicBlock.type === 'summary_yesterday') {
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
-                const yesterdayStart = new Date(yesterday.setHours(0, 0, 0, 0));
-                const yesterdayEnd = new Date(yesterday.setHours(23, 59, 59, 999));
+                yesterday.setHours(0, 0, 0, 0);
+                timeLimit.setTime(yesterday.getTime());
+            }
 
-                masterNewsList = allNewsItems
-                    .filter(item => {
-                        if (!item.pubDate) return false;
-                        const itemDate = new Date(item.pubDate);
-                        return itemDate >= timeLimit && itemDate >= yesterdayStart && itemDate <= yesterdayEnd;
-                    })
-                    .sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
-                
-                const processedList = [];
-                let lastHour = -1;
-                masterNewsList.forEach(item => {
-                    const itemHour = new Date(item.pubDate).getHours();
-                    if(itemHour !== lastHour && itemHour > 0 && itemHour % 3 === 0) {
-                        processedList.push({ isAnnouncement: true });
-                    }
-                    lastHour = itemHour;
-                    processedList.push(item);
-                });
-                
-                newsToDisplay = [
-                    `<div class="ticker-item news-intro-item">${ICON_NEWS} A tegnapi nap (${yesterdayStart.toLocaleDateString('hu-HU')}) hírei időrendben:</div>`,
-                    ...processedList
-                ];
+            let filteredNews = allNewsItems.filter(item => {
+                if (!item.pubDate) return false;
+                const itemDate = new Date(item.pubDate);
+                if (currentThematicBlock.type === 'summary_yesterday') {
+                    const yesterdayEnd = new Date(timeLimit);
+                    yesterdayEnd.setHours(23, 59, 59, 999);
+                    return itemDate >= timeLimit && itemDate <= yesterdayEnd;
+                }
+                return itemDate >= timeLimit;
+            });
 
+            if (activeFilter !== 'all') {
+                filteredNews = filterNews(filteredNews, activeFilter);
+            } else if (currentThematicBlock.categories.length > 0) {
+                let blockFiltered = filteredNews.filter(item => item.categories && item.categories.some(cat => currentThematicBlock.categories.includes(cat)));
+                if (blockFiltered.length > 0 || currentThematicBlock.type.startsWith('summary')) {
+                    filteredNews = blockFiltered;
+                }
+            }
+            
+            if(currentThematicBlock.type === 'summary_yesterday') {
+                newsToDisplay = filteredNews.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
+            } else {
+                newsToDisplay = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+            }
+
+            if(currentThematicBlock.type !== 'summary_yesterday' && activeFilter === 'all' && !isManualTrigger) {
+                const dayOfMonth = today.getDate();
+                const monthName = CALENDAR_DATA.honapok[today.getMonth()];
+                const year = today.getFullYear();
+                const dayName = CALENDAR_DATA.napok[today.getDay()];
+                const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
+                const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                const nyirLat = 47.95, nyirLon = 21.71;
+                const sunTimes = SunCalc.getTimes(today, nyirLat, nyirLon);
+                const sunriseStr = formatTime(sunTimes.sunrise);
+                const sunsetStr = formatTime(sunTimes.sunset);
+                
+                const calendarHtml = `
+                <div class="ticker-item calendar-item">
+                    ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
+                    <div class="date-wrapper">
+                        <span class="date-full">${formattedDate}</span>
+                        <span class="date-dayname">${dayNameDisplay}</span>
+                    </div>
+                    <div class="creative-info-wrapper">
+                            <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
+                            <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
+                            <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg> ${sunriseStr}</span>
+                            <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg> ${sunsetStr}</span>
+                    </div>
+                </div>`;
+                preliminaryItems.push(calendarHtml);
+                
+                const quoteHtml = `<div class="ticker-item quote-item"><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
+                preliminaryItems.push(quoteHtml);
+            }
+            
+            let introText = currentThematicBlock.name;
+            if(activeFilter !== 'all') introText = `Hírek: '${activeFilter}'`;
+            else if(currentThematicBlock.type.startsWith('summary')) introText = `${currentThematicBlock.name}: a nap hírei`;
+            preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS} ${introText}</div>`);
+
+            newsToDisplay = [...preliminaryItems, ...newsToDisplay];
+
+            if (currentThematicBlock.type === 'summary_yesterday') {
                 breakingIndicator.classList.remove('active');
                 generateTimeline();
-
             } else {
-                 const filteredByCategory = filterNews(allNewsItems, activeFilter);
-
-                if (activeFilter === 'all') {
-                    const timeLimit = new Date();
-                    timeLimit.setHours(timeLimit.getHours() - 2);
-                    newsToDisplay = filteredByCategory
-                        .filter(item => item.pubDate && new Date(item.pubDate) >= timeLimit)
-                        .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-                } else {
-                    const timeLimit = new Date();
-                    timeLimit.setHours(0, 0, 0, 0);
-                    newsToDisplay = filteredByCategory
-                        .filter(item => item.pubDate && new Date(item.pubDate) >= timeLimit)
-                        .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-                }
-                
-                breakingIndicator.classList.toggle(allNewsItems.slice(0, 10).some(item => BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k))), true);
-                
-                let preliminaryItems = [];
-                if (!isManualTrigger) {
-                    if(activeFilter === 'all') {
-                        const dayOfMonth = today.getDate();
-                        const monthName = CALENDAR_DATA.honapok[today.getMonth()];
-                        const year = today.getFullYear();
-                        const dayName = CALENDAR_DATA.napok[today.getDay()];
-                        
-                        const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
-                        const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
-
-                        const calendarHtml = `
-                        <div class="ticker-item calendar-item">
-                            ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
-                            <div class="date-wrapper">
-                                <span class="date-full">${formattedDate}</span>
-                                <span class="date-dayname">${dayNameDisplay}</span>
-                            </div>
-                            <div class="creative-info-wrapper">
-                                 <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
-                                 <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
-                            </div>
-                        </div>`;
-                        preliminaryItems.push(calendarHtml);
-
-                        if (customAnnouncements.length > 0) { customAnnouncements.forEach(ann => { preliminaryItems.push(`<div class="ticker-item custom-announcement" style="color: ${ann.color || 'var(--accent-main)'};">${ICON_ANNOUNCEMENT} ${ann.text}</div>`); }); }
-                        
-                        const quoteHtml = `
-                        <div class="ticker-item quote-item">
-                            <blockquote>"${QUOTES[new Date().getDate() % QUOTES.length]}"</blockquote>
-                        </div>`;
-                        preliminaryItems.push(quoteHtml);
-                    }
-                    if (newsToDisplay.length > 0) { preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS}${activeFilter === 'all' ? 'A legfrissebb hírek' : `Napi hírek: '${activeFilter}'` }</div>`); }
-                }
-                newsToDisplay = [...preliminaryItems, ...newsToDisplay];
+                 breakingIndicator.classList.toggle(allNewsItems.slice(0, 10).some(item => BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k))), true);
             }
             
             masterNewsList = newsToDisplay;
-            const announcementHTML = `<div class="ticker-item announcement-item"><div class="label-top-row"><svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="eyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient></defs><path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/></svg><div class="brand-container"><span class="brand-name">TKP NEWS</span></div><svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><use href="#eyeGrad"/><path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/></svg></div><p>Tudtad? Hírszalagunkon reggel 6 és éjfél között a legfrissebb híreket, míg éjfél és reggel 6 között az előző nap teljes összefoglalóját követheted nyomon.</p></div>`;
-
-            newsToDisplay.forEach(item => {
-                if(typeof item === 'string') {
-                    contentItems.push(item);
-                    return;
-                }
-                if (item.isAnnouncement) {
-                    contentItems.push(announcementHTML);
-                    return;
-                }
+            contentItems = masterNewsList.map(item => {
+                if(typeof item === 'string') return item;
+                
                 const time = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
@@ -1426,8 +1488,7 @@
                         <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>
                         <span class="ticker-item-description">${getSmartDescription(item.description)}</span>
                     </div>`;
-
-                contentItems.push(`<div class="${itemClass}">${imageHtml}${contentHtml}</div>`);
+                return `<div class="${itemClass}">${imageHtml}${contentHtml}</div>`;
             });
             
             const standbyTrackKey = activeTrackKey === 'a' ? 'b' : 'a';
@@ -1444,15 +1505,21 @@
                     tracks[standbyTrackKey].classList.add('visible');
                     tracks[activeTrackKey].classList.remove('visible');
                     activeTrackKey = standbyTrackKey;
-                    startFlipCycle(true); // Always start from the first item after a refresh
+                    startFlipCycle(true);
                 });
+                lastNewsCheckTimestamp = Date.now();
                 startNewsCheckCycle();
-
             }, remainingTime);
         };
 
         async function checkForNewNews() {
-            if (currentMode !== 'normal' || document.visibilityState !== 'visible' || Object.keys(rssFeeds).length === 0) {
+            if (!currentThematicBlock || currentThematicBlock.type !== 'fresh' || document.visibilityState !== 'visible' || Object.keys(rssFeeds).length === 0) {
+                return;
+            }
+
+            const checkStartTime = Date.now();
+            if (lastNewsCheckTimestamp === 0) {
+                lastNewsCheckTimestamp = checkStartTime;
                 return;
             }
 
@@ -1460,46 +1527,44 @@
                 const newsPromises = Object.values(rssFeeds).map(url => fetch(CORS_PROXY + url, { signal: AbortSignal.timeout(10000) }).then(res => res.ok ? res.text() : Promise.reject()));
                 const results = await Promise.allSettled(newsPromises);
                 
-                let newNewsCount = 0;
-                const newLinks = new Set();
+                let newLinksInThisCheck = new Set();
                 
                 for (const result of results) {
                     if (result.status === 'fulfilled') {
                         const data = new window.DOMParser().parseFromString(result.value, "text/xml");
                         const items = data.querySelectorAll("item");
-                        const timeLimit = new Date();
-                        timeLimit.setHours(timeLimit.getHours() - 2);
-
+                        
                         items.forEach(item => {
                             const pubDate = new Date(item.querySelector("pubDate")?.textContent);
-                            if (pubDate >= timeLimit) {
+                            if (pubDate.getTime() > lastNewsCheckTimestamp) {
                                 const link = item.querySelector("link")?.textContent;
-                                if (link && !currentNewsLinks.has(link) && !newLinks.has(link)) {
-                                    newLinks.add(link);
-                                    newNewsCount++;
+                                if (link && !currentNewsLinks.has(link)) {
+                                    newLinksInThisCheck.add(link);
                                 }
                             }
                         });
                     }
                 }
 
-                if (newNewsCount > 0) {
-                    manualRefreshTriggerEl.textContent = `${newNewsCount} új hír érhető el. Frissítés`;
+                if (newLinksInThisCheck.size > 0) {
+                    accumulatedNewNewsCount += newLinksInThisCheck.size;
+                    newLinksInThisCheck.forEach(link => currentNewsLinks.add(link)); 
+                    manualRefreshTriggerEl.textContent = `${accumulatedNewNewsCount} új hír érhető el. Frissítés`;
                     manualRefreshTriggerEl.style.display = 'block';
-                } else {
-                    manualRefreshTriggerEl.style.display = 'none';
                 }
+                
+                lastNewsCheckTimestamp = checkStartTime;
+
             } catch (error) {
                 console.warn("Hiba az új hírek ellenőrzésekor:", error);
-                manualRefreshTriggerEl.style.display = 'none';
             }
         }
 
         function startNewsCheckCycle() {
-            stopNewsCheckCycle(); // Clear any existing interval
-            if (currentMode === 'normal') {
-                setTimeout(checkForNewNews, 2 * 60 * 1000); // Initial check after 2 minutes
-                newsCheckInterval = setInterval(checkForNewNews, 2 * 60 * 1000); // Then check every 2 minutes
+            stopNewsCheckCycle();
+            if (currentThematicBlock && currentThematicBlock.type === 'fresh') {
+                setTimeout(checkForNewNews, 2 * 60 * 1000);
+                newsCheckInterval = setInterval(checkForNewNews, 2 * 60 * 1000);
             }
         }
 
@@ -1511,27 +1576,23 @@
         }
 
         function generateTimeline() {
-            const newsItems = masterNewsList.filter(item => typeof item !== 'string' && !item.isAnnouncement);
+            const newsItems = masterNewsList.filter(item => typeof item === 'object' && item.pubDate);
             if (newsItems.length === 0) return;
             const hours = [...new Set(newsItems.map(item => new Date(item.pubDate).getHours()))].sort((a, b) => a - b);
             timelineContainer.innerHTML = hours.map(hour => `<button data-hour="${hour}">${String(hour).padStart(2, '0')}</button>`).join('');
         }
 
         function updateTimeline() {
-            if (currentMode !== 'summary' || masterNewsList.length === 0) return;
+            if (!currentThematicBlock || currentThematicBlock.type !== 'summary_yesterday' || masterNewsList.length === 0) return;
             
             let currentNewsItem = masterNewsList[currentItemIndex];
-            if (typeof currentNewsItem === 'string' || currentNewsItem.isAnnouncement) {
+             if (typeof currentNewsItem === 'string') {
                  for(let i = currentItemIndex; i >= 0; i--) {
                     const item = masterNewsList[i];
-                    if(item && typeof item !== 'string' && !item.isAnnouncement) {
-                        currentNewsItem = item;
-                        break;
-                    }
+                    if(item && typeof item === 'object' && item.pubDate) { currentNewsItem = item; break; }
                 }
             }
-             if (!currentNewsItem || typeof currentNewsItem === 'string' || currentNewsItem.isAnnouncement) return;
-
+            if (!currentNewsItem || typeof currentNewsItem === 'string' || !currentNewsItem.pubDate) return;
 
             const currentHour = new Date(currentNewsItem.pubDate).getHours();
             const currentActive = timelineContainer.querySelector('.active-hour');
@@ -1598,7 +1659,7 @@
             timelineContainer.addEventListener('click', (e) => {
                 if (e.target.tagName === 'BUTTON') {
                     const hour = parseInt(e.target.dataset.hour, 10);
-                    const firstItemIndex = masterNewsList.findIndex(item => typeof item !== 'string' && !item.isAnnouncement && new Date(item.pubDate).getHours() === hour);
+                    const firstItemIndex = masterNewsList.findIndex(item => typeof item === 'object' && item.pubDate && new Date(item.pubDate).getHours() === hour);
                     
                     if (firstItemIndex !== -1) {
                          showItemAtIndex(firstItemIndex, true);
@@ -1618,7 +1679,11 @@
 
         filterControls.addEventListener('click', (e) => setFilter(e.target));
         onValue(announcementsRef, (snapshot) => { customAnnouncements = snapshot.val() ? Object.values(snapshot.val()) : []; sessionStorage.removeItem('newsCache'); triggerUpdate(true); });
-        onValue(feedsRef, (snapshot) => { rssFeeds = snapshot.val() || {}; sessionStorage.removeItem('newsCache'); triggerUpdate(true); });
+        onValue(feedsRef, (snapshot) => { 
+            rssFeeds = snapshot.val() || {};
+            sessionStorage.removeItem('newsCache');
+            triggerUpdate(true);
+        });
 
     </script>
 </body>
