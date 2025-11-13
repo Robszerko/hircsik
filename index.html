@@ -29,7 +29,7 @@
         body.theme-dawn       { --bg-main-gradient: linear-gradient(145deg, #2c2a4f, #7c4d8e, #d192a0); --text-primary: #E4E6EB; --text-secondary: #BCCCDC; --border-color: #7c4d8e; }
         body.theme-sunrise    { --bg-main-gradient: linear-gradient(145deg, #f7cac9, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #5D4037; --border-color: #f7cac9; }
         body.theme-morning    { --bg-main-gradient: linear-gradient(145deg, #E0F7FA, #87CEEB); --text-primary: #1C1E21; --text-secondary: #606770; --border-color: #B2EBF2; }
-        body.theme-day        { --bg-main-gradient: linear-gradient(145deg, #81D4FA, #29B6F6); --text-primary: #1C1E21; --text-secondary: #005689; --border-color: #4FC3F7; }
+        body.theme-day        { --bg-main-gradient: linear-gradient(145deg, #B3E5FC, #4FC3F7); --text-primary: #1C1E21; --text-secondary: #005689; --border-color: #4FC3F7; }
         body.theme-afternoon  { --bg-main-gradient: linear-gradient(145deg, #29B6F6, #FFD700); --text-primary: #1C1E21; --text-secondary: #424242; --border-color: #FFECB3; }
         body.theme-sunset     { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #ff9a3f); --text-primary: #2c3e50; --text-secondary: #4E342E; --border-color: #ff9a3f; }
         body.theme-dusk       { --bg-main-gradient: linear-gradient(145deg, #d94e3c, #483D8B); --text-primary: #E4E6EB; --text-secondary: #B0B3B8; --border-color: #483D8B; }
@@ -55,7 +55,21 @@
         }
 
         .ticker-main-row { display: flex; align-items: stretch; flex-grow: 1; min-height: 110px; }
-        .ticker-label { background-color: #2C3E50; color: #ECF0F1; padding: 0 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-display); border-right: 1px solid #444; min-width: 210px; flex-shrink: 0; position: relative; overflow: hidden; }
+        .ticker-label {
+            background: linear-gradient(160deg, #3a4f64, #2c3e50);
+            color: #ECF0F1;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-display);
+            border-right: 1px solid #444;
+            min-width: 210px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
         
         #intro-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; z-index: 10; transform: scaleX(1); transition: transform 0.8s cubic-bezier(0.86, 0, 0.07, 1) 1.2s; }
         .color-bar { flex-grow: 1; }
@@ -89,21 +103,41 @@
         #night-shift-container { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 5px; width: 100%; }
         #night-shift-label { font-size: 0.85rem; font-weight: 500; color: var(--accent-gold); font-family: var(--font-body); }
         #night-mode-icon { color: var(--accent-gold); flex-shrink: 0; width: 16px; height: 16px; }
-        #clock { font-family: var(--font-body); font-size: 0.9rem; font-weight: 500; color: var(--accent-main); letter-spacing: 0.5px; margin-top: 4px; background-color: rgba(0,0,0,0.2); padding: 1px 6px; border-radius: 4px; white-space: nowrap; transition: color 1.5s ease-in-out; }
+        
+        #clock {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1C1E21;
+            background-color: rgba(228, 230, 235, 0.85);
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            transition: all 1.5s ease-in-out;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
         #clock .clock-colon { animation: blink 1.2s step-end infinite; }
         
-        #nameday, #manual-refresh-trigger {
-            font-family: var(--font-display);
-            font-size: 0.8rem;
-            color: #95A5A6;
+        #nameday {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent-gold);
+            background-color: rgba(0,0,0,0.25);
             padding: 2px 8px;
-            margin-top: 5px;
+            margin-top: 6px;
+            border-radius: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 100%;
+            max-width: 90%;
             text-align: center;
+            border: 1px solid rgba(184, 134, 11, 0.3);
         }
+
         #manual-refresh-trigger {
             font-weight: 500;
             color: var(--accent-gold);
@@ -111,6 +145,9 @@
             border-radius: 4px;
             font-family: var(--font-body);
             cursor: pointer;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            margin-top: 5px;
         }
         
         #schedule-overlay {
@@ -144,23 +181,19 @@
         .dot:nth-child(3) { animation-delay: 0.4s; }
         
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
-        
         #block-title-layer {
             position: absolute;
             top: 10px;
             right: 10px;
             z-index: 5;
-            
-            /* New Styles for a discreet, light, and visible layer */
-            background-color: rgba(255, 255, 255, 0.25); /* Semi-transparent light background */
-            backdrop-filter: blur(8px);                 /* Frosted glass effect for discretion */
-            -webkit-backdrop-filter: blur(8px);         /* Safari support */
+            background-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.3);  /* A subtle border to define the shape */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);       /* A soft shadow for a bit of depth */
-            color: #2c3e50;                             /* A consistently dark, readable text color */
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);  /* A very subtle glow to make it pop slightly */
-            
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            color: #2c3e50;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
             padding: 4px 10px;
             font-family: var(--font-display);
             font-size: 0.85rem;
@@ -184,7 +217,7 @@
         .ticker-item {
             display: flex; flex-direction: column; align-items: flex-start; text-align: left;
             font-size: 0.95rem; font-weight: 500; color: var(--text-secondary);
-            padding: 15px 20px; /* Megnövelt padding a "safe zone"-ért */
+            padding: 15px 20px;
             border-radius: 4px;
             position: absolute; top: 50%; left: 50%;
             width: 95%; height: 90%;
@@ -215,6 +248,24 @@
         .ticker-item a:hover { color: var(--accent-main); }
         .ticker-item-description { font-size: 0.9rem; font-weight: 400; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
         .ticker-item.breaking-highlight { font-weight: 700; color: var(--text-primary); animation: pulse-bg 2s infinite; }
+        .ticker-item.breaking-highlight::before {
+            content: 'Rendkívüli hír';
+            position: absolute;
+            top: 8px;
+            left: 15px;
+            background-color: #D32F2F;
+            color: white;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 4px;
+            z-index: 10;
+            animation: blink 1.2s step-end infinite;
+            font-family: var(--font-body);
+        }
+        .ticker-item.breaking-highlight .ticker-item-content-wrapper {
+             padding-top: 18px;
+        }
         .ticker-item svg { width: 16px; height: 16px; margin-right: 10px; flex-shrink: 0; stroke-width: 2; }
         .ticker-item.news-intro-item, .ticker-item.calendar-item, .ticker-item.quote-item { color: var(--text-primary); transition: color 1.5s ease-in-out; }
         
@@ -291,6 +342,14 @@
             font-size: 1.1rem;
             color: var(--text-secondary);
             font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .calendar-item .date-nameday {
+            font-size: 1.05rem;
+            font-family: var(--font-body);
+            color: var(--accent-gold);
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
         .creative-info-wrapper {
             margin-left: auto;
@@ -400,7 +459,7 @@
             white-space: nowrap;
             margin-left: auto;
         }
-         #next-block-indicator {
+        #next-block-indicator {
             font-size: 0.8rem;
             font-weight: 700;
             color: #111;
@@ -710,7 +769,7 @@
                             </svg>
                         </div>
                         <div id="clock">--.--.--. ------ --:--</div>
-                        <div id="nameday" style="display: none;"></div>
+                        <div id="nameday"></div>
                         <div id="manual-refresh-trigger" title="Hírek azonnali frissítése" style="display: none;"></div>
                         <div id="night-shift-container" style="display: none;">
                             <svg id="night-mode-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -1211,6 +1270,15 @@
             const currentItem = items[currentItemIndex];
             
             if(currentItem) {
+                const shouldShowTitle = !currentItem.classList.contains('calendar-item');
+                const isNightMode = bodyEl.classList.contains('night-mode-active');
+                
+                if (shouldShowTitle && !isNightMode) {
+                    blockTitleLayerEl.classList.add('visible');
+                } else {
+                    blockTitleLayerEl.classList.remove('visible');
+                }
+
                 requestAnimationFrame(() => { 
                     currentItem.classList.add('visible');
                     updateCounter();
@@ -1247,6 +1315,15 @@
                 }
                 updateCounter();
                 const currentItem = items[currentItemIndex];
+
+                const shouldShowTitle = !currentItem.classList.contains('calendar-item');
+                const isNightMode = bodyEl.classList.contains('night-mode-active');
+                if (shouldShowTitle && !isNightMode) {
+                    blockTitleLayerEl.classList.add('visible');
+                } else {
+                    blockTitleLayerEl.classList.remove('visible');
+                }
+
                 let duration = FLIP_INTERVAL_REGULAR;
                 if (currentItem?.classList.contains('announcement-item')) {
                     duration = FLIP_INTERVAL_ANNOUNCEMENT;
@@ -1435,7 +1512,6 @@
                 nightModeMessage.style.display = 'none';
                 updateFilterButtons(allNewsItems);
                 blockTitleLayerEl.textContent = currentThematicBlock.name;
-                blockTitleLayerEl.classList.add('visible');
             }
             updateDynamicTheme();
 
@@ -1493,6 +1569,7 @@
                     const sunTimes = SunCalc.getTimes(today, nyirLat, nyirLon);
                     const sunriseStr = formatTime(sunTimes.sunrise);
                     const sunsetStr = formatTime(sunTimes.sunset);
+                    const nameDayText = names.length > 0 ? `<span class="date-nameday">${names.join(', ')} névnapja van.</span>` : '';
                     
                     const calendarHtml = `
                     <div class="ticker-item calendar-item">
@@ -1500,6 +1577,7 @@
                         <div class="date-wrapper">
                             <span class="date-full">${formattedDate}</span>
                             <span class="date-dayname">${dayNameDisplay}</span>
+                             ${nameDayText}
                         </div>
                         <div class="creative-info-wrapper">
                                 <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
@@ -1513,11 +1591,6 @@
                     const quoteHtml = `<div class="ticker-item quote-item"><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
                     preliminaryItems.push(quoteHtml);
                 }
-                
-                let introText = currentThematicBlock.name;
-                if(activeFilter !== 'all') introText = `Hírek: '${activeFilter}'`;
-                else if(currentThematicBlock.type.startsWith('summary')) introText = `${currentThematicBlock.name}: a nap hírei`;
-                preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS} ${introText}</div>`);
             }
 
             newsToDisplay = [...preliminaryItems, ...newsToDisplay];
