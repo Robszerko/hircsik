@@ -290,88 +290,87 @@
         }
 
         /* --- KREATÍV HÍRELEM STÍLUSOK --- */
-        .ticker-item.news-intro-item {
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            gap: 10px;
-            background: rgba(0,0,0,0.15);
-            border-left: 4px solid var(--accent-gold);
-            font-family: var(--font-display);
-            font-size: 1.2rem;
-            letter-spacing: 0.5px;
-        }
-        .news-intro-item svg {
-            width: 32px;
-            height: 32px;
-            stroke-width: 1.5;
-            stroke: var(--accent-gold);
-            margin-right: 0;
-        }
         .ticker-item.calendar-item {
-            flex-direction: row;
-            justify-content: flex-start;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
             align-items: center;
             gap: 20px;
-            background: rgba(0,0,0,0.1);
-            border-left: 4px solid var(--accent-main);
             padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background-color 1.5s ease, border-color 1.5s ease;
         }
-        .calendar-item .calendar-icon {
-            stroke: var(--accent-main);
-            width: 45px;
-            height: 45px;
-            flex-shrink: 0;
-        }
-        .calendar-item .date-wrapper {
+
+        .calendar-date-block {
             display: flex;
             flex-direction: column;
-            text-align: left;
-            line-height: 1.3;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 6px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            min-width: 70px;
         }
-        .calendar-item .date-full {
+        .calendar-date-block .date-day-number {
             font-family: var(--font-display);
-            font-size: 1.6rem;
+            font-size: 2.8rem;
+            line-height: 1;
             color: var(--text-primary);
         }
-        .calendar-item .date-dayname {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
+        .calendar-date-block .date-month-year {
+            font-size: 0.8rem;
             font-weight: 500;
-            margin-bottom: 4px;
+            color: var(--text-secondary);
         }
-        .calendar-item .date-nameday {
-            font-size: 1.05rem;
+
+        .calendar-details-block {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+        .calendar-details-block .date-dayname {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .calendar-details-block .date-nameday {
+            font-size: 1rem;
             font-family: var(--font-body);
             color: var(--accent-gold);
             font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
-        .creative-info-wrapper {
-            margin-left: auto;
-            padding-left: 20px;
-            border-left: 1px solid var(--border-color);
+        .calendar-details-block .creative-info-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .calendar-sun-info-block {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-start;
-            height: 80%;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-        }
-        .creative-info-text {
-             white-space: nowrap;
+            gap: 8px;
+            padding-left: 20px;
+            border-left: 1px solid var(--border-color);
+            height: 100%;
         }
         .sun-info-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
         .sun-info-item svg {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             stroke: var(--accent-gold);
+            stroke-width: 2;
         }
 
 
@@ -629,8 +628,8 @@
             width: 28px; height: 28px;
             position: absolute;
         }
-        #animated-logo-container #animated-eye-logo-1 { left: calc(50% - 60px); }
-        #animated-logo-container #animated-eye-logo-2 { left: calc(50% + 32px); }
+        #animated-logo-container #animated-eye-logo-1 { left: 50%; transform: translateX(-50%); }
+        #animated-logo-container #animated-eye-logo-2 { left: 50%; transform: translateX(-50%); }
 
         #animated-logo-container .brand-name {
             font-size: 1.5rem; letter-spacing: 1px;
@@ -638,31 +637,39 @@
             color: #ECF0F1;
         }
         
-        @keyframes eye-close-in-1 { from { transform: translateX(0); } to { transform: translateX(30px); } }
-        @keyframes eye-close-in-2 { from { transform: translateX(0); } to { transform: translateX(-30px); } }
-        @keyframes eye-open-out-1 { from { transform: translateX(30px); } to { transform: translateX(0); } }
-        @keyframes eye-open-out-2 { from { transform: translateX(-30px); } to { transform: translateX(0); } }
-        @keyframes brand-name-appear {
-            from { opacity: 0; transform: translateY(10px); letter-spacing: 5px; }
-            to { opacity: 1; transform: translateY(0); letter-spacing: 1px; }
+        @keyframes eye-merge-and-separate-1 {
+            0% { transform: translateX(-100px); opacity: 0; }
+            30% { transform: translateX(30px); opacity: 1; }
+            60% { transform: translateX(30px); opacity: 1; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes eye-merge-and-separate-2 {
+            0% { transform: translateX(100px); opacity: 0; }
+            30% { transform: translateX(-30px); opacity: 1; }
+            60% { transform: translateX(-30px); opacity: 1; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes brand-name-reveal {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
         @keyframes animated-eyelid-blink { 50% { transform: scaleY(0.1); } }
 
-        #refresh-overlay.animation-active #animated-eye-logo-1 {
-            animation: eye-close-in-1 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
-                       eye-open-out-1 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 3.5s forwards;
+        #refresh-overlay.refresh-animation-active #animated-eye-logo-1 {
+            left: calc(50% - 60px);
+            animation: eye-merge-and-separate-1 2.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
         }
-        #refresh-overlay.animation-active #animated-eye-logo-2 {
-            animation: eye-close-in-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards,
-                       eye-open-out-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 3.5s forwards;
+        #refresh-overlay.refresh-animation-active #animated-eye-logo-2 {
+            left: calc(50% + 32px);
+            animation: eye-merge-and-separate-2 2.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
         }
-        #refresh-overlay.animation-active #animated-brand-name {
+        #refresh-overlay.refresh-animation-active #animated-brand-name {
             visibility: visible;
-            animation: brand-name-appear 0.8s ease-out 1.5s forwards;
+            animation: brand-name-reveal 0.8s ease-out 1.5s forwards;
         }
-        #refresh-overlay.animation-active .eyelid-anim {
+        #refresh-overlay.refresh-animation-active .eyelid-anim {
             transform-origin: center;
-            animation: animated-eyelid-blink 0.2s linear 0.9s 2;
+            animation: animated-eyelid-blink 0.2s linear 1s 1;
         }
         
         @media (max-width: 950px) {
@@ -698,7 +705,10 @@
              .weather-main-content, .weather-details { order: 0; }
              .weather-details { grid-template-columns: 1fr 1fr; }
              .weather-header, .weather-description { display: block; }
-             .creative-info-wrapper { display: none; }
+            .ticker-item.calendar-item { grid-template-columns: 1fr; }
+            .calendar-date-block { flex-direction: row; align-items: baseline; gap: 10px; padding: 5px 10px;}
+            .calendar-date-block .date-day-number { font-size: 2rem; }
+            .calendar-sun-info-block, .creative-info-wrapper { display: none; }
         }
         @media (max-width: 380px) { .label-top-row { gap: 5px; } .brand-name { font-size: 1.1rem; } body.night-mode-active .ticker-logo { width: 20px; height: 20px; } .ticker-logo { width: 22px; height: 22px; } #clock { font-size: 0.8rem; } .control-group-label { display: none; } }
     </style>
@@ -1121,20 +1131,20 @@
                 if (mode === 'animation') {
                     clockWrapper.style.display = 'none';
                     animationWrapper.style.display = 'flex';
-                    refreshOverlay.classList.remove('animation-active');
+                    refreshOverlay.classList.remove('refresh-animation-active');
                     void refreshOverlay.offsetWidth;
-                    refreshOverlay.classList.add('animation-active');
+                    refreshOverlay.classList.add('refresh-animation-active');
                 } else {
                     animationWrapper.style.display = 'none';
                     clockWrapper.style.display = 'flex';
-                    refreshOverlay.classList.remove('animation-active');
+                    refreshOverlay.classList.remove('refresh-animation-active');
                     if (!analogClockInterval) {
                         updateAnalogClock();
                         analogClockInterval = setInterval(updateAnalogClock, 1000);
                     }
                 }
             } else {
-                refreshOverlay.classList.remove('visible', 'animation-active');
+                refreshOverlay.classList.remove('visible', 'refresh-animation-active');
                 if (analogClockInterval) {
                     clearInterval(analogClockInterval);
                     analogClockInterval = null;
@@ -1557,30 +1567,36 @@
             if (!isManualTrigger) {
                 if (currentThematicBlock.type !== 'summary_yesterday' && activeFilter === 'all') {
                     const dayOfMonth = today.getDate();
-                    const monthName = CALENDAR_DATA.honapok[today.getMonth()];
+                    const monthName = CALENDAR_DATA.honapok[today.getMonth()].slice(0,3);
                     const year = today.getFullYear();
                     const dayName = CALENDAR_DATA.napok[today.getDay()];
-                    const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
                     const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
                     const nyirLat = 47.95, nyirLon = 21.71;
                     const sunTimes = SunCalc.getTimes(today, nyirLat, nyirLon);
                     const sunriseStr = formatTime(sunTimes.sunrise);
                     const sunsetStr = formatTime(sunTimes.sunset);
-                    const nameDayText = names.length > 0 ? `<span class="date-nameday">${names.join(', ')} névnapja van.</span>` : '';
+                    const nameDayText = names.length > 0 ? `<span class="date-nameday">${names.join(', ')}</span>` : '';
                     
                     const calendarHtml = `
                     <div class="ticker-item calendar-item">
-                        ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
-                        <div class="date-wrapper">
-                            <span class="date-full">${formattedDate}</span>
-                            <span class="date-dayname">${dayNameDisplay}</span>
-                             ${nameDayText}
+                        <div class="calendar-date-block">
+                            <span class="date-day-number">${String(dayOfMonth).padStart(2, '0')}</span>
+                            <span class="date-month-year">${monthName} / ${year}</span>
                         </div>
-                        <div class="creative-info-wrapper">
-                                <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
-                                <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
-                                <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg> ${sunriseStr}</span>
-                                <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg> ${sunsetStr}</span>
+                        <div class="calendar-details-block">
+                            <span class="date-dayname">${dayNameDisplay}</span>
+                            ${nameDayText}
+                            <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja / ${getDaysLeftInYear(today)} nap van hátra.</span>
+                        </div>
+                        <div class="calendar-sun-info-block">
+                            <span class="sun-info-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
+                                <span>${sunriseStr}</span>
+                            </span>
+                            <span class="sun-info-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg>
+                                <span>${sunsetStr}</span>
+                            </span>
                         </div>
                     </div>`;
                     preliminaryItems.push(calendarHtml);
@@ -1630,7 +1646,7 @@
             standbyContent.innerHTML = contentItems.join('');
             
             const fetchDuration = Date.now() - fetchStartTime;
-            const minDisplayTime = isManualTrigger ? 1000 : 5000;
+            const minDisplayTime = isManualTrigger ? 1000 : 3500;
             const remainingTime = Math.max(0, minDisplayTime - fetchDuration);
 
             setTimeout(() => {
