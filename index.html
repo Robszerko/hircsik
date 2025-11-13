@@ -144,15 +144,24 @@
         .dot:nth-child(3) { animation-delay: 0.4s; }
         
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
+        
         #block-title-layer {
             position: absolute;
             top: 10px;
             right: 10px;
             z-index: 5;
-            background-color: rgba(0, 0, 0, 0.4);
-            color: var(--text-primary);
-            padding: 4px 10px;
+            
+            /* New Styles for a discreet, light, and visible layer */
+            background-color: rgba(255, 255, 255, 0.25); /* Semi-transparent light background */
+            backdrop-filter: blur(8px);                 /* Frosted glass effect for discretion */
+            -webkit-backdrop-filter: blur(8px);         /* Safari support */
             border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);  /* A subtle border to define the shape */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);       /* A soft shadow for a bit of depth */
+            color: #2c3e50;                             /* A consistently dark, readable text color */
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);  /* A very subtle glow to make it pop slightly */
+            
+            padding: 4px 10px;
             font-family: var(--font-display);
             font-size: 0.85rem;
             max-width: 50%;
@@ -161,8 +170,9 @@
             text-overflow: ellipsis;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.5s ease-in-out, backdrop-filter 1.5s ease-in-out, background-color 1.5s ease-in-out;
         }
+
         #block-title-layer.visible {
             opacity: 1;
         }
@@ -382,7 +392,7 @@
         .ticker-controls button:hover { background-color: var(--text-secondary); color: #000; }
         .ticker-controls button.active { background-color: var(--accent-main); color: white; border-color: var(--accent-main); }
         .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-        #night-mode-message, #next-block-indicator {
+        #night-mode-message {
             font-size: 0.8rem;
             font-weight: 500;
             color: var(--text-secondary);
@@ -390,7 +400,19 @@
             white-space: nowrap;
             margin-left: auto;
         }
-         #next-block-indicator { color: var(--accent-gold); }
+         #next-block-indicator {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #111;
+            background-color: var(--accent-gold);
+            transition: all 0.5s ease-in-out;
+            white-space: nowrap;
+            margin-left: auto;
+            padding: 3px 10px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            text-shadow: none;
+        }
         
         .nav-controls { display: flex; align-items: center; gap: 10px; }
         #news-counter {
@@ -1459,42 +1481,44 @@
                 newsToDisplay = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
             }
 
-            if(currentThematicBlock.type !== 'summary_yesterday' && activeFilter === 'all' && !isManualTrigger) {
-                const dayOfMonth = today.getDate();
-                const monthName = CALENDAR_DATA.honapok[today.getMonth()];
-                const year = today.getFullYear();
-                const dayName = CALENDAR_DATA.napok[today.getDay()];
-                const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
-                const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
-                const nyirLat = 47.95, nyirLon = 21.71;
-                const sunTimes = SunCalc.getTimes(today, nyirLat, nyirLon);
-                const sunriseStr = formatTime(sunTimes.sunrise);
-                const sunsetStr = formatTime(sunTimes.sunset);
+            if (!isManualTrigger) {
+                if (currentThematicBlock.type !== 'summary_yesterday' && activeFilter === 'all') {
+                    const dayOfMonth = today.getDate();
+                    const monthName = CALENDAR_DATA.honapok[today.getMonth()];
+                    const year = today.getFullYear();
+                    const dayName = CALENDAR_DATA.napok[today.getDay()];
+                    const formattedDate = `${year}. ${monthName} ${dayOfMonth}.`;
+                    const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                    const nyirLat = 47.95, nyirLon = 21.71;
+                    const sunTimes = SunCalc.getTimes(today, nyirLat, nyirLon);
+                    const sunriseStr = formatTime(sunTimes.sunrise);
+                    const sunsetStr = formatTime(sunTimes.sunset);
+                    
+                    const calendarHtml = `
+                    <div class="ticker-item calendar-item">
+                        ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
+                        <div class="date-wrapper">
+                            <span class="date-full">${formattedDate}</span>
+                            <span class="date-dayname">${dayNameDisplay}</span>
+                        </div>
+                        <div class="creative-info-wrapper">
+                                <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
+                                <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
+                                <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg> ${sunriseStr}</span>
+                                <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg> ${sunsetStr}</span>
+                        </div>
+                    </div>`;
+                    preliminaryItems.push(calendarHtml);
+                    
+                    const quoteHtml = `<div class="ticker-item quote-item"><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
+                    preliminaryItems.push(quoteHtml);
+                }
                 
-                const calendarHtml = `
-                <div class="ticker-item calendar-item">
-                    ${ICON_CALENDAR.replace('<svg', '<svg class="calendar-icon"')}
-                    <div class="date-wrapper">
-                        <span class="date-full">${formattedDate}</span>
-                        <span class="date-dayname">${dayNameDisplay}</span>
-                    </div>
-                    <div class="creative-info-wrapper">
-                            <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja.</span>
-                            <span class="creative-info-text">Még ${getDaysLeftInYear(today)} nap van hátra.</span>
-                            <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg> ${sunriseStr}</span>
-                            <span class="sun-info-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg> ${sunsetStr}</span>
-                    </div>
-                </div>`;
-                preliminaryItems.push(calendarHtml);
-                
-                const quoteHtml = `<div class="ticker-item quote-item"><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
-                preliminaryItems.push(quoteHtml);
+                let introText = currentThematicBlock.name;
+                if(activeFilter !== 'all') introText = `Hírek: '${activeFilter}'`;
+                else if(currentThematicBlock.type.startsWith('summary')) introText = `${currentThematicBlock.name}: a nap hírei`;
+                preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS} ${introText}</div>`);
             }
-            
-            let introText = currentThematicBlock.name;
-            if(activeFilter !== 'all') introText = `Hírek: '${activeFilter}'`;
-            else if(currentThematicBlock.type.startsWith('summary')) introText = `${currentThematicBlock.name}: a nap hírei`;
-            preliminaryItems.push(`<div class="ticker-item news-intro-item">${ICON_NEWS} ${introText}</div>`);
 
             newsToDisplay = [...preliminaryItems, ...newsToDisplay];
 
