@@ -294,39 +294,55 @@
             display: grid;
             grid-template-columns: auto 1fr auto;
             align-items: center;
-            gap: 20px;
-            padding: 10px 20px;
-            background-color: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            gap: 30px;
+            padding: 10px 30px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             transition: background-color 1.5s ease, border-color 1.5s ease;
         }
-
         .calendar-date-block {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background-color: rgba(0,0,0,0.1);
-            border-radius: 6px;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            min-width: 70px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+        .calendar-date-block .date-month-header {
+            background-color: #D32F2F;
+            color: white;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 0.8rem;
+            padding: 3px 0;
+            width: 100%;
+            text-align: center;
+            text-transform: uppercase;
         }
         .calendar-date-block .date-day-number {
             font-family: var(--font-display);
             font-size: 2.8rem;
             line-height: 1;
             color: var(--text-primary);
+            padding: 5px 15px 0;
+            background-color: rgba(255,255,255,0.8);
         }
-        .calendar-date-block .date-month-year {
+        .calendar-date-block .date-year {
             font-size: 0.8rem;
             font-weight: 500;
             color: var(--text-secondary);
+            padding: 0 15px 5px;
+            background-color: rgba(255,255,255,0.8);
+            width: 100%;
+            text-align: center;
+            margin-top: 2px;
         }
-
         .calendar-details-block {
             display: flex;
             flex-direction: column;
@@ -628,48 +644,39 @@
             width: 28px; height: 28px;
             position: absolute;
         }
-        #animated-logo-container #animated-eye-logo-1 { left: 50%; transform: translateX(-50%); }
-        #animated-logo-container #animated-eye-logo-2 { left: 50%; transform: translateX(-50%); }
-
         #animated-logo-container .brand-name {
             font-size: 1.5rem; letter-spacing: 1px;
             visibility: hidden;
             color: #ECF0F1;
         }
         
-        @keyframes eye-merge-and-separate-1 {
-            0% { transform: translateX(-100px); opacity: 0; }
-            30% { transform: translateX(30px); opacity: 1; }
-            60% { transform: translateX(30px); opacity: 1; }
-            100% { transform: translateX(0); opacity: 1; }
+        @keyframes eye-move-out-1 {
+            from { left: 50%; transform: translateX(-50%); }
+            to { left: calc(50% - 60px); transform: translateX(0); }
         }
-        @keyframes eye-merge-and-separate-2 {
-            0% { transform: translateX(100px); opacity: 0; }
-            30% { transform: translateX(-30px); opacity: 1; }
-            60% { transform: translateX(-30px); opacity: 1; }
-            100% { transform: translateX(0); opacity: 1; }
+        @keyframes eye-move-out-2 {
+            from { left: 50%; transform: translateX(-50%); }
+            to { left: calc(50% + 32px); transform: translateX(0); }
         }
         @keyframes brand-name-reveal {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
+            from { opacity: 0; letter-spacing: 5px; }
+            to { opacity: 1; letter-spacing: 1px; }
         }
         @keyframes animated-eyelid-blink { 50% { transform: scaleY(0.1); } }
 
         #refresh-overlay.refresh-animation-active #animated-eye-logo-1 {
-            left: calc(50% - 60px);
-            animation: eye-merge-and-separate-1 2.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+            animation: eye-move-out-1 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards;
         }
         #refresh-overlay.refresh-animation-active #animated-eye-logo-2 {
-            left: calc(50% + 32px);
-            animation: eye-merge-and-separate-2 2.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+            animation: eye-move-out-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards;
         }
         #refresh-overlay.refresh-animation-active #animated-brand-name {
             visibility: visible;
-            animation: brand-name-reveal 0.8s ease-out 1.5s forwards;
+            animation: brand-name-reveal 0.8s ease-out 0.8s forwards;
         }
         #refresh-overlay.refresh-animation-active .eyelid-anim {
             transform-origin: center;
-            animation: animated-eyelid-blink 0.2s linear 1s 1;
+            animation: animated-eyelid-blink 0.2s linear 0.2s 1;
         }
         
         @media (max-width: 950px) {
@@ -1567,7 +1574,7 @@
             if (!isManualTrigger) {
                 if (currentThematicBlock.type !== 'summary_yesterday' && activeFilter === 'all') {
                     const dayOfMonth = today.getDate();
-                    const monthName = CALENDAR_DATA.honapok[today.getMonth()].slice(0,3);
+                    const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
                     const year = today.getFullYear();
                     const dayName = CALENDAR_DATA.napok[today.getDay()];
                     const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
@@ -1580,8 +1587,9 @@
                     const calendarHtml = `
                     <div class="ticker-item calendar-item">
                         <div class="calendar-date-block">
+                            <div class="date-month-header">${monthName}</div>
                             <span class="date-day-number">${String(dayOfMonth).padStart(2, '0')}</span>
-                            <span class="date-month-year">${monthName} / ${year}</span>
+                            <span class="date-year">${year}</span>
                         </div>
                         <div class="calendar-details-block">
                             <span class="date-dayname">${dayNameDisplay}</span>
