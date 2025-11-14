@@ -183,14 +183,14 @@
             top: 10px;
             right: 10px;
             z-index: 5;
-            background-color: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            color: #2c3e50;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            color: #FFFFFF;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
             padding: 4px 10px;
             font-family: var(--font-display);
             font-size: 0.85rem;
@@ -200,11 +200,30 @@
             text-overflow: ellipsis;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out, backdrop-filter 1.5s ease-in-out, background-color 1.5s ease-in-out;
+            transition: opacity 0.5s ease-in-out, backdrop-filter 1.5s ease-in-out, background-color 1.5s ease-in-out, color 1.5s ease-in-out;
         }
 
         #block-title-layer.visible {
             opacity: 1;
+        }
+
+        #breaking-title-layer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 6;
+            background-color: #D32F2F;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            color: #FFFFFF;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+            padding: 4px 10px;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            pointer-events: none;
+            display: none;
+            animation: blink 1.2s step-end infinite;
         }
 
         .ticker-track { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; will-change: opacity, transform; transform: translateY(10px); display: flex; align-items: center; justify-content: center; }
@@ -245,6 +264,8 @@
         .ticker-item a:hover { color: var(--accent-main); }
         .ticker-item-description { font-size: 0.9rem; font-weight: 400; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
         .ticker-item.breaking-highlight { font-weight: 700; color: var(--text-primary); animation: pulse-bg 2s infinite; }
+        
+        /* This ::before is now a backup/supplement, main indicator is #breaking-title-layer */
         .ticker-item.breaking-highlight::before {
             content: 'Rendkívüli hír';
             position: absolute;
@@ -257,7 +278,6 @@
             font-weight: 700;
             border-radius: 4px;
             z-index: 10;
-            animation: blink 1.2s step-end infinite;
             font-family: var(--font-body);
         }
         .ticker-item.breaking-highlight .ticker-item-content-wrapper {
@@ -329,15 +349,16 @@
             font-family: var(--font-display);
             font-size: 2.8rem;
             line-height: 1;
-            color: var(--text-primary);
+            color: #2c3e50;
             padding: 5px 15px 0;
             background-color: rgba(255,255,255,0.8);
+            text-shadow: 0px 1px 2px rgba(0,0,0,0.1);
         }
         .calendar-date-block .date-year {
             font-size: 0.8rem;
             font-weight: 500;
-            color: var(--text-secondary);
-            padding: 5 15px 5px;
+            color: #424242;
+            padding: 5px 15px 5px;
             background-color: rgba(255,255,255,0.8);
             width: 100%;
             text-align: center;
@@ -424,10 +445,52 @@
             right: 10px;
         }
 
+        .goodbye-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%);
+        }
+
+        #progress-bar-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: rgba(0,0,0,0.2);
+            z-index: 6;
+        }
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-main));
+            border-radius: 0 2px 2px 0;
+        }
+        #progress-bar.animate {
+            animation-name: fill-progress;
+            animation-timing-function: linear;
+            animation-fill-mode: forwards;
+        }
+
 
         #breaking-indicator { position: absolute; top: 8px; left: 8px; width: 10px; height: 10px; background-color: #D32F2F; border-radius: 50%; display: none; border: 2px solid #2C3E50; box-shadow: 0 0 10px #D32F2F; z-index: 10; }
         #breaking-indicator.active { display: block; animation: pulse 1.5s infinite; }
         
+        @keyframes fill-progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        @keyframes strobe-in {
+            0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); }
+            12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); }
+        }
+        .strobe-in {
+            animation: strobe-in 0.8s ease-in-out forwards;
+        }
         @keyframes glitch-text { 0%, 100% { text-shadow: 1px 1px 0 #00FFFF, -1px -1px 0 #FF00FF; opacity: 1; } 5% { opacity: 0.8; } 10% { opacity: 1; } 15% { opacity: 0.6; } 20% { opacity: 1; text-shadow: -1px -1px 0 #00FFFF, 1px 1px 0 #FF00FF; } 25% { opacity: 0.9; } 30% { opacity: 1; } 50% { text-shadow: 1px -1px 0 #00FFFF, -1px 1px 0 #FF00FF; } 75% { text-shadow: -1px 1px 0 #00FFFF, 1px -1px 0 #FF00FF; } }
         @keyframes static-move { 0% { background-position: 0 0; } 100% { background-position: 4px 6px; } }
         @keyframes static-fade-in-out { 0% { opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.6; } 100% { opacity: 0; } }
@@ -793,8 +856,10 @@
                 </div>
                 <div class="ticker-wrap" id="ticker-wrap">
                     <div id="block-title-layer"></div>
+                    <div id="breaking-title-layer">Rendkívüli hír</div>
                     <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
                     <div id="ticker-b" class="ticker-track"><div class="ticker-content"></div></div>
+                    <div id="progress-bar-container"><div id="progress-bar"></div></div>
                 </div>
             </div>
             <div class="ticker-controls">
@@ -839,16 +904,19 @@
         const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "01-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"09-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-11": ["Árpád"],"12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
         
         const THEMATIC_BLOCKS = [
-            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday', categories: [] },
-            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',             categories: [] },
-            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',             categories: [] },
-            { start: 12,   name: 'Délidőben',            type: 'fresh',             categories: [] },
-            { start: 13,   name: 'Délutáni csúcs',      type: 'fresh',             categories: [] },
-            { start: 18,   name: 'Hazai Pálya',          type: 'summary_today',     categories: ['belföld'] },
-            { start: 19,   name: 'Esti gyors',           type: 'fresh',             categories: [] },
-            { start: 22,   name: 'Sportpercek',          type: 'summary_today',     categories: ['sport'] },
-            { start: 22.5, name: 'Gazdasági Negyed',     type: 'summary_today',     categories: ['gazdaság'] },
-            { start: 23,   name: 'Hazai Pálya+',         type: 'summary_today',     categories: ['belföld'] },
+            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [] },
+            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    categories: [] },
+            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    categories: [] },
+            { start: 12,   name: 'Délidőben',            type: 'fresh',                    categories: [] },
+            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    categories: [] },
+            { start: 18,   name: 'Hazai pálya',          type: 'summary_today',            categories: ['belföld'] },
+            { start: 18.5, name: 'Esti gyors',           type: 'fresh',                    categories: [] },
+            { start: 22,   name: 'TKP SPORT',            type: 'summary_today',            categories: ['sport'] },
+            { start: 22.5, name: 'Gazdasági Negyed',     type: 'summary_today',            categories: ['gazdaság'] },
+            { start: 22.75,name: 'Sziréna',              type: 'summary_today',            categories: ['kékfény'] },
+            { start: 23,   name: 'Hazai Pálya+',         type: 'summary_today',            categories: ['belföld'] },
+            { start: 23.5, name: 'Napzárta',             type: 'special_summary_today_80', categories: [] },
+            { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [] }
         ];
 
         const app = initializeApp(firebaseConfig);
@@ -882,6 +950,8 @@
         const blockTitleLayerEl = document.getElementById('block-title-layer');
         const nextBlockIndicatorEl = document.getElementById('next-block-indicator');
         const scheduleOverlayEl = document.getElementById('schedule-overlay');
+        const progressBar = document.getElementById('progress-bar');
+        const breakingTitleLayerEl = document.getElementById('breaking-title-layer');
 
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
@@ -912,6 +982,7 @@
         let newsCheckInterval = null;
         let lastNewsCheckTimestamp = 0;
         let accumulatedNewNewsCount = 0;
+        let wasPreviousItemBreaking = false;
 
 
         const stripHtml = (html) => { let doc = new DOMParser().parseFromString(html, 'text/html'); return doc.body.textContent || ""; };
@@ -1000,6 +1071,14 @@
             if (code >= 95) return 'thunderstorm';
             return 'cloudy';
         };
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
         async function fetchAllWeatherData() {
             const fetchList = async (list) => {
@@ -1227,7 +1306,7 @@
             nextStartTime.setHours(Math.floor(next.start), (next.start % 1) * 60, 0, 0);
             if (next.start < current.start) nextStartTime.setDate(nextStartTime.getDate() + 1);
             const timeToNext = nextStartTime - now;
-            if (timeToNext > 0 && timeToNext < 60 * 60 * 1000) {
+            if (timeToNext > 0 && timeToNext < 15 * 60 * 1000) {
                 const nextBlockStartTime = formatBlockTime(next.start);
                 nextBlockIndicatorEl.textContent = `Következik ${nextBlockStartTime}-tól: ${next.name}`;
                 nextBlockIndicatorEl.style.display = 'block';
@@ -1266,7 +1345,7 @@
         function updateFilterButtons(newsItems) { const availableCategories = new Set(newsItems.flatMap(item => item.categories || [])); filterControls.innerHTML = ''; const allBtn = document.createElement('button'); allBtn.dataset.filter = 'all'; allBtn.textContent = 'Összes'; filterControls.appendChild(allBtn); availableCategories.forEach(cat => { const btn = document.createElement('button'); btn.dataset.filter = cat; btn.textContent = cat; filterControls.appendChild(btn); }); let activeBtn = filterControls.querySelector(`[data-filter="${activeFilter}"]`) || filterControls.querySelector('[data-filter="all"]'); activeFilter = activeBtn.dataset.filter; activeBtn.classList.add('active'); }
         function filterNews(newsItems, category) { if (category === 'all') return newsItems; return newsItems.filter(item => item.categories && item.categories.includes(category)); }
         const getSourceName = (url) => { if (url.includes('index.hu')) return 'Index'; if (url.includes('telex.hu')) return 'Telex'; if (url.includes('hvg.hu')) return 'HVG'; if (url.includes('24.hu')) return '24.hu'; if (url.includes('ma.hu')) return 'ma.hu'; if (url.includes('portfolio.hu')) return 'Portfolio'; if (url.includes('origo.hu')) return 'Origo'; if (url.includes('nemzetisport.hu')) return 'NSO'; try { return new URL(url).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch { return 'Ismeretlen'; } };
-        const formatBlockTime = (time) => `${String(Math.floor(time)).padStart(2, '0')}:${String((time % 1) * 60).padStart(2, '0')}`;
+        const formatBlockTime = (time) => `${String(Math.floor(time)).padStart(2, '0')}:${String(Math.round((time % 1) * 60)).padStart(2, '0')}`;
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; } }
@@ -1284,14 +1363,44 @@
             const currentItem = items[currentItemIndex];
             
             if(currentItem) {
-                const shouldShowTitle = !currentItem.classList.contains('calendar-item');
-                const isNightMode = bodyEl.classList.contains('night-mode-active');
-                
-                if (shouldShowTitle && !isNightMode) {
-                    blockTitleLayerEl.classList.add('visible');
-                } else {
-                    blockTitleLayerEl.classList.remove('visible');
+                // 1. Handle Progress Bar
+                progressBar.classList.remove('animate');
+                void progressBar.offsetWidth; 
+
+                let duration = FLIP_INTERVAL_REGULAR;
+                if (currentItem.classList.contains('announcement-item')) {
+                    duration = FLIP_INTERVAL_ANNOUNCEMENT;
+                } else if (currentItem.classList.contains('news-intro-item') || currentItem.classList.contains('calendar-item') || currentItem.classList.contains('quote-item') || currentItem.classList.contains('goodbye-item')) {
+                    duration = FLIP_INTERVAL_INFO;
                 }
+                
+                progressBar.style.animationDuration = `${duration / 1000}s`;
+                progressBar.classList.add('animate');
+                
+                // 2. Handle Breaking News & Block Title
+                const isCurrentItemBreaking = currentItem.classList.contains('breaking-highlight');
+                const isNightMode = bodyEl.classList.contains('night-mode-active');
+                const shouldShowTitle = !currentItem.classList.contains('calendar-item') && !currentItem.classList.contains('goodbye-item');
+
+                blockTitleLayerEl.classList.remove('visible', 'strobe-in');
+                breakingTitleLayerEl.style.display = 'none';
+
+                if (isCurrentItemBreaking) {
+                    breakingTitleLayerEl.style.display = 'block';
+                } else if (shouldShowTitle && !isNightMode) {
+                    if (wasPreviousItemBreaking) {
+                        setTimeout(() => {
+                            blockTitleLayerEl.classList.add('visible', 'strobe-in');
+                            blockTitleLayerEl.addEventListener('animationend', () => {
+                                blockTitleLayerEl.classList.remove('strobe-in');
+                            }, { once: true });
+                        }, 1000);
+                    } else {
+                        blockTitleLayerEl.classList.add('visible');
+                    }
+                }
+                
+                wasPreviousItemBreaking = isCurrentItemBreaking;
 
                 requestAnimationFrame(() => { 
                     currentItem.classList.add('visible');
@@ -1300,17 +1409,12 @@
                         updateTimeline();
                     }
                 });
-            }
 
-            let duration = FLIP_INTERVAL_REGULAR;
-             if (currentItem?.classList.contains('announcement-item')) {
-                duration = FLIP_INTERVAL_ANNOUNCEMENT;
-            } else if (currentItem?.classList.contains('news-intro-item') || currentItem?.classList.contains('calendar-item') || currentItem?.classList.contains('quote-item')) {
-                duration = FLIP_INTERVAL_INFO;
+                flipRemainingTime = duration;
+                if(currentThematicBlock.type !== 'goodbye') {
+                    resumeFlipCycle();
+                }
             }
-            
-            flipRemainingTime = duration;
-            resumeFlipCycle();
         }
 
         function cycleItems() { 
@@ -1320,35 +1424,18 @@
         
         function startFlipCycle(startAtFirst = true) {
             if (flipTimeoutId) clearTimeout(flipTimeoutId);
+            pauseFlipCycle();
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item');
-            currentItemIndex = startAtFirst ? 0 : currentItemIndex;
-            
+
             if (items.length > 0) {
-                if (startAtFirst) {
-                    items.forEach((item, index) => item.classList.toggle('visible', index === 0));
-                }
-                updateCounter();
-                const currentItem = items[currentItemIndex];
-
-                const shouldShowTitle = !currentItem.classList.contains('calendar-item');
-                const isNightMode = bodyEl.classList.contains('night-mode-active');
-                if (shouldShowTitle && !isNightMode) {
-                    blockTitleLayerEl.classList.add('visible');
-                } else {
-                    blockTitleLayerEl.classList.remove('visible');
-                }
-
-                let duration = FLIP_INTERVAL_REGULAR;
-                if (currentItem?.classList.contains('announcement-item')) {
-                    duration = FLIP_INTERVAL_ANNOUNCEMENT;
-                } else if (currentItem?.classList.contains('news-intro-item') || currentItem?.classList.contains('calendar-item') || currentItem?.classList.contains('quote-item')) {
-                    duration = FLIP_INTERVAL_INFO;
-                }
-                flipRemainingTime = duration;
-                resumeFlipCycle();
+                const startIndex = startAtFirst ? 0 : currentItemIndex;
+                showItemAtIndex(startIndex); 
             } else {
                 updateCounter();
                 flipRemainingTime = 0;
+                progressBar.classList.remove('animate');
+                blockTitleLayerEl.classList.remove('visible', 'strobe-in');
+                breakingTitleLayerEl.style.display = 'none';
             }
         }
         
@@ -1406,6 +1493,30 @@
             if (Object.keys(rssFeeds).length === 0 || !currentThematicBlock) {
                 console.log("Várakozás a feedekre vagy a blokk információra...");
                 return;
+            }
+            
+            if (currentThematicBlock.type === 'goodbye') {
+                const standbyTrackKey = activeTrackKey === 'a' ? 'b' : 'a';
+                const standbyContent = tracks[standbyTrackKey].querySelector('.ticker-content');
+                
+                standbyContent.innerHTML = `
+                    <div class="ticker-item visible goodbye-item">
+                        <svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:48px; height:48px; margin-bottom: 15px;">
+                           <use href="#eyeGrad"/>
+                           <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
+                           <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                        </svg>
+                        <h2 style="font-family: var(--font-display); color: var(--text-primary); font-size: 1.5rem;">Köszönjük a figyelmet!</h2>
+                        <p style="color: var(--text-secondary); font-size: 1rem;">Jó éjszakát és kellemes pihenést kíván a TKP NEWS csapata!</p>
+                    </div>`;
+                
+                requestAnimationFrame(() => {
+                    tracks[standbyTrackKey].classList.add('visible');
+                    tracks[activeTrackKey].classList.remove('visible');
+                    activeTrackKey = standbyTrackKey;
+                    startFlipCycle();
+                });
+                return; 
             }
 
             isInfoMessageActive = false;
@@ -1536,7 +1647,7 @@
             const timeLimit = new Date();
             if (currentThematicBlock.type === 'fresh') {
                 timeLimit.setHours(timeLimit.getHours() - 2);
-            } else if (currentThematicBlock.type === 'summary_today') {
+            } else if (currentThematicBlock.type.startsWith('summary') || currentThematicBlock.type === 'special_summary_today_80') {
                 timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.type === 'summary_yesterday') {
                 const yesterday = new Date();
@@ -1556,16 +1667,18 @@
                 return itemDate >= timeLimit;
             });
 
-            if (activeFilter !== 'all') {
+            if (activeFilter !== 'all' && currentThematicBlock.categories.length === 0) {
                 filteredNews = filterNews(filteredNews, activeFilter);
             } else if (currentThematicBlock.categories.length > 0) {
                 let blockFiltered = filteredNews.filter(item => item.categories && item.categories.some(cat => currentThematicBlock.categories.includes(cat)));
-                if (blockFiltered.length > 0 || currentThematicBlock.type.startsWith('summary')) {
-                    filteredNews = blockFiltered;
-                }
+                 filteredNews = blockFiltered;
             }
             
-            if(currentThematicBlock.type === 'summary_yesterday') {
+            if (currentThematicBlock.type === 'special_summary_today_80') {
+                 const now = new Date();
+                 const limit = (now.getMinutes() < 45) ? 80 : 160;
+                 newsToDisplay = shuffleArray(filteredNews).slice(0, limit);
+            } else if(currentThematicBlock.type === 'summary_yesterday') {
                 newsToDisplay = filteredNews.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
             } else {
                 newsToDisplay = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
