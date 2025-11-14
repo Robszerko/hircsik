@@ -54,7 +54,7 @@
             background-size: 500px 500px, 800px 800px, 100% 100%;
         }
 
-        .ticker-main-row { display: flex; align-items: stretch; flex-grow: 1; min-height: 110px; }
+        .ticker-main-row { display: flex; align-items: stretch; flex-grow: 1; min-height: 125px; }
         .ticker-label {
             background: linear-gradient(160deg, #3a4f64, #2c3e50);
             color: #ECF0F1;
@@ -233,10 +233,11 @@
         .ticker-item {
             display: flex; flex-direction: column; align-items: flex-start; text-align: left;
             font-size: 0.95rem; font-weight: 500; color: var(--text-secondary);
-            padding: 15px 20px;
+            padding: 10px 20px;
             border-radius: 4px;
             position: absolute; top: 50%; left: 50%;
-            width: 95%; height: 90%;
+            width: 95%; 
+            max-height: 95%;
             justify-content: center;
             background-color: transparent;
             opacity: 0;
@@ -930,10 +931,6 @@
                         <div id="clock">--.--.--. ------ --:--</div>
                         <div id="nameday"></div>
                         <div id="manual-refresh-trigger" title="Hírek azonnali frissítése" style="display: none;"></div>
-                        <div id="night-shift-container" style="display: none;">
-                            <svg id="night-mode-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                            <span id="night-shift-label">Éjszakai műszak</span>
-                        </div>
                     </div>
                 </div>
                 <div class="ticker-wrap" id="ticker-wrap">
@@ -1017,7 +1014,6 @@
         const tickerLabel = document.getElementById('ticker-label');
         const filterControlGroup = document.getElementById('filter-control-group');
         const nightModeMessage = document.getElementById('night-mode-message');
-        const nightShiftContainer = document.getElementById('night-shift-container');
         const worldWeatherContainer = document.getElementById('world-weather-container');
         const brandNameEl = document.querySelector('.brand-name');
         const namedayEl = document.getElementById('nameday');
@@ -1462,7 +1458,6 @@
                 
                 // 2. Handle Breaking News & Block Title
                 const isCurrentItemBreaking = currentItem.classList.contains('breaking-highlight');
-                const isNightMode = bodyEl.classList.contains('night-mode-active');
                 const shouldShowTitle = !currentItem.classList.contains('calendar-item') && !currentItem.classList.contains('goodbye-item');
 
                 blockTitleLayerEl.classList.remove('visible', 'strobe-in');
@@ -1470,7 +1465,7 @@
 
                 if (isCurrentItemBreaking) {
                     breakingTitleLayerEl.style.display = 'block';
-                } else if (shouldShowTitle && !isNightMode) {
+                } else if (shouldShowTitle) {
                     if (wasPreviousItemBreaking) {
                         setTimeout(() => {
                             blockTitleLayerEl.classList.add('visible', 'strobe-in');
@@ -1704,22 +1699,12 @@
                 namedayEl.style.display = 'none';
             }
 
-
-            if (currentThematicBlock.type === 'summary_yesterday') {
-                nightShiftContainer.style.display = 'flex';
-                bodyEl.classList.add('night-mode-active');
-                filterControlGroup.style.display = 'none';
-                nightModeMessage.textContent = "Előző nap hírei. Friss hírek: 6:00-tól.";
-                nightModeMessage.style.display = 'block';
-                blockTitleLayerEl.classList.remove('visible');
-            } else {
-                nightShiftContainer.style.display = 'none';
-                bodyEl.classList.remove('night-mode-active');
-                filterControlGroup.style.display = 'flex';
-                nightModeMessage.style.display = 'none';
-                updateFilterButtons(allNewsItems);
-                blockTitleLayerEl.textContent = currentThematicBlock.name;
-            }
+            blockTitleLayerEl.textContent = currentThematicBlock.name;
+            bodyEl.classList.remove('night-mode-active');
+            filterControlGroup.style.display = 'flex';
+            nightModeMessage.style.display = 'none';
+            updateFilterButtons(allNewsItems);
+            
             updateDynamicTheme();
 
             let contentItems = [];
