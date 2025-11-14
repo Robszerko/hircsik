@@ -76,10 +76,10 @@
         body.loaded #intro-overlay { transform: scaleX(0); transform-origin: left; }
         
         .label-content { display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(20px); transition: opacity 0.4s, transform 0.4s; width: 100%; }
-        body.loaded .label-content { 
+        body.intro-finished .label-content { 
             opacity: 1; 
             transform: translateY(0);
-            animation: content-glitch-in 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
+            animation: content-glitch-in 1.2s cubic-bezier(0.7, 0, 0.3, 1) 0.2s both;
         }
 
         .ticker-label::before {
@@ -88,7 +88,7 @@
             opacity: 0; z-index: 9; pointer-events: none; animation: static-move 0.15s steps(2) infinite;
         }
 
-        body.loaded .ticker-label::before {
+        body.intro-finished .ticker-label::before {
             animation: static-move 0.15s steps(2) infinite, static-fade-in-out 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
         }
 
@@ -499,6 +499,70 @@
         @keyframes pulse { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); } 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); } }
         @keyframes pulse-bg { 0% { background-color: rgba(211, 47, 47, 0.1); } 50% { background-color: rgba(211, 47, 47, 0.25); } 100% { background-color: rgba(211, 47, 47, 0.1); } }
         @keyframes widget-fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* --- NEW INTRO ANIMATION --- */
+        #intro-animation-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9;
+            opacity: 0;
+            pointer-events: none;
+        }
+        #intro-logo-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+        }
+        .intro-eye {
+            width: 32px; height: 32px;
+            opacity: 0;
+        }
+        #intro-logo-wrapper .brand-name {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+        .intro-eye .eyelid {
+            transform-origin: center;
+            transform: scaleY(1);
+        }
+
+        @keyframes intro-fade-in { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        @keyframes intro-blink { 50% { transform: scaleY(0.1); } }
+        @keyframes intro-split-left { from { transform: translateX(25px); } to { transform: translateX(0); } }
+        @keyframes intro-split-right { from { transform: translateX(-25px); } to { transform: translateX(0); } }
+        @keyframes intro-text-reveal { from { opacity: 0; letter-spacing: 5px; } to { opacity: 1; letter-spacing: 1px; } }
+        @keyframes intro-move-up { to { transform: translateY(-30px) scale(0.85); opacity: 0; } }
+
+        .intro-animation-active #intro-animation-container { opacity: 1; }
+        .intro-animation-active .intro-eye {
+            animation: intro-fade-in 0.5s ease-out forwards;
+        }
+        .intro-animation-active .intro-eye .eyelid {
+            animation: intro-blink 0.2s linear 0.7s 2 alternate;
+        }
+        .intro-animation-active #intro-eye-left {
+            animation-name: intro-fade-in, intro-split-left;
+            animation-duration: 0.5s, 0.8s;
+            animation-delay: 0s, 1.5s;
+            animation-fill-mode: forwards, forwards;
+        }
+        .intro-animation-active #intro-eye-right {
+            animation-name: intro-fade-in, intro-split-right;
+            animation-duration: 0.5s, 0.8s;
+            animation-delay: 0s, 1.5s;
+            animation-fill-mode: forwards, forwards;
+        }
+        .intro-animation-active #intro-brand-name {
+            animation: intro-text-reveal 0.5s ease-out 2.3s forwards;
+        }
+        .intro-animation-active #intro-logo-wrapper .intro-eye .eyelid {
+            animation: intro-blink 0.2s linear 0.7s 2, intro-blink 0.2s linear 2.8s 2;
+        }
+        .intro-animation-active #intro-logo-wrapper {
+            animation: intro-move-up 0.8s ease-in 4s forwards;
+        }
 
         .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; padding: 5px 15px; gap: 10px; transition: border-color 1.5s ease-in-out; }
         .control-group { display: flex; align-items: center; gap: 5px; }
@@ -791,6 +855,21 @@
                     <div id="intro-overlay">
                         <div class="color-bar" style="background-color: #c0c0c0;"></div> <div class="color-bar" style="background-color: #c0c000;"></div> <div class="color-bar" style="background-color: #00c0c0;"></div> <div class="color-bar" style="background-color: #00c000;"></div> <div class="color-bar" style="background-color: #c000c0;"></div> <div class="color-bar" style="background-color: #c00000;"></div> <div class="color-bar" style="background-color: #0000c0;"></div>
                     </div>
+
+                    <div id="intro-animation-container">
+                        <div id="intro-logo-wrapper">
+                            <svg class="intro-eye" id="intro-eye-left" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                               <use href="#eye-paths"/>
+                               <path class="eyelid" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                            <span class="brand-name" id="intro-brand-name">TKP NEWS</span>
+                            <svg class="intro-eye" id="intro-eye-right" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                               <use href="#eye-paths"/>
+                               <path class="eyelid" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+
                     <div id="breaking-indicator"></div>
                     
                     <div id="refresh-overlay">
@@ -830,18 +909,21 @@
                     <div class="label-content">
                         <div class="label-top-row">
                              <svg class="ticker-logo" id="eye-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <defs><linearGradient id="eyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient></defs>
-                                <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
-                                <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                                <defs>
+                                    <linearGradient id="eyeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#E4E6EB"/><stop offset="100%" stop-color="#95A5A6"/></linearGradient>
+                                    <g id="eye-paths">
+                                        <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
+                                        <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                                    </g>
+                                </defs>
+                                <use href="#eye-paths"/>
                                 <path id="eyelid" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" style="transform: scaleY(0);"/>
                             </svg>
                             <div class="brand-container">
                                 <span class="brand-name">TKP NEWS</span>
                             </div>
                             <svg class="ticker-logo" id="eye-logo-2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <use href="#eyeGrad"/>
-                                <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
-                                <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                                <use href="#eye-paths"/>
                                 <path id="eyelid-2" d="M2,12 C6,12 18,12 22,12" stroke="#2C3E50" stroke-width="3" stroke-linecap="round" style="transform: scaleY(0);"/>
                             </svg>
                         </div>
@@ -932,6 +1014,7 @@
         const breakingIndicator = document.getElementById('breaking-indicator');
         const filterControls = document.getElementById('filter-controls');
         const bodyEl = document.body;
+        const tickerLabel = document.getElementById('ticker-label');
         const filterControlGroup = document.getElementById('filter-control-group');
         const nightModeMessage = document.getElementById('night-mode-message');
         const nightShiftContainer = document.getElementById('night-shift-container');
@@ -952,6 +1035,7 @@
         const scheduleOverlayEl = document.getElementById('schedule-overlay');
         const progressBar = document.getElementById('progress-bar');
         const breakingTitleLayerEl = document.getElementById('breaking-title-layer');
+        const introAnimationContainer = document.getElementById('intro-animation-container');
 
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
@@ -1303,7 +1387,7 @@
             }
             
             const nextStartTime = new Date(now);
-            nextStartTime.setHours(Math.floor(next.start), (next.start % 1) * 60, 0, 0);
+            nextStartTime.setHours(Math.floor(next.start), Math.round((next.start % 1) * 60), 0, 0);
             if (next.start < current.start) nextStartTime.setDate(nextStartTime.getDate() + 1);
             const timeToNext = nextStartTime - now;
             if (timeToNext > 0 && timeToNext < 15 * 60 * 1000) {
@@ -1345,11 +1429,10 @@
         function updateFilterButtons(newsItems) { const availableCategories = new Set(newsItems.flatMap(item => item.categories || [])); filterControls.innerHTML = ''; const allBtn = document.createElement('button'); allBtn.dataset.filter = 'all'; allBtn.textContent = 'Összes'; filterControls.appendChild(allBtn); availableCategories.forEach(cat => { const btn = document.createElement('button'); btn.dataset.filter = cat; btn.textContent = cat; filterControls.appendChild(btn); }); let activeBtn = filterControls.querySelector(`[data-filter="${activeFilter}"]`) || filterControls.querySelector('[data-filter="all"]'); activeFilter = activeBtn.dataset.filter; activeBtn.classList.add('active'); }
         function filterNews(newsItems, category) { if (category === 'all') return newsItems; return newsItems.filter(item => item.categories && item.categories.includes(category)); }
         const getSourceName = (url) => { if (url.includes('index.hu')) return 'Index'; if (url.includes('telex.hu')) return 'Telex'; if (url.includes('hvg.hu')) return 'HVG'; if (url.includes('24.hu')) return '24.hu'; if (url.includes('ma.hu')) return 'ma.hu'; if (url.includes('portfolio.hu')) return 'Portfolio'; if (url.includes('origo.hu')) return 'Origo'; if (url.includes('nemzetisport.hu')) return 'NSO'; try { return new URL(url).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch { return 'Ismeretlen'; } };
-        const formatBlockTime = (time) => `${String(Math.floor(time)).padStart(2, '0')}:${String(Math.round((time % 1) * 60)).padStart(2, '0')}`;
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 
-        function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; } }
-        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && tracks[activeTrackKey].querySelectorAll('.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); } }
+        function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
+        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && tracks[activeTrackKey].querySelectorAll('.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
         
         function showItemAtIndex(index, isManual = false) {
             if (isInfoMessageActive) return;
@@ -1456,8 +1539,9 @@
         }
 
         function triggerTextGlitch() { 
-            if (document.visibilityState !== 'visible') {
-                setTimeout(triggerTextGlitch, Math.random() * (20000 - 7000) + 7000);
+            if (document.visibilityState !== 'visible' || !bodyEl.classList.contains('intro-finished')) {
+                const randomInterval = Math.random() * (20000 - 7000) + 7000;
+                setTimeout(triggerTextGlitch, randomInterval);
                 return;
             }; 
             brandNameEl.classList.add('glitch-text-active'); 
@@ -1502,9 +1586,7 @@
                 standbyContent.innerHTML = `
                     <div class="ticker-item visible goodbye-item">
                         <svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:48px; height:48px; margin-bottom: 15px;">
-                           <use href="#eyeGrad"/>
-                           <path d="M1,12 C1,12 5,4 12,4 C19,4 23,12 23,12 C23,12 19,20 12,20 C5,20 1,12 1,12 Z" stroke="url(#eyeGrad)" stroke-width="1.5" fill="none"/>
-                           <circle cx="12" cy="12" r="3" fill="url(#eyeGrad)"/>
+                           <use href="#eye-paths"/>
                         </svg>
                         <h2 style="font-family: var(--font-display); color: var(--text-primary); font-size: 1.5rem;">Köszönjük a figyelmet!</h2>
                         <p style="color: var(--text-secondary); font-size: 1rem;">Jó éjszakát és kellemes pihenést kíván a TKP NEWS csapata!</p>
@@ -1902,17 +1984,38 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => { document.body.classList.add('loaded'); }, 200);
+            setTimeout(() => { 
+                document.body.classList.add('loaded'); 
+                
+                setTimeout(() => {
+                    tickerLabel.classList.add('intro-animation-active');
+                    setTimeout(() => {
+                        introAnimationContainer.style.display = 'none';
+                        document.body.classList.add('intro-finished');
+                        if (document.visibilityState === 'visible') { 
+                            startAllTimers();
+                            triggerEyeBlink();
+                        }
+                    }, 5000); // Total duration of new intro animation
+                }, 2000); // After color bars finish
+
+            }, 200);
             
             updateClock(); 
             setInterval(updateClock, 1000);
             updateDynamicTheme(); 
             setInterval(updateDynamicTheme, 5 * 60 * 1000);
             
-            if (document.visibilityState === 'visible') { 
-                startAllTimers();
-                triggerEyeBlink();
-            }
+            document.addEventListener('visibilitychange', () => { 
+                if (document.visibilityState === 'visible') {
+                    if (bodyEl.classList.contains('intro-finished')) {
+                        resumeFlipCycle();
+                        startAllTimers();
+                    }
+                } else {
+                    stopAllTimers();
+                }
+            });
 
             tickerWrap.addEventListener('mouseenter', pauseFlipCycle);
             tickerWrap.addEventListener('mouseleave', resumeFlipCycle);
@@ -1935,15 +2038,6 @@
                     if (firstItemIndex !== -1) {
                          showItemAtIndex(firstItemIndex, true);
                     }
-                }
-            });
-
-            document.addEventListener('visibilitychange', () => { 
-                if (document.visibilityState === 'visible') {
-                    resumeFlipCycle();
-                    startAllTimers();
-                } else {
-                    stopAllTimers();
                 }
             });
         });
