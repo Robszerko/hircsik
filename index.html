@@ -56,7 +56,7 @@
         .ticker-label {
             background: linear-gradient(160deg, #3a4f64, #2c3e50);
             color: #ECF0F1;
-            padding: 0 15px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -73,11 +73,16 @@
         .color-bar { flex-grow: 1; }
         body.loaded #intro-overlay { transform: scaleX(0); transform-origin: left; }
         
-        .label-content { display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(20px); transition: opacity 0.4s, transform 0.4s; width: 100%; }
-        body.intro-finished .label-content { 
-            opacity: 1; 
-            transform: translateY(0);
-            animation: content-glitch-in 1.2s cubic-bezier(0.7, 0, 0.3, 1) 0.2s both;
+        .label-content { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            width: 100%; height: 100%;
+            padding: 0 15px;
+            opacity: 0; /* Alapból láthatatlan */
+            position: absolute;
+            transition: opacity 0.6s ease-in-out, visibility 0s;
+        }
+        body.intro-finished .label-content {
+            animation: content-glitch-in 1.2s cubic-bezier(0.7, 0, 0.3, 1) both;
         }
 
         .ticker-label::before {
@@ -89,6 +94,67 @@
         body.intro-finished .ticker-label::before {
             animation: static-move 0.15s steps(2) infinite, static-fade-in-out 1.2s cubic-bezier(0.7, 0, 0.3, 1) 2s both;
         }
+        
+        #label-image-container, #schedule-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease-in-out, visibility 0s 0.6s;
+        }
+
+        #label-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: #2c3e50;
+        }
+
+        .ticker-label.image-mode-active .label-content, .ticker-label.schedule-mode-active .label-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease-in-out, visibility 0s 0.6s;
+        }
+        
+        .ticker-label.image-mode-active #label-image-container, .ticker-label.schedule-mode-active #schedule-overlay {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.6s ease-in-out 0.2s, visibility 0s 0.2s;
+        }
+
+        #schedule-overlay {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background-color: rgba(28, 28, 30, 0.9);
+            padding: 10px 15px;
+            gap: 8px;
+        }
+        .schedule-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--accent-gold);
+            width: 100%;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        .schedule-item {
+            display: flex; flex-direction: row; justify-content: flex-start; align-items: baseline;
+            gap: 10px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .schedule-item .time {
+            font-family: var(--font-body); font-size: 0.9rem; font-weight: 700;
+            color: #f0f2f5;
+            flex-shrink: 0;
+        }
+        .schedule-item .title {
+            font-family: var(--font-display); font-size: 0.9rem; color: #a8b3c2;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+
 
         .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 0x; }
         .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; transition: width 0.4s ease, height 0.4s ease; }
@@ -143,30 +209,6 @@
             display: none; /* Initially hidden */
         }
         
-        #schedule-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            background-color: #2C3E50;
-            z-index: 20;
-            opacity: 0; visibility: hidden;
-            transition: opacity 0.4s, visibility 0.4s;
-            padding: 10px 5px;
-        }
-        #schedule-overlay.visible { opacity: 1; visibility: visible; }
-        .schedule-item {
-            display: flex; flex-direction: row; justify-content: center; align-items: baseline;
-            gap: 8px; margin-bottom: 6px; width: 100%; overflow: hidden;
-        }
-        .schedule-item .time {
-            font-family: var(--font-body); font-size: 1rem; font-weight: 700;
-            color: var(--accent-main); flex-shrink: 0;
-        }
-        .schedule-item .title {
-            font-family: var(--font-display); font-size: 0.95rem; color: #ECF0F1;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
         .dot { opacity: 0; animation: loading-dots 1.4s infinite; display: inline-block; }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
@@ -175,8 +217,8 @@
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
         #block-title-layer {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 20px;
+            right: 25px;
             z-index: 5;
             background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(8px);
@@ -239,7 +281,6 @@
         }
         .ticker-content { position: relative; width: 100%; height: 100%; }
 
-        /* --- HÍREK SZEKCIÓ ÚJRATERVEZVE AZ OLVASHATÓSÁGÉRT --- */
         a.ticker-item, div.ticker-item {
             display: flex; flex-direction: column; align-items: flex-start; text-align: left;
             font-size: 0.95rem; font-weight: 500;
@@ -249,13 +290,13 @@
             width: 95%; 
             max-height: 95%;
             justify-content: center;
-            background-color: var(--item-bg-color);
+            background: var(--item-bg-color);
             border: 1px solid var(--item-border-color);
             box-shadow: 0 4px 20px rgba(0,0,0,0.25);
             opacity: 0;
             visibility: hidden;
             transform: translate(-50%, -50%);
-            transition: opacity 0.4s ease-in-out, color 2s ease-in-out, background-color 2s ease-in-out, border-color 2s ease-in-out;
+            transition: opacity 0.4s ease-in-out, background-color 2s ease-in-out, border-color 2s ease-in-out;
             text-decoration: none;
             backdrop-filter: none; 
             -webkit-backdrop-filter: none;
@@ -265,11 +306,7 @@
             visibility: visible;
         }
         
-        .ticker-item.has-image { flex-direction: row; gap: 15px; align-items: center; }
-        .ticker-item-image-container { width: 85px; height: 85px; flex-shrink: 0; overflow: hidden; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
-        .ticker-item-image { width: 100%; height: 100%; object-fit: cover; background-color: rgba(0,0,0,0.1); }
         .ticker-item-content-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; height: 100%; justify-content: center; }
-        .ticker-item.has-image .ticker-item-description { -webkit-line-clamp: 2; }
         
         .ticker-item-header { display: flex; align-items: center; margin-bottom: 5px; width: 100%; }
         .ticker-item .meta { color: var(--text-secondary); margin-right: 0.5rem; font-weight: 400; display: flex; align-items: center; white-space: nowrap; transition: color 2s ease-in-out; text-shadow: none; }
@@ -277,7 +314,7 @@
         .ticker-item .source { font-weight: 700; color: var(--accent-gold); }
         .ticker-item-title { color: var(--text-primary); font-weight: 700; transition: color 2s ease-in-out; width: 100%; text-shadow: none; line-height: 1.3; }
         a.ticker-item:hover .ticker-item-title { color: var(--accent-main); }
-        .ticker-item-description { font-size: 0.9rem; font-weight: 400; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; transition: color 2s ease-in-out; text-shadow: none; line-height: 1.5; }
+        .ticker-item-description { font-size: 0.9rem; font-weight: 400; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; transition: color 2s ease-in-out; text-shadow: none; line-height: 1.5; }
         
         .ticker-item.breaking-highlight { 
             border-left: 4px solid #D32F2F;
@@ -800,9 +837,9 @@
             .weather-header, .weather-description { display: none; }
             #next-block-indicator { order: 3; flex-basis: 100%; text-align: center; margin-top: 5px; margin-left: 0; }
         }
-        @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0 10px; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } }
+        @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } .label-content { padding: 0 10px; } }
         @media (max-width: 520px) {
-            .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; padding: 5px 10px; } #clock { margin-top: 0; } #night-shift-label { font-size: 0.8rem; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; }
+            .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; } #clock { margin-top: 0; } #night-shift-label { font-size: 0.8rem; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; } .label-content { padding: 5px 10px; }
             .weather-widget {
                 flex-direction: column;
                 text-align: center;
@@ -840,6 +877,12 @@
                             </svg>
                         </div>
                     </div>
+                    
+                    <div id="label-image-container">
+                        <img id="label-image" src="" alt="Hír kép">
+                    </div>
+                    
+                    <div id="schedule-overlay"></div>
 
                     <div id="refresh-overlay">
                         <div id="animation-wrapper" style="display: none;">
@@ -863,8 +906,6 @@
                         </div>
                         <div class="refresh-text">Hírek frissítése...</div>
                     </div>
-
-                    <div id="schedule-overlay"></div>
 
                     <div class="label-content">
                         <div class="label-top-row">
@@ -947,11 +988,10 @@
             { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    categories: [] },
             { start: 12,   name: 'Délidőben',            type: 'fresh',                    categories: [] },
             { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    categories: [] },
-            { start: 18,   name: 'Hazai pálya',          type: 'summary_today',            categories: ['belföld'] },
+            { start: 18,   name: 'Hazai Pálya',          type: 'fresh',                    categories: ['belföld'], timeWindowHours: 6 },
             { start: 18.5, name: 'Esti gyors',           type: 'fresh',                    categories: [] },
             { start: 22,   name: 'TKP SPORT',            type: 'summary_today',            categories: ['sport'] },
-            { start: 22.5, name: 'Gazdasági Negyed',     type: 'summary_today',            categories: ['gazdaság'] },
-            { start: 22.75,name: 'Sziréna',              type: 'summary_today',            categories: ['kékfény'] },
+            { start: 22.5, name: 'Sziréna',              type: 'summary_today',            categories: ['kékfény'] },
             { start: 23,   name: 'Hazai Pálya+',         type: 'summary_today',            categories: ['belföld'] },
             { start: 23.5, name: 'Napzárta',             type: 'special_summary_today_80', categories: [] },
             { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [] }
@@ -996,6 +1036,8 @@
         const brandNameEl = document.querySelector('.brand-name');
         const namedayEl = document.getElementById('nameday');
         const labelContent = document.querySelector('.label-content');
+        const labelImageContainer = document.getElementById('label-image-container');
+        const labelImage = document.getElementById('label-image');
         const refreshOverlay = document.getElementById('refresh-overlay');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
@@ -1030,6 +1072,7 @@
         
         let textGlitchTimeout = null;
         let lastUpdateMinute = -1;
+        let scheduleTimeout = null;
         
         let fetchStartTime = 0;
         let loadingTimeout = null;
@@ -1297,30 +1340,37 @@
         }
         
         function showScheduleOverlay() {
-            if (!currentThematicBlock || scheduleOverlayEl.classList.contains('visible')) return;
+            if (tickerLabel.classList.contains('image-mode-active')) return;
+
             const currentIndex = THEMATIC_BLOCKS.findIndex(b => b.start === currentThematicBlock.start);
             if (currentIndex === -1) return;
 
-            let scheduleHTML = '';
+            let scheduleHTML = '<div class="schedule-title">Következik:</div>';
             for (let i = 1; i <= 3; i++) {
                 const nextBlockIndex = (currentIndex + i) % THEMATIC_BLOCKS.length;
                 const block = THEMATIC_BLOCKS[nextBlockIndex];
-                if (block.start === 0) break;
+                if (block.start === 0 && i > 1) break;
                 const startTime = formatBlockTime(block.start);
                 scheduleHTML += `<div class="schedule-item"><span class="time">${startTime}</span><span class="title">${block.name}</span></div>`;
             }
 
             scheduleOverlayEl.innerHTML = scheduleHTML;
-            scheduleOverlayEl.classList.add('visible');
-            labelContent.style.display = 'none';
+            tickerLabel.classList.add('schedule-mode-active');
 
             setTimeout(() => {
-                scheduleOverlayEl.classList.remove('visible');
-                 if (!refreshOverlay.classList.contains('visible')) {
-                    labelContent.style.display = '';
-                }
-            }, 60 * 1000);
+                tickerLabel.classList.remove('schedule-mode-active');
+            }, 15000); // 15 másodpercig látható
         }
+
+        function scheduleNextOverlay() {
+            clearTimeout(scheduleTimeout);
+            const randomInterval = Math.floor(Math.random() * (20 * 60 * 1000 - 5 * 60 * 1000 + 1)) + 5 * 60 * 1000;
+            scheduleTimeout = setTimeout(() => {
+                showScheduleOverlay();
+                scheduleNextOverlay();
+            }, randomInterval);
+        }
+
 
         function getCurrentAndNextBlocks(now) {
             const currentTime = now.getHours() + now.getMinutes() / 60;
@@ -1378,10 +1428,6 @@
                     triggerUpdate(true);
                 }
             }
-            
-            if (minutes % 10 === 0 && seconds === 0) {
-                 if (current.type !== 'summary_yesterday') showScheduleOverlay();
-            }
         }
         
         function updateCounter() {
@@ -1401,6 +1447,7 @@
         function filterNews(newsItems, category) { if (category === 'all') return newsItems; return newsItems.filter(item => item.categories && item.categories.includes(category)); }
         const getSourceName = (url) => { if (url.includes('index.hu')) return 'Index'; if (url.includes('telex.hu')) return 'Telex'; if (url.includes('hvg.hu')) return 'HVG'; if (url.includes('24.hu')) return '24.hu'; if (url.includes('ma.hu')) return 'ma.hu'; if (url.includes('portfolio.hu')) return 'Portfolio'; if (url.includes('origo.hu')) return 'Origo'; if (url.includes('nemzetisport.hu')) return 'NSO'; try { return new URL(url).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch { return 'Ismeretlen'; } };
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+        const formatBlockTime = (time) => { const hour = Math.floor(time); const minute = Math.round((time % 1) * 60); return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`; };
 
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
         function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
@@ -1454,6 +1501,24 @@
                 }
                 
                 wasPreviousItemBreaking = isCurrentItemBreaking;
+                
+                 // Dinamikus képváltás a címkében
+                const imageUrl = currentItem.dataset.imageUrl;
+                if (imageUrl && imageUrl !== 'null') {
+                    const img = new Image();
+                    img.onload = () => {
+                        labelImage.src = img.src;
+                        tickerLabel.classList.add('image-mode-active');
+                        tickerLabel.classList.remove('schedule-mode-active');
+                    };
+                    img.onerror = () => { // Hiba esetén visszaáll
+                        tickerLabel.classList.remove('image-mode-active', 'schedule-mode-active');
+                    }
+                    img.src = CORS_PROXY + imageUrl;
+                } else {
+                    tickerLabel.classList.remove('image-mode-active', 'schedule-mode-active');
+                }
+
 
                 requestAnimationFrame(() => { 
                     currentItem.classList.add('visible');
@@ -1693,7 +1758,8 @@
             
             const timeLimit = new Date();
             if (currentThematicBlock.type === 'fresh') {
-                timeLimit.setHours(timeLimit.getHours() - 2);
+                const hours = currentThematicBlock.timeWindowHours || 2;
+                timeLimit.setHours(timeLimit.getHours() - hours);
             } else if (currentThematicBlock.type.startsWith('summary_today')) {
                 timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.type === 'summary_yesterday') {
@@ -1715,17 +1781,14 @@
                 return itemDate >= timeLimit;
             });
 
-            if (activeFilter !== 'all' && currentThematicBlock.categories.length === 0) {
+            if (currentThematicBlock.categories.length > 0) {
+                filteredNews = filteredNews.filter(item => item.categories && item.categories.some(cat => currentThematicBlock.categories.includes(cat)));
+            } else if (activeFilter !== 'all') {
                 filteredNews = filterNews(filteredNews, activeFilter);
-            } else if (currentThematicBlock.categories.length > 0) {
-                let blockFiltered = filteredNews.filter(item => item.categories && item.categories.some(cat => currentThematicBlock.categories.includes(cat)));
-                 filteredNews = blockFiltered;
             }
             
             if (currentThematicBlock.type === 'special_summary_today_80') {
-                 const now = new Date();
-                 const limit = (now.getMinutes() < 45) ? 80 : 160;
-                 newsToDisplay = shuffleArray(filteredNews).slice(0, limit);
+                 newsToDisplay = shuffleArray(filteredNews).slice(0, 80);
             } else if(currentThematicBlock.type === 'summary_yesterday') {
                 newsToDisplay = filteredNews.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
             } else {
@@ -1745,7 +1808,7 @@
                     const nameDayText = names.length > 0 ? `<span class="date-nameday">${names.join(', ')}</span>` : '';
                     
                     const calendarHtml = `
-                    <div class="ticker-item calendar-item">
+                    <div class="ticker-item calendar-item" data-image-url="">
                         <div class="calendar-date-block">
                             <div class="date-month-header">${monthName}</div>
                             <span class="date-day-number">${String(dayOfMonth).padStart(2, '0')}</span>
@@ -1769,7 +1832,7 @@
                     </div>`;
                     preliminaryItems.push(calendarHtml);
                     
-                    const quoteHtml = `<div class="ticker-item quote-item"><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
+                    const quoteHtml = `<div class="ticker-item quote-item" data-image-url=""><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
                     preliminaryItems.push(quoteHtml);
                 }
             }
@@ -1788,16 +1851,10 @@
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
                 
-                let imageHtml = '';
                 let itemClass = `ticker-item ${isBreaking ? 'breaking-highlight' : ''}`;
-                if (item.imageUrl) {
-                    imageHtml = `<div class="ticker-item-image-container"><img src="${CORS_PROXY}${item.imageUrl}" class="ticker-item-image" alt="" loading="lazy"></div>`;
-                    itemClass += ' has-image';
-                }
-
+                
                 return `
-                    <a href="${item.link}" class="${itemClass}" target="_blank" rel="noopener noreferrer">
-                        ${imageHtml}
+                    <a href="${item.link}" class="${itemClass}" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
                         <div class="ticker-item-content-wrapper">
                             <div class="ticker-item-header">
                                 <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span>
@@ -1939,7 +1996,7 @@
             }, 500);
         };
         
-        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); };
+        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); clearTimeout(scheduleTimeout); }
         
         async function startAllTimers() { 
             triggerUpdate();
@@ -1952,6 +2009,7 @@
                  weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
             }
             startAllAnimatedEffects();
+            scheduleNextOverlay();
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1967,8 +2025,9 @@
                             startAllTimers();
                             triggerEyeBlink();
                         }
-                    }, 5000); // Total duration of new intro animation
-                }, 2000); // After color bars finish
+                    }, 5200);
+
+                }, 2000);
 
             }, 200);
             
