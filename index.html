@@ -273,6 +273,7 @@
             pointer-events: none;
             z-index: 5;
             transition: color 2s ease-in-out, opacity 2s ease-in-out;
+            text-transform: capitalize;
         }
 
         .watermark-punched {
@@ -1661,7 +1662,8 @@
                 }
                 return itemDate >= timeLimit;
             });
-
+            
+            // News filtering based on active filter or block category
             if (currentThematicBlock.categories.length > 0 && activeFilter === 'all') {
                 filteredNews = filteredNews.filter(item => item.categories && item.categories.some(cat => currentThematicBlock.categories.includes(cat)));
             } else if (activeFilter !== 'all') {
@@ -1669,17 +1671,24 @@
             }
             
             fullFilteredNewsList = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+            
+            const specialShows = ['Hazai Pálya', 'TKP SPORT', 'Sziréna', 'Hazai Pálya+'];
 
-            if (activeFilter !== 'all') {
+            // News selection logic
+            if (specialShows.includes(currentThematicBlock.name) && activeFilter === 'all') {
+                newsToDisplay = fullFilteredNewsList.slice(0, 50);
+            } else if (activeFilter !== 'all') {
                 newsToDisplay = fullFilteredNewsList.slice(0, currentFilterPage * FILTER_CHUNK_SIZE);
             } else if (currentThematicBlock.type === 'special_summary_today_80') {
-                 newsToDisplay = shuffleArray(filteredNews).slice(0, 80);
+                 newsToDisplay = shuffleArray(fullFilteredNewsList).slice(0, 80);
             } else if(currentThematicBlock.type === 'summary_yesterday') {
                 newsToDisplay = filteredNews.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
             } else {
-                newsToDisplay = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                newsToDisplay = fullFilteredNewsList;
             }
-
+            
+            const watermarkText = (activeFilter !== 'all') ? activeFilter : currentThematicBlock.name;
+            
             if ((activeFilter === 'all' || (isManualTrigger && currentFilterPage === 1)) && !isManualTrigger) {
                 const dayOfMonth = today.getDate();
                 const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
@@ -1691,7 +1700,7 @@
                 const sunsetStr = formatTime(sunTimes.sunset);
                 const nameDayText = names.length > 0 ? `<div class="ci-nameday">${names.join(', ')}</div>` : '';
                 
-                const watermarkHtml = `<div class="item-watermark">${currentThematicBlock.name}</div>`;
+                const watermarkHtml = `<div class="item-watermark">${watermarkText}</div>`;
                 
                 const calendarHtml = `
                     <div class="ticker-item calendar-item-v2" data-image-url="">
@@ -1715,7 +1724,7 @@
                     const quote = QUOTES[dayOfMonth % QUOTES.length];
                     const quoteHtml = `
                         <div class="ticker-item quote-item-v2" data-image-url="">
-                            <div class="item-watermark">${currentThematicBlock.name}</div>
+                            <div class="item-watermark">${watermarkText}</div>
                             <blockquote>“${quote.text}”</blockquote>
                             <div class="quote-divider"><cite>${quote.author}</cite></div>
                         </div>`;
@@ -1736,7 +1745,7 @@
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
                 
-                const watermarkHtml = `<div class="item-watermark watermark-punched">${currentThematicBlock.name}</div>`;
+                const watermarkHtml = `<div class="item-watermark watermark-punched">${watermarkText}</div>`;
                 const breakingIndicatorHtml = `<div class="item-breaking-indicator">Rendkívüli hír</div>`;
 
                 return `
