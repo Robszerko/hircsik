@@ -6,7 +6,7 @@
     <title>Dinamikus Napszak Hírszalag</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js" type="module"></script>
@@ -213,33 +213,9 @@
         @keyframes loading-dots { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
 
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
+        
         #block-title-layer {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 5;
-            background-color: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            color: #f0f2f5;
-            text-shadow: 0px 1px 2px rgba(0,0,0,0.5);
-            padding: 4px 10px;
-            font-family: var(--font-display);
-            font-size: 0.85rem;
-            max-width: 50%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out, backdrop-filter 2s ease-in-out, background-color 2s ease-in-out, color 2s ease-in-out;
-        }
-
-        #block-title-layer.visible {
-            opacity: 1;
+           display: none !important;
         }
 
         #breaking-title-layer {
@@ -259,6 +235,35 @@
             display: none;
             animation: blink 1.2s step-end infinite;
         }
+        
+        /* --- VÁLTOZTATÁS: Új visszaszámláló óra stílusai --- */
+        #countdown-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg-main-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0s 0.5s, background 2s ease-in-out;
+        }
+        #countdown-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease, visibility 0s, background 2s ease-in-out;
+        }
+        #countdown-clock {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 6vw;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 2px 5px rgba(0,0,0,0.5);
+            letter-spacing: 0.05em;
+            transition: color 2s ease-in-out;
+        }
 
         .ticker-track { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
@@ -269,6 +274,11 @@
             transform: translateY(10px); 
             z-index: 1;
         }
+        .ticker-wrap.countdown-active .ticker-track {
+            visibility: hidden;
+            opacity: 0;
+        }
+
         .ticker-track.visible { 
             opacity: 1; 
             visibility: visible;
@@ -277,7 +287,6 @@
             z-index: 2;
         }
         
-        /* --- VÁLTOZTATÁS: Grid alapú központozás --- */
         .ticker-content { 
             position: relative; 
             width: 100%; 
@@ -286,9 +295,8 @@
             place-items: center;
         }
 
-        /* --- VÁLTOZTATÁS: Grid alapú pozicionálás és renderelési javítások --- */
         a.ticker-item, div.ticker-item {
-            grid-area: 1 / 1; /* Minden elem ugyanabba a cellába kerül, egymásra helyezve őket */
+            grid-area: 1 / 1;
             display: flex; flex-direction: column; align-items: flex-start; text-align: left;
             font-size: 0.95rem; font-weight: 500;
             padding: 12px 20px;
@@ -303,7 +311,22 @@
             visibility: hidden;
             transition: opacity 0.4s ease-in-out, background-color 2s ease-in-out, border-color 2s ease-in-out;
             text-decoration: none;
-            backface-visibility: hidden; /* Extra renderelési réteg kényszerítése az élességért */
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            position: relative; /* Szükséges a vízjel abszolút pozicionálásához */
+        }
+        
+        .item-watermark {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            opacity: 0.5; /* VÁLTOZTATÁS: Erősebb láthatóság */
+            pointer-events: none;
+            z-index: 5;
+            transition: color 2s ease-in-out, opacity 2s ease-in-out;
         }
         
         .ticker-item.visible, a.ticker-item.visible {
@@ -403,20 +426,20 @@
         }
         .calendar-details-block .date-dayname {
             font-family: var(--font-display);
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             color: var(--text-primary);
             font-weight: 500;
             text-shadow: 0 1px 2px rgba(0,0,0,0.4);
         }
         .calendar-details-block .date-nameday {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-family: var(--font-body);
             color: var(--accent-gold);
             font-weight: 700;
             text-shadow: 0 1px 2px rgba(0,0,0,0.4);
         }
         .calendar-details-block .creative-info-text {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             text-shadow: 0 1px 2px rgba(0,0,0,0.4);
         }
@@ -459,7 +482,7 @@
         .quote-item blockquote {
             font-family: var(--font-quote);
             font-style: italic;
-            font-size: 1.1rem;
+            font-size: 1.0rem;
             color: var(--text-primary);
             z-index: 2;
             position: relative;
@@ -665,7 +688,6 @@
             border-radius: 4px;
         }
 
-        /* JAVÍTÁS: Szűrők elrejtése éjszakai módban */
         #timeline-container { display: none; width: 100%; }
         #filter-control-group { display: flex; }
         body.night-mode-active #timeline-container { display: flex; }
@@ -836,6 +858,7 @@
             }
             .weather-header, .weather-description { display: none; }
             #next-block-indicator { order: 3; flex-basis: 100%; text-align: center; margin-top: 5px; margin-left: 0; }
+            #countdown-clock { font-size: 10vw; }
         }
         @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } .label-content { padding: 0 10px; } }
         @media (max-width: 520px) {
@@ -851,6 +874,7 @@
             .calendar-date-block { flex-direction: row; align-items: baseline; gap: 10px; padding: 5px 10px;}
             .calendar-date-block .date-day-number { font-size: 2rem; }
             .calendar-sun-info-block, .creative-info-wrapper { display: none; }
+            #countdown-clock { font-size: 12vw; }
         }
         @media (max-width: 380px) { .label-top-row { gap: 5px; } .brand-name { font-size: 1.1rem; } body.night-mode-active .ticker-logo { width: 20px; height: 20px; } .ticker-logo { width: 22px; height: 22px; } #clock { font-size: 0.8rem; } .control-group-label { display: none; } }
     </style>
@@ -934,6 +958,8 @@
                     </div>
                 </div>
                 <div class="ticker-wrap" id="ticker-wrap">
+                    <!-- VÁLTOZTATÁS: Visszaszámláló óra konténer hozzáadva -->
+                    <div id="countdown-overlay"><div id="countdown-clock"></div></div>
                     <div id="block-title-layer"></div>
                     <div id="breaking-title-layer">Rendkívüli hír</div>
                     <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
@@ -1045,12 +1071,13 @@
         const timelineContainer = document.getElementById('timeline-container');
         const animationWrapper = document.getElementById('animation-wrapper');
         const manualRefreshTriggerEl = document.getElementById('manual-refresh-trigger');
-        const blockTitleLayerEl = document.getElementById('block-title-layer');
         const nextBlockIndicatorEl = document.getElementById('next-block-indicator');
         const scheduleOverlayEl = document.getElementById('schedule-overlay');
         const progressBar = document.getElementById('progress-bar');
         const breakingTitleLayerEl = document.getElementById('breaking-title-layer');
         const introAnimationContainer = document.getElementById('intro-animation-container');
+        const countdownOverlayEl = document.getElementById('countdown-overlay');
+        const countdownClockEl = document.getElementById('countdown-clock');
 
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
@@ -1083,6 +1110,7 @@
         let lastNewsCheckTimestamp = 0;
         let accumulatedNewNewsCount = 0;
         let wasPreviousItemBreaking = false;
+        let isCountdownActive = false;
 
 
         const stripHtml = (html) => { let doc = new DOMParser().parseFromString(html, 'text/html'); return doc.body.textContent || ""; };
@@ -1394,15 +1422,56 @@
 
         function updateClock() {
             const now = new Date(); 
-            const year = now.getFullYear(), month = String(now.getMonth() + 1).padStart(2, '0'), day = String(now.getDate()).padStart(2, '0'), dayOfWeek = CALENDAR_DATA.napok[now.getDay()], hours = String(now.getHours()).padStart(2, '0'), minutes = String(now.getMinutes()).padStart(2, '0');
+            const year = now.getFullYear(), month = String(now.getMonth() + 1).padStart(2, '0'), day = String(now.getDate()).padStart(2, '0'), dayOfWeek = CALENDAR_DATA.napok[now.getDay()], hours = String(now.getHours()).padStart(2, '0'), minutes = String(now.getMinutes()).padStart(2, '0'), seconds = now.getSeconds();
+            
             document.getElementById('clock').innerHTML = `${year}.${month}.${day}. ${dayOfWeek} ${hours}<span class="clock-colon">:</span>${minutes}`;
             
             const { current, next } = getCurrentAndNextBlocks(now);
+
+            // --- VÁLTOZTATÁS: Visszaszámláló óra logikája ---
+            if (currentThematicBlock && currentThematicBlock.type !== 'summary_yesterday') {
+                if (minutes === 59 && seconds >= 50 && !isCountdownActive) {
+                    isCountdownActive = true;
+                    pauseFlipCycle();
+                    tickerWrap.classList.add('countdown-active');
+                    countdownOverlayEl.classList.add('visible');
+                    
+                    if (seconds === 50) {
+                        console.log("Óránkénti frissítés indítása a visszaszámlálás alatt...");
+                        sessionStorage.removeItem('newsCache');
+                        triggerUpdate(true);
+                    }
+                }
+
+                if (isCountdownActive) {
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    countdownClockEl.textContent = `${h}:${m}:${s}`;
+                }
+                
+                if (minutes === 0 && seconds === 0 && isCountdownActive) {
+                    isCountdownActive = false;
+                    tickerWrap.classList.remove('countdown-active');
+                    countdownOverlayEl.classList.remove('visible');
+                    
+                    console.log("Visszaszámlálás vége, hírciklus indítása elölről.");
+                    // Mivel a triggerUpdate lefutott, a startFlipCycle(true) már a frissített tartalommal indul.
+                    startFlipCycle(true);
+                }
+            }
+            // --- Visszaszámláló vége ---
 
             if (currentThematicBlock === null || current.start !== currentThematicBlock.start) {
                 console.log(`Tematikus blokk váltás: ${current.name}`);
                 currentThematicBlock = current;
                 sessionStorage.removeItem('newsCache');
+                // Ha blokkváltás van, ne indítsuk el a visszaszámlálót azonnal
+                if(isCountdownActive) {
+                    isCountdownActive = false;
+                    tickerWrap.classList.remove('countdown-active');
+                    countdownOverlayEl.classList.remove('visible');
+                }
                 triggerUpdate(true);
                 return;
             }
@@ -1418,11 +1487,10 @@
             } else {
                 nextBlockIndicatorEl.style.display = 'none';
             }
-
-            const seconds = now.getSeconds();
+            
             if (current.type === 'fresh' && minutes % 15 === 0 && seconds === 0 && minutes !== lastUpdateMinute) {
                 lastUpdateMinute = minutes;
-                if (document.visibilityState === 'visible') {
+                if (document.visibilityState === 'visible' && !isCountdownActive) {
                     console.log("Automatikus frissítés (negyedóránként)...");
                     sessionStorage.removeItem('newsCache');
                     triggerUpdate(true);
@@ -1450,10 +1518,10 @@
         const formatBlockTime = (time) => { const hour = Math.floor(time); const minute = Math.round((time % 1) * 60); return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`; };
 
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
-        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
+        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
         
         function showItemAtIndex(index, isManual = false) {
-            if (isInfoMessageActive) return;
+            if (isInfoMessageActive || isCountdownActive) return;
             pauseFlipCycle();
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
             if(items.length === 0) return;
@@ -1464,45 +1532,20 @@
             const currentItem = items[currentItemIndex];
             
             if(currentItem) {
-                // 1. Handle Progress Bar
                 progressBar.classList.remove('animate');
                 void progressBar.offsetWidth; 
 
                 let duration = FLIP_INTERVAL_REGULAR;
-                if (currentItem.classList.contains('announcement-item')) {
-                    duration = FLIP_INTERVAL_ANNOUNCEMENT;
-                } else if (currentItem.classList.contains('news-intro-item') || currentItem.classList.contains('calendar-item') || currentItem.classList.contains('quote-item') || currentItem.classList.contains('goodbye-item')) {
-                    duration = FLIP_INTERVAL_INFO;
-                }
+                if (currentItem.classList.contains('announcement-item')) duration = FLIP_INTERVAL_ANNOUNCEMENT;
+                else if (currentItem.classList.contains('news-intro-item') || currentItem.classList.contains('calendar-item') || currentItem.classList.contains('quote-item') || currentItem.classList.contains('goodbye-item')) duration = FLIP_INTERVAL_INFO;
                 
                 progressBar.style.animationDuration = `${duration / 1000}s`;
                 progressBar.classList.add('animate');
                 
-                // 2. Handle Breaking News & Block Title
                 const isCurrentItemBreaking = currentItem.classList.contains('breaking-highlight');
-                const shouldShowTitle = !currentItem.classList.contains('calendar-item') && !currentItem.classList.contains('goodbye-item');
-
-                blockTitleLayerEl.classList.remove('visible', 'strobe-in');
-                breakingTitleLayerEl.style.display = 'none';
-
-                if (isCurrentItemBreaking) {
-                    breakingTitleLayerEl.style.display = 'block';
-                } else if (shouldShowTitle) {
-                    if (wasPreviousItemBreaking) {
-                        setTimeout(() => {
-                            blockTitleLayerEl.classList.add('visible', 'strobe-in');
-                            blockTitleLayerEl.addEventListener('animationend', () => {
-                                blockTitleLayerEl.classList.remove('strobe-in');
-                            }, { once: true });
-                        }, 1000);
-                    } else {
-                        blockTitleLayerEl.classList.add('visible');
-                    }
-                }
-                
+                breakingTitleLayerEl.style.display = isCurrentItemBreaking ? 'block' : 'none';
                 wasPreviousItemBreaking = isCurrentItemBreaking;
                 
-                 // Dinamikus képváltás a címkében
                 const imageUrl = currentItem.dataset.imageUrl;
                 if (imageUrl && imageUrl !== 'null') {
                     const img = new Image();
@@ -1511,7 +1554,7 @@
                         tickerLabel.classList.add('image-mode-active');
                         tickerLabel.classList.remove('schedule-mode-active');
                     };
-                    img.onerror = () => { // Hiba esetén visszaáll
+                    img.onerror = () => {
                         tickerLabel.classList.remove('image-mode-active', 'schedule-mode-active');
                     }
                     img.src = CORS_PROXY + imageUrl;
@@ -1519,24 +1562,19 @@
                     tickerLabel.classList.remove('image-mode-active');
                 }
 
-
                 requestAnimationFrame(() => { 
                     currentItem.classList.add('visible');
                     updateCounter();
-                    if (currentThematicBlock.type === 'summary_yesterday') {
-                        updateTimeline();
-                    }
+                    if (currentThematicBlock.type === 'summary_yesterday') updateTimeline();
                 });
 
                 flipRemainingTime = duration;
-                if(currentThematicBlock.type !== 'goodbye') {
-                    resumeFlipCycle();
-                }
+                if(currentThematicBlock.type !== 'goodbye') resumeFlipCycle();
             }
         }
 
         function cycleItems() { 
-            if (isInfoMessageActive) return;
+            if (isInfoMessageActive || isCountdownActive) return;
             showItemAtIndex(currentItemIndex + 1); 
         }
         
@@ -1552,7 +1590,6 @@
                 updateCounter();
                 flipRemainingTime = 0;
                 progressBar.classList.remove('animate');
-                blockTitleLayerEl.classList.remove('visible', 'strobe-in');
                 breakingTitleLayerEl.style.display = 'none';
             }
         }
@@ -1746,7 +1783,6 @@
                 namedayEl.style.display = 'none';
             }
 
-            blockTitleLayerEl.textContent = currentThematicBlock.name;
             bodyEl.classList.remove('night-mode-active');
             updateFilterButtons(allNewsItems);
             
@@ -1805,8 +1841,11 @@
                     const sunsetStr = formatTime(sunTimes.sunset);
                     const nameDayText = names.length > 0 ? `<span class="date-nameday">${names.join(', ')}</span>` : '';
                     
+                    const watermarkText = currentThematicBlock ? currentThematicBlock.name : '';
+
                     const calendarHtml = `
                     <div class="ticker-item calendar-item" data-image-url="">
+                        <div class="item-watermark">${watermarkText}</div>
                         <div class="calendar-date-block">
                             <div class="date-month-header">${monthName}</div>
                             <span class="date-day-number">${String(dayOfMonth).padStart(2, '0')}</span>
@@ -1830,7 +1869,7 @@
                     </div>`;
                     preliminaryItems.push(calendarHtml);
                     
-                    const quoteHtml = `<div class="ticker-item quote-item" data-image-url=""><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
+                    const quoteHtml = `<div class="ticker-item quote-item" data-image-url=""><div class="item-watermark">${watermarkText}</div><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
                     preliminaryItems.push(quoteHtml);
                 }
             }
@@ -1842,6 +1881,9 @@
             }
             
             masterNewsList = newsToDisplay;
+            
+            const watermarkText = currentThematicBlock ? currentThematicBlock.name : '';
+
             contentItems = masterNewsList.map(item => {
                 if (typeof item === 'string') return item;
                 
@@ -1853,6 +1895,7 @@
                 
                 return `
                     <a href="${item.link}" class="${itemClass}" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
+                        <div class="item-watermark">${watermarkText}</div>
                         <div class="ticker-item-content-wrapper">
                             <div class="ticker-item-header">
                                 <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span>
@@ -1879,13 +1922,16 @@
                     manualRefreshTriggerEl.style.display = 'none';
                     manualRefreshTriggerEl.style.cursor = 'pointer';
                 }
-
-                requestAnimationFrame(() => {
-                    tracks[standbyTrackKey].classList.add('visible');
-                    tracks[activeTrackKey].classList.remove('visible');
-                    activeTrackKey = standbyTrackKey;
-                    startFlipCycle(true);
-                });
+                
+                // Ha a visszaszámláló aktív, nem váltunk kártyát, megvárjuk, hogy lejárjon
+                if (!isCountdownActive) {
+                    requestAnimationFrame(() => {
+                        tracks[standbyTrackKey].classList.add('visible');
+                        tracks[activeTrackKey].classList.remove('visible');
+                        activeTrackKey = standbyTrackKey;
+                        startFlipCycle(true);
+                    });
+                }
                 lastNewsCheckTimestamp = Date.now();
                 startNewsCheckCycle();
             }, remainingTime);
@@ -2032,14 +2078,13 @@
             updateClock(); 
             setInterval(updateClock, 1000);
             
-            // A dinamikus téma frissítése
             updateDynamicSkyAndTheme(); 
-            setInterval(updateDynamicSkyAndTheme, 60 * 1000); // Percenkénti frissítés a sima átmenetért
+            setInterval(updateDynamicSkyAndTheme, 60 * 1000);
             
             document.addEventListener('visibilitychange', () => { 
                 if (document.visibilityState === 'visible') {
                     if (bodyEl.classList.contains('intro-finished')) {
-                        updateDynamicSkyAndTheme(); // Azonnali frissítés, amikor a fül újra aktív
+                        updateDynamicSkyAndTheme();
                         resumeFlipCycle();
                         startAllTimers();
                     }
@@ -2054,7 +2099,7 @@
             nextBtn.addEventListener('click', () => showItemAtIndex(currentItemIndex + 1, true));
             
             manualRefreshTriggerEl.addEventListener('click', () => {
-                if (!refreshOverlay.classList.contains('visible')) {
+                if (!refreshOverlay.classList.contains('visible') && !isCountdownActive) {
                     console.log("Manuális frissítés...");
                     sessionStorage.removeItem('newsCache');
                     triggerUpdate(true, true);
