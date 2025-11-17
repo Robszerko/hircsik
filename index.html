@@ -214,26 +214,8 @@
 
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
         
-        #block-title-layer {
+        #block-title-layer, #breaking-title-layer {
            display: none !important;
-        }
-
-        #breaking-title-layer {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 6;
-            background-color: #D32F2F;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            color: #FFFFFF;
-            padding: 4px 10px;
-            font-family: var(--font-display);
-            font-size: 0.85rem;
-            pointer-events: none;
-            display: none;
-            animation: blink 1.2s step-end infinite;
         }
         
         #countdown-overlay {
@@ -321,7 +303,7 @@
             font-family: var(--font-display);
             font-size: 0.7rem;
             color: var(--text-secondary);
-            opacity: 0.5;
+            opacity: 0.6;
             pointer-events: none;
             z-index: 5;
             transition: color 2s ease-in-out, opacity 2s ease-in-out;
@@ -335,7 +317,26 @@
             border: 1px solid rgba(0,0,0,0.2);
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
             background-color: rgba(0,0,0,0.15);
-            opacity: 0.7;
+            opacity: 0.85;
+            color: #f0f2f5;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+        }
+
+        .item-breaking-indicator {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            padding: 3px 8px;
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: #FFFFFF;
+            background-color: #D32F2F;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            pointer-events: none;
+            animation: blink 1.2s step-end infinite;
+            display: none;
         }
         
         .ticker-item.visible, a.ticker-item.visible {
@@ -518,14 +519,23 @@
         }
         
         @keyframes fill-progress { from { width: 0%; } to { width: 100%; } }
-        @keyframes strobe-in { 0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); } 12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); } }
-        .strobe-in { animation: strobe-in 0.8s ease-in-out forwards; }
+        @keyframes strobe-in {
+            0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); }
+            12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); }
+        }
+        .strobe-in {
+            animation: strobe-in 2s ease-in-out forwards;
+        }
         @keyframes glitch-text { 0%, 100% { text-shadow: 1px 1px 0 #00FFFF, -1px -1px 0 #FF00FF; opacity: 1; } 5% { opacity: 0.8; } 10% { opacity: 1; } 15% { opacity: 0.6; } 20% { opacity: 1; text-shadow: -1px -1px 0 #00FFFF, 1px 1px 0 #FF00FF; } 25% { opacity: 0.9; } 30% { opacity: 1; } 50% { text-shadow: 1px -1px 0 #00FFFF, -1px 1px 0 #FF00FF; } 75% { text-shadow: -1px 1px 0 #00FFFF, 1px -1px 0 #FF00FF; } }
         @keyframes static-move { 0% { background-position: 0 0; } 100% { background-position: 4px 6px; } }
         @keyframes static-fade-in-out { 0% { opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.6; } 100% { opacity: 0; } }
         @keyframes content-glitch-in { 0% { opacity: 0; transform: translateY(20px) scale(1.02); text-shadow: -2px -2px 0 red, 2px 2px 0 cyan; } 15% { opacity: 0.4; transform: translateY(18px) scale(1) skew(-3deg); text-shadow: 2px 2px 0 red, -2px -2px 0 cyan; } 30% { opacity: 0.1; transform: translateY(20px) scale(1.01) skew(3deg); } 45% { opacity: 0.7; transform: translateY(10px) scale(1) skew(0deg); text-shadow: 1px 1px 0 red, -1px -1px 0 cyan; } 60% { opacity: 0.5; transform: translateY(15px); } 85% { opacity: 0.9; transform: translateY(5px); text-shadow: none; } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes blink { 50% { opacity: 0; } }
-        @keyframes pulse-bg { 0% { background-color: rgba(211, 47, 47, 0.1); } 50% { background-color: rgba(211, 47, 47, 0.25); } 100% { background-color: rgba(211, 47, 47, 0.1); } }
+        @keyframes pulse-bg {
+            0% { box-shadow: inset 0 0 0 0 rgba(211, 47, 47, 0.4), 0 0 8px 2px rgba(211, 47, 47, 0.2); }
+            50% { box-shadow: inset 0 0 10px 2px rgba(211, 47, 47, 0.1), 0 0 16px 6px rgba(211, 47, 47, 0.4); }
+            100% { box-shadow: inset 0 0 0 0 rgba(211, 47, 47, 0.4), 0 0 8px 2px rgba(211, 47, 47, 0.2); }
+        }
         @keyframes widget-fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
         #intro-animation-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9; opacity: 0; pointer-events: none; }
@@ -548,26 +558,88 @@
         .intro-animation-active #intro-logo-wrapper .intro-eye .eyelid { animation: intro-blink 0.2s linear 0.7s 2, intro-blink 0.2s linear 2.8s 2; }
         .intro-animation-active #intro-logo-wrapper { animation: intro-move-up 0.8s ease-in 4s forwards; }
 
-        .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; padding: 5px 15px; gap: 15px; transition: border-color 2s ease-in-out; }
+        .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.25); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; padding: 5px 15px; gap: 15px; transition: border-color 2s ease-in-out, background-color 2s ease-in-out; }
         .control-group { display: flex; align-items: center; gap: 5px; }
         .central-controls { flex-grow: 1; min-width: 0; display: flex; justify-content: center; }
         #filter-controls, #timeline-container { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
         #filter-controls::-webkit-scrollbar, #timeline-container::-webkit-scrollbar { display: none; }
-        .control-group-label { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); transition: color 2s ease-in-out; white-space: nowrap; }
-        .ticker-controls button { background-color: transparent; border: 1px solid var(--text-secondary); color: var(--text-secondary); border-radius: 4px; padding: 2px 8px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; transition: all 0.2s, color 2s ease-in-out, border-color 2s ease-in-out; text-transform: capitalize; display: flex; align-items: center; gap: 5px; }
-        .ticker-controls button:hover { background-color: var(--text-secondary); color: #000; }
-        .ticker-controls button.active { background-color: var(--accent-main); color: white; border-color: var(--accent-main); }
+        
+        .control-group-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #f0f2f5;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            white-space: nowrap;
+        }
+        .ticker-controls button {
+            background-color: transparent;
+            border: 1px solid #f0f2f5;
+            color: #f0f2f5;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: capitalize;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .ticker-controls button:hover {
+            background-color: #f0f2f5;
+            color: #111;
+            text-shadow: none;
+        }
+        .ticker-controls button.active {
+            background-color: var(--accent-main);
+            color: white;
+            border-color: var(--accent-main);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
         .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-        #night-mode-message { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); transition: color 2s ease-in-out, opacity 0.5s; white-space: nowrap; margin-left: auto; }
-        #next-block-indicator { font-size: 0.8rem; font-weight: 700; color: #111; background-color: var(--accent-gold); transition: all 0.5s ease-in-out; white-space: nowrap; margin-left: auto; padding: 3px 10px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); text-shadow: none; }
+        #night-mode-message {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #f0f2f5;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            transition: opacity 0.5s;
+            white-space: nowrap;
+            margin-left: auto;
+        }
+        #next-block-indicator {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            background-color: var(--accent-gold);
+            transition: all 0.5s ease-in-out;
+            white-space: nowrap;
+            margin-left: auto;
+            padding: 3px 10px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
         .nav-controls { display: flex; align-items: center; gap: 10px; }
-        #news-counter { font-size: 0.8rem; font-weight: 700; font-family: var(--font-display); letter-spacing: 0.5px; color: var(--text-secondary); transition: color 2s ease-in-out; padding: 2px 8px; border: 1px solid transparent; border-radius: 4px; }
+        #news-counter {
+            font-size: 0.8rem;
+            font-weight: 700;
+            font-family: var(--font-display);
+            letter-spacing: 0.5px;
+            color: #f0f2f5;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+            padding: 2px 8px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        
         #timeline-container { display: none; width: 100%; }
         #filter-control-group { display: flex; }
         body.night-mode-active #timeline-container { display: flex; }
         body.night-mode-active #filter-control-group { display: none; }
         #timeline-container button { flex-shrink: 0; padding: 2px 6px; font-size: 0.75rem; }
-        #timeline-container button.active-hour { background-color: var(--accent-gold); border-color: var(--accent-gold); color: #000; }
+        #timeline-container button.active-hour { background-color: var(--accent-gold); border-color: var(--accent-gold); color: #000; text-shadow: none; }
         
         #world-weather-container { flex-shrink: 0; width: 210px; border-left: 1px solid var(--border-color); padding: 8px 12px; display: flex; flex-direction: column; justify-content: space-between; background-size: cover; background-position: center; transition: border-color 2s ease-in-out; position: relative; }
         #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.4); z-index: 1; transition: background-color 2s ease-in-out; }
@@ -719,7 +791,7 @@
                 <div class="ticker-wrap" id="ticker-wrap">
                     <div id="countdown-overlay"><div id="countdown-clock"></div></div>
                     <div id="block-title-layer"></div>
-                    <div id="breaking-title-layer">Rendkívüli hír</div>
+                    <div id="breaking-title-layer"></div>
                     <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
                     <div id="ticker-b" class="ticker-track"><div class="ticker-content"></div></div>
                     <div id="progress-bar-container"><div id="progress-bar"></div></div>
@@ -760,7 +832,20 @@
         const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Johannesburg', lat: -26.20, lon: 28.04 }, { name: 'Szentpétervár', lat: 59.93, lon: 30.33 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 }, { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Genf', lat: 46.20, lon: 6.14 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Szao Paulo', lat: -23.55, lon: -46.63 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Bogotá', lat: 4.71, lon: -74.07 }, { name: 'Santiago', lat: -33.44, lon: -70.66 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 }, { name: 'Lagos', lat: 6.52, lon: 3.37 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Ho Si Minh-város', lat: 10.82, lon: 106.62 }, { name: 'Kuala Lumpur', lat: 3.13, lon: 101.68 }, { name: 'Abu-Dzabi', lat: 24.45, lon: 54.37 }, { name: 'Doha', lat: 25.28, lon: 51.53 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Montreal', lat: 45.50, lon: -73.56 }, { name: 'Wellington', lat: -41.28, lon: 174.77 }, { name: 'Kijev', lat: 50.45, lon: 30.52 }, { name: 'Belgrád', lat: 44.78, lon: 20.44 }, { name: 'Bukarest', lat: 44.42, lon: 26.10 }, { name: 'Ljubljana', lat: 46.05, lon: 14.50 }, { name: 'Szarajevó', lat: 43.85, lon: 18.41 }, { name: 'Szófia', lat: 42.69, lon: 23.32 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Ankara', lat: 39.93, lon: 32.85 }, { name: 'San Francisco', lat: 37.77, lon: -122.41 }, { name: 'Seattle', lat: 47.60, lon: -122.33 }, { name: 'Boston', lat: 42.36, lon: -71.05 }, { name: 'Edinburgh', lat: 55.95, lon: -3.18 }, { name: 'Jeruzsálem', lat: 31.76, lon: 35.21 } ];
         
         const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac', 'portfolio'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs', 'nemzeti sport'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
-        const QUOTES = [ { text: "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", author: "Alan Kay" }, { text: "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", author: "Ray Bradbury" }, { text: "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít.", author: "Winston Churchill" } ];
+        const QUOTES = [
+            { text: "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", author: "Alan Kay" }, { text: "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", author: "Ray Bradbury" }, { text: "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít.", author: "Winston Churchill" },
+            { text: "Az élet 10%-a, ami veled történik, és 90%-a, ahogyan reagálsz rá.", author: "Charles R. Swindoll" }, { text: "Nem az számít, hogy hányszor buksz el, hanem hogy hányszor állsz fel.", author: "Vince Lombardi" }, { text: "A képzelet fontosabb, mint a tudás.", author: "Albert Einstein" },
+            { text: "Légy a változás, amit a világban látni szeretnél.", author: "Mahatma Gandhi" }, { text: "Aki nem követ el hibákat, az nem próbálkozik semmi újjal.", author: "Albert Einstein" }, { text: "A legnehezebb dolog a döntés, a többi már csak kitartás kérdése.", author: "Amelia Earhart" },
+            { text: "A tegnap a múlt, a holnap a jövő, a ma ajándék.", author: "Eleanor Roosevelt" }, { text: "Az egyetlen út a nagyszerű munkához, ha szereted, amit csinálsz.", author: "Steve Jobs" }, { text: "Az akadályok azok az ijesztő dolgok, amiket akkor látsz, ha leveszed a szemed a célról.", author: "Henry Ford" },
+            { text: "Nem azért vallunk kudarcot, mert elbukunk, hanem mert feladjuk.", author: "Konfuciusz" }, { text: "A boldogság nem egy úti cél. Hanem egy utazás.", author: "Roy M. Goodman" }, { text: "A tudás hatalom.", author: "Francis Bacon" },
+            { text: "Aki hegyet akar mozgatni, apró kövek elhordásával kezdi.", author: "Konfuciusz" }, { text: "A kreativitás intelligencia, ami szórakozik.", author: "Albert Einstein" }, { text: "A legjobb bosszú a hatalmas siker.", author: "Frank Sinatra" },
+            { text: "Aki nem hisz önmagában, az senki másban sem fog hinni.", author: "Roy T. Bennett" }, { text: "A jövő azoké, akik hisznek álmaik szépségében.", author: "Eleanor Roosevelt" }, { text: "Az ezer mérföldes utazás is egyetlen lépéssel kezdődik.", author: "Lao-ce" },
+            { text: "A legfontosabb dolog, hogy élvezd az életed – hogy boldog légy –, ez minden, ami számít.", author: "Audrey Hepburn" }, { text: "A siker kulcsa nem a kudarc elkerülése, hanem a kudarcból való tanulás.", author: "Lass Small" }, { text: "A lehetőségek nem kopogtatnak, hanem te teremted meg őket.", author: "Chris Grosser" },
+            { text: "A kemény munka legyőzi a tehetséget, ha a tehetség nem dolgozik keményen.", author: "Tim Notke" }, { text: "A ma olvasója holnap vezető lesz.", author: "Margaret Fuller" }, { text: "A bátorság nem a félelem hiánya, hanem a félelem legyőzése.", author: "Nelson Mandela" },
+            { text: "Aki mindig a tömegben jár, nem jut messzebb a tömegnél.", author: "Albert Einstein" }, { text: "Az élet olyan, mint a biciklizés. Ahhoz, hogy egyensúlyban maradj, mozognod kell.", author: "Albert Einstein" }, { text: "A legnagyobb dicsőség nem az, ha soha nem bukunk el, hanem ha minden bukás után felállunk.", author: "Konfuciusz" },
+            { text: "A siker a lelkesedés elvesztése nélküli haladás kudarcról kudarcra.", author: "Winston Churchill" }, { text: "A tett minden tudás virága és gyümölcse.", author: "James Allen" }, { text: "Aki mindent megért, az mindent megbocsát.", author: "Buddha" },
+            { text: "A türelem keserű, de a gyümölcse édes.", author: "Jean-Jacques Rousseau" }, { text: "A világ egy könyv, és aki nem utazik, az csak egy lapot olvas el belőle.", author: "Szent Ágoston" }
+        ];
         const ICON_CALENDAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
         const ICON_NEWS = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`;
         const ICON_ANNOUNCEMENT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
@@ -831,7 +916,6 @@
         const nextBlockIndicatorEl = document.getElementById('next-block-indicator');
         const scheduleOverlayEl = document.getElementById('schedule-overlay');
         const progressBar = document.getElementById('progress-bar');
-        const breakingTitleLayerEl = document.getElementById('breaking-title-layer');
         const introAnimationContainer = document.getElementById('intro-animation-container');
         const countdownOverlayEl = document.getElementById('countdown-overlay');
         const countdownClockEl = document.getElementById('countdown-clock');
@@ -1225,7 +1309,7 @@
                 }
             }
 
-            if ((minutes === 0 || minutes === 20 || minutes === 40) && seconds < 10 && minutes !== lastScheduleMinute) {
+            if ((minutes === 25 || minutes === 50) && seconds < 10 && minutes !== lastScheduleMinute) {
                 lastScheduleMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
                     console.log("Periódikus műsorterv megjelenítése...");
@@ -1313,7 +1397,30 @@
                 progressBar.classList.add('animate');
                 
                 const isCurrentItemBreaking = currentItem.classList.contains('breaking-highlight');
-                breakingTitleLayerEl.style.display = isCurrentItemBreaking ? 'block' : 'none';
+                const watermarkEl = currentItem.querySelector('.item-watermark');
+                const breakingIndicatorEl = currentItem.querySelector('.item-breaking-indicator');
+
+                if (isCurrentItemBreaking) {
+                    if (watermarkEl) watermarkEl.style.display = 'none';
+                    if (breakingIndicatorEl) breakingIndicatorEl.style.display = 'block';
+                } else {
+                    if (breakingIndicatorEl) breakingIndicatorEl.style.display = 'none';
+                    if (watermarkEl) {
+                        if (wasPreviousItemBreaking) {
+                            watermarkEl.style.visibility = 'hidden';
+                            setTimeout(() => {
+                                watermarkEl.style.visibility = 'visible';
+                                watermarkEl.classList.add('strobe-in');
+                                watermarkEl.addEventListener('animationend', () => {
+                                    watermarkEl.classList.remove('strobe-in');
+                                }, { once: true });
+                            }, 1000);
+                        } else {
+                            watermarkEl.style.display = 'block';
+                        }
+                    }
+                }
+
                 wasPreviousItemBreaking = isCurrentItemBreaking;
                 
                 if(!isScheduleActive){
@@ -1323,11 +1430,8 @@
                         img.onload = () => {
                             labelImage.src = img.src;
                             tickerLabel.classList.add('image-mode-active');
-                            tickerLabel.classList.remove('schedule-mode-active');
                         };
-                        img.onerror = () => {
-                            tickerLabel.classList.remove('image-mode-active', 'schedule-mode-active');
-                        }
+                        img.onerror = () => tickerLabel.classList.remove('image-mode-active');
                         img.src = CORS_PROXY + imageUrl;
                     } else {
                         tickerLabel.classList.remove('image-mode-active');
@@ -1362,7 +1466,6 @@
                 updateCounter();
                 flipRemainingTime = 0;
                 progressBar.classList.remove('animate');
-                breakingTitleLayerEl.style.display = 'none';
             }
         }
         
@@ -1612,7 +1715,7 @@
                 const sunsetStr = formatTime(sunTimes.sunset);
                 const nameDayText = names.length > 0 ? `<div class="ci-nameday">${names.join(', ')}</div>` : '';
                 
-                const watermarkHtml = `<div class="item-watermark watermark-punched">${currentThematicBlock.name}</div>`;
+                const watermarkHtml = `<div class="item-watermark">${currentThematicBlock.name}</div>`;
                 
                 const calendarHtml = `
                     <div class="ticker-item calendar-item-v2" data-image-url="">
@@ -1651,19 +1754,19 @@
             masterNewsList = newsToDisplay;
             
             contentItems = masterNewsList.map((item) => {
-                if (typeof item === 'string') {
-                    return item;
-                }
+                if (typeof item === 'string') return item;
                 
                 const time = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
                 
                 const watermarkHtml = `<div class="item-watermark watermark-punched">${currentThematicBlock.name}</div>`;
+                const breakingIndicatorHtml = `<div class="item-breaking-indicator">Rendkívüli hír</div>`;
 
                 return `
                     <a href="${item.link}" class="ticker-item ${isBreaking ? 'breaking-highlight' : ''}" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
                         ${watermarkHtml}
+                        ${breakingIndicatorHtml}
                         <div class="ticker-item-content-wrapper">
                             <div class="ticker-item-header">
                                 <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span>
