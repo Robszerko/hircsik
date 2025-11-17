@@ -217,8 +217,8 @@
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
         #block-title-layer {
             position: absolute;
-            top: 20px;
-            right: 25px;
+            top: 10px;
+            right: 10px;
             z-index: 5;
             background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(8px);
@@ -599,7 +599,7 @@
             animation: intro-move-up 0.8s ease-in 4s forwards;
         }
 
-        .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; padding: 5px 15px; gap: 10px; transition: border-color 2s ease-in-out; }
+        .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; padding: 5px 15px; gap: 15px; transition: border-color 2s ease-in-out; }
         .control-group { display: flex; align-items: center; gap: 5px; }
         
         .central-controls {
@@ -660,17 +660,12 @@
             border-radius: 4px;
         }
 
-        #timeline-container {
-            display: none;
-            align-items: center;
-            padding: 2px 0;
-            width: 100%;
-        }
-        body.night-mode-active #filter-control-group {
-            display: none;
-        }
-
+        /* JAVÍTÁS: Szűrők elrejtése éjszakai módban */
+        #timeline-container { display: none; width: 100%; }
+        #filter-control-group { display: flex; }
         body.night-mode-active #timeline-container { display: flex; }
+        body.night-mode-active #filter-control-group { display: none; }
+        
         #timeline-container button {
             flex-shrink: 0;
             padding: 2px 6px;
@@ -1516,7 +1511,7 @@
                     }
                     img.src = CORS_PROXY + imageUrl;
                 } else {
-                    tickerLabel.classList.remove('image-mode-active', 'schedule-mode-active');
+                    tickerLabel.classList.remove('image-mode-active');
                 }
 
 
@@ -1748,8 +1743,6 @@
 
             blockTitleLayerEl.textContent = currentThematicBlock.name;
             bodyEl.classList.remove('night-mode-active');
-            filterControlGroup.style.display = 'flex';
-            nightModeMessage.style.display = 'none';
             updateFilterButtons(allNewsItems);
             
             let contentItems = [];
@@ -1795,8 +1788,8 @@
                 newsToDisplay = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
             }
 
-            if (!isManualTrigger) {
-                if (currentThematicBlock.type !== 'summary_yesterday' && activeFilter === 'all') {
+            if (!isManualTrigger && activeFilter === 'all') {
+                if (currentThematicBlock.type !== 'summary_yesterday') {
                     const dayOfMonth = today.getDate();
                     const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
                     const year = today.getFullYear();
