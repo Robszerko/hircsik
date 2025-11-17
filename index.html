@@ -236,7 +236,6 @@
             animation: blink 1.2s step-end infinite;
         }
         
-        /* --- VÁLTOZTATÁS: Új visszaszámláló óra stílusai --- */
         #countdown-overlay {
             position: absolute;
             top: 0; left: 0;
@@ -297,13 +296,12 @@
 
         a.ticker-item, div.ticker-item {
             grid-area: 1 / 1;
-            display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+            display: flex;
             font-size: 0.95rem; font-weight: 500;
             padding: 12px 20px;
             border-radius: 8px;
             width: 95%; 
             max-height: 95%;
-            justify-content: center;
             background: var(--item-bg-color);
             border: 1px solid var(--item-border-color);
             box-shadow: 0 4px 20px rgba(0,0,0,0.25);
@@ -313,7 +311,7 @@
             text-decoration: none;
             backface-visibility: hidden;
             transform: translateZ(0);
-            position: relative; /* Szükséges a vízjel abszolút pozicionálásához */
+            position: relative;
         }
         
         .item-watermark {
@@ -323,10 +321,21 @@
             font-family: var(--font-display);
             font-size: 0.7rem;
             color: var(--text-secondary);
-            opacity: 0.5; /* VÁLTOZTATÁS: Erősebb láthatóság */
+            opacity: 0.5;
             pointer-events: none;
             z-index: 5;
             transition: color 2s ease-in-out, opacity 2s ease-in-out;
+        }
+
+        .watermark-punched {
+            top: 6px;
+            right: 8px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.2);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+            background-color: rgba(0,0,0,0.15);
+            opacity: 0.7;
         }
         
         .ticker-item.visible, a.ticker-item.visible {
@@ -350,7 +359,6 @@
         }
 
         .ticker-item svg { width: 16px; height: 16px; margin-right: 10px; flex-shrink: 0; stroke-width: 2; }
-        .ticker-item.news-intro-item, .ticker-item.calendar-item, .ticker-item.quote-item { color: var(--text-primary); transition: color 2s ease-in-out; }
         
         .announcement-item {
             flex-direction: column;
@@ -368,143 +376,108 @@
             text-shadow: none;
         }
 
-        .ticker-item.calendar-item {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            align-items: center;
-            gap: 30px;
-            padding: 10px 30px;
-            background-color: transparent;
-            border: none;
-            box-shadow: none;
-        }
-        .calendar-date-block {
+        .calendar-item-v2 {
             display: flex;
-            flex-direction: column;
+            gap: 25px;
             align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            border: 1px solid rgba(0,0,0,0.2);
-        }
-        .calendar-date-block .date-month-header {
-            background-color: #D32F2F;
-            color: white;
-            font-family: var(--font-body);
-            font-weight: 700;
-            font-size: 0.8rem;
-            padding: 3px 0;
-            width: 100%;
-            text-align: center;
-            text-transform: uppercase;
-        }
-        .calendar-date-block .date-day-number {
-            font-family: var(--font-display);
-            font-size: 2.8rem;
-            line-height: 1;
-            color: #2c3e50;
-            padding: 5px 15px 0;
-            background-color: rgba(255,255,255,0.8);
-            text-shadow: none;
-        }
-        .calendar-date-block .date-year {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #424242;
-            padding: 5px 15px 5px;
-            background-color: rgba(255,255,255,0.8);
-            width: 100%;
-            text-align: center;
-            margin-top: 2px;
-        }
-        .calendar-details-block {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 4px;
-        }
-        .calendar-details-block .date-dayname {
-            font-family: var(--font-display);
-            font-size: 1.3rem;
-            color: var(--text-primary);
-            font-weight: 500;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
-        .calendar-details-block .date-nameday {
-            font-size: 0.95rem;
-            font-family: var(--font-body);
-            color: var(--accent-gold);
-            font-weight: 700;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
-        .calendar-details-block .creative-info-text {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
-        
-        .calendar-sun-info-block {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 8px;
-            padding-left: 20px;
-            border-left: 1px solid var(--border-color);
-            height: 100%;
-        }
-        .sun-info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
-        .sun-info-item svg {
-            width: 20px;
-            height: 20px;
-            stroke: var(--accent-gold);
-            stroke-width: 2;
-        }
-
-
-        .ticker-item.quote-item {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 10px 25px;
-            position: relative;
             background: transparent;
             border: none;
             box-shadow: none;
+            padding: 10px 25px;
         }
-        .quote-item blockquote {
+        .calendar-item-v2 .ci-left {
+            text-align: center;
+        }
+        .calendar-item-v2 .ci-day {
+            font-family: var(--font-display);
+            font-size: 4rem;
+            font-weight: 500;
+            line-height: 1;
+            background: linear-gradient(145deg, var(--accent-gold), #ffb700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+        }
+        .calendar-item-v2 .ci-month-year {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .calendar-item-v2 .ci-right {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+            border-left: 1px solid var(--border-color);
+            padding-left: 25px;
+        }
+        .calendar-item-v2 .ci-dayname {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+        .calendar-item-v2 .ci-nameday {
+            font-size: 1rem;
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+        .calendar-item-v2 .ci-sun-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        .calendar-item-v2 .ci-sun-info span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .calendar-item-v2 .ci-sun-info svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--accent-gold);
+        }
+
+        .quote-item-v2 {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            gap: 12px;
+        }
+        .quote-item-v2 blockquote {
             font-family: var(--font-quote);
             font-style: italic;
-            font-size: 1.0rem;
+            font-size: 1.1rem;
             color: var(--text-primary);
-            z-index: 2;
-            position: relative;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+            max-width: 90%;
+            line-height: 1.6;
         }
-        .quote-item::before, .quote-item::after {
-            position: absolute;
-            font-family: serif;
-            font-size: 6rem;
-            opacity: 0.08;
-            color: var(--text-secondary);
-            z-index: 1;
+        .quote-item-v2 .quote-divider {
+            display: flex;
+            align-items: center;
+            width: 80%;
+            gap: 10px;
         }
-        .quote-item::before {
-            content: '“';
-            top: 0;
-            left: 10px;
+        .quote-item-v2 .quote-divider::before,
+        .quote-item-v2 .quote-divider::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background-color: var(--border-color);
         }
-        .quote-item::after {
-            content: '”';
-            bottom: -20px;
-            right: 10px;
+        .quote-item-v2 cite {
+            font-family: var(--font-body);
+            font-style: normal;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent-gold);
         }
 
         .goodbye-item {
@@ -544,17 +517,9 @@
             animation-fill-mode: forwards;
         }
         
-        @keyframes fill-progress {
-            from { width: 0%; }
-            to { width: 100%; }
-        }
-        @keyframes strobe-in {
-            0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); }
-            12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); }
-        }
-        .strobe-in {
-            animation: strobe-in 0.8s ease-in-out forwards;
-        }
+        @keyframes fill-progress { from { width: 0%; } to { width: 100%; } }
+        @keyframes strobe-in { 0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); } 12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); } }
+        .strobe-in { animation: strobe-in 0.8s ease-in-out forwards; }
         @keyframes glitch-text { 0%, 100% { text-shadow: 1px 1px 0 #00FFFF, -1px -1px 0 #FF00FF; opacity: 1; } 5% { opacity: 0.8; } 10% { opacity: 1; } 15% { opacity: 0.6; } 20% { opacity: 1; text-shadow: -1px -1px 0 #00FFFF, 1px 1px 0 #FF00FF; } 25% { opacity: 0.9; } 30% { opacity: 1; } 50% { text-shadow: 1px -1px 0 #00FFFF, -1px 1px 0 #FF00FF; } 75% { text-shadow: -1px 1px 0 #00FFFF, 1px -1px 0 #FF00FF; } }
         @keyframes static-move { 0% { background-position: 0 0; } 100% { background-position: 4px 6px; } }
         @keyframes static-fade-in-out { 0% { opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.6; } 100% { opacity: 0; } }
@@ -563,166 +528,49 @@
         @keyframes pulse-bg { 0% { background-color: rgba(211, 47, 47, 0.1); } 50% { background-color: rgba(211, 47, 47, 0.25); } 100% { background-color: rgba(211, 47, 47, 0.1); } }
         @keyframes widget-fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* --- NEW INTRO ANIMATION --- */
-        #intro-animation-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9;
-            opacity: 0;
-            pointer-events: none;
-        }
-        #intro-logo-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
-        }
-        .intro-eye {
-            width: 32px; height: 32px;
-            opacity: 0;
-        }
-        #intro-logo-wrapper .brand-name {
-            opacity: 0;
-            transform: scale(1.1);
-        }
-        .intro-eye .eyelid {
-            transform-origin: center;
-            transform: scaleY(1);
-        }
-
+        #intro-animation-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9; opacity: 0; pointer-events: none; }
+        #intro-logo-wrapper { display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+        .intro-eye { width: 32px; height: 32px; opacity: 0; }
+        #intro-logo-wrapper .brand-name { opacity: 0; transform: scale(1.1); }
+        .intro-eye .eyelid { transform-origin: center; transform: scaleY(1); }
         @keyframes intro-fade-in { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         @keyframes intro-blink { 50% { transform: scaleY(0.1); } }
         @keyframes intro-split-left { from { transform: translateX(25px); } to { transform: translateX(0); } }
         @keyframes intro-split-right { from { transform: translateX(-25px); } to { transform: translateX(0); } }
         @keyframes intro-text-reveal { from { opacity: 0; letter-spacing: 5px; } to { opacity: 1; letter-spacing: 1px; } }
         @keyframes intro-move-up { to { transform: translateY(-30px) scale(0.85); opacity: 0; } }
-
         .intro-animation-active #intro-animation-container { opacity: 1; }
-        .intro-animation-active .intro-eye {
-            animation: intro-fade-in 0.5s ease-out forwards;
-        }
-        .intro-animation-active .intro-eye .eyelid {
-            animation: intro-blink 0.2s linear 0.7s 2 alternate;
-        }
-        .intro-animation-active #intro-eye-left {
-            animation-name: intro-fade-in, intro-split-left;
-            animation-duration: 0.5s, 0.8s;
-            animation-delay: 0s, 1.5s;
-            animation-fill-mode: forwards, forwards;
-        }
-        .intro-animation-active #intro-eye-right {
-            animation-name: intro-fade-in, intro-split-right;
-            animation-duration: 0.5s, 0.8s;
-            animation-delay: 0s, 1.5s;
-            animation-fill-mode: forwards, forwards;
-        }
-        .intro-animation-active #intro-brand-name {
-            animation: intro-text-reveal 0.5s ease-out 2.3s forwards;
-        }
-        .intro-animation-active #intro-logo-wrapper .intro-eye .eyelid {
-            animation: intro-blink 0.2s linear 0.7s 2, intro-blink 0.2s linear 2.8s 2;
-        }
-        .intro-animation-active #intro-logo-wrapper {
-            animation: intro-move-up 0.8s ease-in 4s forwards;
-        }
+        .intro-animation-active .intro-eye { animation: intro-fade-in 0.5s ease-out forwards; }
+        .intro-animation-active .intro-eye .eyelid { animation: intro-blink 0.2s linear 0.7s 2 alternate; }
+        .intro-animation-active #intro-eye-left { animation-name: intro-fade-in, intro-split-left; animation-duration: 0.5s, 0.8s; animation-delay: 0s, 1.5s; animation-fill-mode: forwards, forwards; }
+        .intro-animation-active #intro-eye-right { animation-name: intro-fade-in, intro-split-right; animation-duration: 0.5s, 0.8s; animation-delay: 0s, 1.5s; animation-fill-mode: forwards, forwards; }
+        .intro-animation-active #intro-brand-name { animation: intro-text-reveal 0.5s ease-out 2.3s forwards; }
+        .intro-animation-active #intro-logo-wrapper .intro-eye .eyelid { animation: intro-blink 0.2s linear 0.7s 2, intro-blink 0.2s linear 2.8s 2; }
+        .intro-animation-active #intro-logo-wrapper { animation: intro-move-up 0.8s ease-in 4s forwards; }
 
         .ticker-controls { min-height: 30px; height: auto; background-color: rgba(0,0,0,0.1); border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: flex-start; flex-wrap: nowrap; padding: 5px 15px; gap: 15px; transition: border-color 2s ease-in-out; }
         .control-group { display: flex; align-items: center; gap: 5px; }
-        
-        .central-controls {
-            flex-grow: 1;
-            min-width: 0;
-            display: flex;
-            justify-content: center;
-        }
-
-        #filter-controls, #timeline-container {
-            display: flex;
-            gap: 5px;
-            overflow-x: auto;
-            scrollbar-width: none;
-            padding-bottom: 2px;
-        }
-        #filter-controls::-webkit-scrollbar, #timeline-container::-webkit-scrollbar {
-            display: none;
-        }
-        
+        .central-controls { flex-grow: 1; min-width: 0; display: flex; justify-content: center; }
+        #filter-controls, #timeline-container { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+        #filter-controls::-webkit-scrollbar, #timeline-container::-webkit-scrollbar { display: none; }
         .control-group-label { font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); transition: color 2s ease-in-out; white-space: nowrap; }
         .ticker-controls button { background-color: transparent; border: 1px solid var(--text-secondary); color: var(--text-secondary); border-radius: 4px; padding: 2px 8px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; transition: all 0.2s, color 2s ease-in-out, border-color 2s ease-in-out; text-transform: capitalize; display: flex; align-items: center; gap: 5px; }
         .ticker-controls button:hover { background-color: var(--text-secondary); color: #000; }
         .ticker-controls button.active { background-color: var(--accent-main); color: white; border-color: var(--accent-main); }
         .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-        #night-mode-message {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-            transition: color 2s ease-in-out, opacity 0.5s;
-            white-space: nowrap;
-            margin-left: auto;
-        }
-        #next-block-indicator {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #111;
-            background-color: var(--accent-gold);
-            transition: all 0.5s ease-in-out;
-            white-space: nowrap;
-            margin-left: auto;
-            padding: 3px 10px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            text-shadow: none;
-        }
-        
+        #night-mode-message { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); transition: color 2s ease-in-out, opacity 0.5s; white-space: nowrap; margin-left: auto; }
+        #next-block-indicator { font-size: 0.8rem; font-weight: 700; color: #111; background-color: var(--accent-gold); transition: all 0.5s ease-in-out; white-space: nowrap; margin-left: auto; padding: 3px 10px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); text-shadow: none; }
         .nav-controls { display: flex; align-items: center; gap: 10px; }
-        #news-counter {
-            font-size: 0.8rem;
-            font-weight: 700;
-            font-family: var(--font-display);
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            transition: color 2s ease-in-out;
-            padding: 2px 8px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
-
+        #news-counter { font-size: 0.8rem; font-weight: 700; font-family: var(--font-display); letter-spacing: 0.5px; color: var(--text-secondary); transition: color 2s ease-in-out; padding: 2px 8px; border: 1px solid transparent; border-radius: 4px; }
         #timeline-container { display: none; width: 100%; }
         #filter-control-group { display: flex; }
         body.night-mode-active #timeline-container { display: flex; }
         body.night-mode-active #filter-control-group { display: none; }
+        #timeline-container button { flex-shrink: 0; padding: 2px 6px; font-size: 0.75rem; }
+        #timeline-container button.active-hour { background-color: var(--accent-gold); border-color: var(--accent-gold); color: #000; }
         
-        #timeline-container button {
-            flex-shrink: 0;
-            padding: 2px 6px;
-            font-size: 0.75rem;
-        }
-        #timeline-container button.active-hour {
-            background-color: var(--accent-gold);
-            border-color: var(--accent-gold);
-            color: #000;
-        }
-        
-        #world-weather-container {
-            flex-shrink: 0; width: 210px;
-            border-left: 1px solid var(--border-color);
-            padding: 8px 12px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            background-size: cover;
-            background-position: center;
-            transition: border-color 2s ease-in-out;
-            position: relative;
-        }
-        #world-weather-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.4);
-            z-index: 1;
-            transition: background-color 2s ease-in-out;
-        }
-        
+        #world-weather-container { flex-shrink: 0; width: 210px; border-left: 1px solid var(--border-color); padding: 8px 12px; display: flex; flex-direction: column; justify-content: space-between; background-size: cover; background-position: center; transition: border-color 2s ease-in-out; position: relative; }
+        #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.4); z-index: 1; transition: background-color 2s ease-in-out; }
         .weather-bg-clear.day.summer { background-image: url('https://images.unsplash.com/photo-1590077428593-a55d22956163?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-clear.day.spring { background-image: url('https://images.unsplash.com/photo-1494949649109-ecfc3b8c35df?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-clear.day.autumn { background-image: url('https://images.unsplash.com/photo-1506371369522-c3521a248387?auto=format&fit=crop&w=400&q=80'); }
@@ -734,22 +582,8 @@
         .weather-bg-snow { background-image: url('https://images.unsplash.com/photo-1547754980-3df97fed72a8?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-fog { background-image: url('https://images.unsplash.com/photo-1487621167335-f0249b9e2888?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-default { background: linear-gradient(145deg, #757F9A, #D7DDE8); }
-
-        .weather-widget {
-            animation: widget-fade-in 0.8s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
-        
-        #world-weather-container .weather-widget,
-        #world-weather-container .weather-widget * {
-            color: #ffffff;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
-        }
-
+        .weather-widget { animation: widget-fade-in 0.8s ease-in-out; display: flex; flex-direction: column; text-align: center; position: relative; z-index: 2; }
+        #world-weather-container .weather-widget, #world-weather-container .weather-widget * { color: #ffffff; text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); }
         .weather-header { text-align: center; margin-bottom: 4px; }
         .weather-location { font-size: 1.0rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .weather-time { font-size: 0.7rem; font-weight: 500; }
@@ -763,99 +597,29 @@
         #weather-attribution { font-size: 0.6rem; color: rgba(255,255,255,0.6); text-align: center; margin-top: 4px; z-index: 2; position: relative; }
         #weather-attribution a { color: inherit; text-decoration: none; }
         #world-weather-container .placeholder { font-size: 0.8rem; color: #fff; text-shadow: 1px 1px 2px #000; text-align: center; position: relative; z-index: 2; }
-        
-        #refresh-overlay {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            position: absolute; top: 0; left: 0;
-            z-index: 15; opacity: 0; visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-            gap: 10px;
-        }
+        #refresh-overlay { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; z-index: 15; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; gap: 10px; }
         #refresh-overlay.visible { opacity: 1; visibility: visible; }
-        
-        .refresh-text {
-            font-size: 0.8rem;
-            font-family: var(--font-body); color: var(--accent-main);
-            font-weight: 500;
-        }
-
-        /* --- REFRESH ANIMATION --- */
-        #animation-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        #animated-logo-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 200px;
-            height: 40px;
-        }
-        #animated-logo-container .ticker-logo {
-            width: 28px; height: 28px;
-            position: absolute;
-        }
-        #animated-logo-container .brand-name {
-            font-size: 1.5rem; letter-spacing: 1px;
-            visibility: hidden;
-            color: #ECF0F1;
-        }
-        
-        @keyframes eye-move-out-1 {
-            from { left: 50%; transform: translateX(-50%); }
-            to { left: calc(50% - 60px); transform: translateX(0); }
-        }
-        @keyframes eye-move-out-2 {
-            from { left: 50%; transform: translateX(-50%); }
-            to { left: calc(50% + 32px); transform: translateX(0); }
-        }
-        @keyframes brand-name-reveal {
-            from { opacity: 0; letter-spacing: 5px; }
-            to { opacity: 1; letter-spacing: 1px; }
-        }
+        .refresh-text { font-size: 0.8rem; font-family: var(--font-body); color: var(--accent-main); font-weight: 500; }
+        #animation-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+        #animated-logo-container { position: relative; display: flex; align-items: center; justify-content: center; width: 200px; height: 40px; }
+        #animated-logo-container .ticker-logo { width: 28px; height: 28px; position: absolute; }
+        #animated-logo-container .brand-name { font-size: 1.5rem; letter-spacing: 1px; visibility: hidden; color: #ECF0F1; }
+        @keyframes eye-move-out-1 { from { left: 50%; transform: translateX(-50%); } to { left: calc(50% - 60px); transform: translateX(0); } }
+        @keyframes eye-move-out-2 { from { left: 50%; transform: translateX(-50%); } to { left: calc(50% + 32px); transform: translateX(0); } }
+        @keyframes brand-name-reveal { from { opacity: 0; letter-spacing: 5px; } to { opacity: 1; letter-spacing: 1px; } }
         @keyframes animated-eyelid-blink { 50% { transform: scaleY(0.1); } }
-
-        #refresh-overlay.refresh-animation-active #animated-eye-logo-1 {
-            animation: eye-move-out-1 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards;
-        }
-        #refresh-overlay.refresh-animation-active #animated-eye-logo-2 {
-            animation: eye-move-out-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards;
-        }
-        #refresh-overlay.refresh-animation-active #animated-brand-name {
-            visibility: visible;
-            animation: brand-name-reveal 0.8s ease-out 0.8s forwards;
-        }
-        #refresh-overlay.refresh-animation-active .eyelid-anim {
-            transform-origin: center;
-            animation: animated-eyelid-blink 0.2s linear 0.2s 1;
-        }
+        #refresh-overlay.refresh-animation-active #animated-eye-logo-1 { animation: eye-move-out-1 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards; }
+        #refresh-overlay.refresh-animation-active #animated-eye-logo-2 { animation: eye-move-out-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards; }
+        #refresh-overlay.refresh-animation-active #animated-brand-name { visibility: visible; animation: brand-name-reveal 0.8s ease-out 0.8s forwards; }
+        #refresh-overlay.refresh-animation-active .eyelid-anim { transform-origin: center; animation: animated-eyelid-blink 0.2s linear 0.2s 1; }
         
         @media (max-width: 950px) {
             .news-ticker-container { flex-direction: column; }
             .ticker-controls { flex-wrap: wrap; }
-            #world-weather-container {
-                width: 100%;
-                border-left: none; border-top: 1px solid var(--border-color);
-                padding: 10px 15px;
-            }
-            .weather-widget {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-around;
-                text-align: left;
-            }
+            #world-weather-container { width: 100%; border-left: none; border-top: 1px solid var(--border-color); padding: 10px 15px; }
+            .weather-widget { flex-direction: row; align-items: center; justify-content: space-around; text-align: left; }
             .weather-main-content { order: 1; }
-            .weather-details {
-                order: 2; grid-template-columns: 1fr;
-                align-items: flex-start; border: none;
-                margin: 0; padding: 0; gap: 5px;
-            }
+            .weather-details { order: 2; grid-template-columns: 1fr; align-items: flex-start; border: none; margin: 0; padding: 0; gap: 5px; }
             .weather-header, .weather-description { display: none; }
             #next-block-indicator { order: 3; flex-basis: 100%; text-align: center; margin-top: 5px; margin-left: 0; }
             #countdown-clock { font-size: 10vw; }
@@ -863,17 +627,12 @@
         @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } .label-content { padding: 0 10px; } }
         @media (max-width: 520px) {
             .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; } #clock { margin-top: 0; } #night-shift-label { font-size: 0.8rem; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; } .label-content { padding: 5px 10px; }
-            .weather-widget {
-                flex-direction: column;
-                text-align: center;
-            }
+            .weather-widget { flex-direction: column; text-align: center; }
              .weather-main-content, .weather-details { order: 0; }
              .weather-details { grid-template-columns: 1fr 1fr; }
              .weather-header, .weather-description { display: block; }
-            .ticker-item.calendar-item { grid-template-columns: 1fr; }
-            .calendar-date-block { flex-direction: row; align-items: baseline; gap: 10px; padding: 5px 10px;}
-            .calendar-date-block .date-day-number { font-size: 2rem; }
-            .calendar-sun-info-block, .creative-info-wrapper { display: none; }
+            .calendar-item-v2 { flex-direction: column; text-align: center; gap: 15px; }
+            .calendar-item-v2 .ci-right { border-left: none; padding-left: 0; align-items: center; }
             #countdown-clock { font-size: 12vw; }
         }
         @media (max-width: 380px) { .label-top-row { gap: 5px; } .brand-name { font-size: 1.1rem; } body.night-mode-active .ticker-logo { width: 20px; height: 20px; } .ticker-logo { width: 22px; height: 22px; } #clock { font-size: 0.8rem; } .control-group-label { display: none; } }
@@ -958,7 +717,6 @@
                     </div>
                 </div>
                 <div class="ticker-wrap" id="ticker-wrap">
-                    <!-- VÁLTOZTATÁS: Visszaszámláló óra konténer hozzáadva -->
                     <div id="countdown-overlay"><div id="countdown-clock"></div></div>
                     <div id="block-title-layer"></div>
                     <div id="breaking-title-layer">Rendkívüli hír</div>
@@ -1002,7 +760,7 @@
         const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Johannesburg', lat: -26.20, lon: 28.04 }, { name: 'Szentpétervár', lat: 59.93, lon: 30.33 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 }, { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Genf', lat: 46.20, lon: 6.14 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Szao Paulo', lat: -23.55, lon: -46.63 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Bogotá', lat: 4.71, lon: -74.07 }, { name: 'Santiago', lat: -33.44, lon: -70.66 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 }, { name: 'Lagos', lat: 6.52, lon: 3.37 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Ho Si Minh-város', lat: 10.82, lon: 106.62 }, { name: 'Kuala Lumpur', lat: 3.13, lon: 101.68 }, { name: 'Abu-Dzabi', lat: 24.45, lon: 54.37 }, { name: 'Doha', lat: 25.28, lon: 51.53 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Montreal', lat: 45.50, lon: -73.56 }, { name: 'Wellington', lat: -41.28, lon: 174.77 }, { name: 'Kijev', lat: 50.45, lon: 30.52 }, { name: 'Belgrád', lat: 44.78, lon: 20.44 }, { name: 'Bukarest', lat: 44.42, lon: 26.10 }, { name: 'Ljubljana', lat: 46.05, lon: 14.50 }, { name: 'Szarajevó', lat: 43.85, lon: 18.41 }, { name: 'Szófia', lat: 42.69, lon: 23.32 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Ankara', lat: 39.93, lon: 32.85 }, { name: 'San Francisco', lat: 37.77, lon: -122.41 }, { name: 'Seattle', lat: 47.60, lon: -122.33 }, { name: 'Boston', lat: 42.36, lon: -71.05 }, { name: 'Edinburgh', lat: 55.95, lon: -3.18 }, { name: 'Jeruzsálem', lat: 31.76, lon: 35.21 } ];
         
         const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac', 'portfolio'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs', 'nemzeti sport'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
-        const QUOTES = [ "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít." ];
+        const QUOTES = [ { text: "A legjobb módja a jövő megjóslásának, ha feltaláljuk.", author: "Alan Kay" }, { text: "Az egyetlen korlátot a valóság megteremtésében a képzeletünk szabja.", author: "Ray Bradbury" }, { text: "A siker nem végleges, a kudarc nem végzetes: a folytatáshoz való bátorság az, ami számít.", author: "Winston Churchill" } ];
         const ICON_CALENDAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
         const ICON_NEWS = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`;
         const ICON_ANNOUNCEMENT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
@@ -1023,7 +781,6 @@
             { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [] }
         ];
 
-        // *** DINAMIKUS TÉMA BEÁLLÍTÁSOK ***
         const NYIREGYHAZA_COORDS = { lat: 47.95, lon: 21.71 };
         const SKY_PALETTE = {
             DEEP_NIGHT:   { themeKey: 'night',   textColorMode: 'night', top: '#020111', bottom: '#191621' },
@@ -1099,7 +856,8 @@
         
         let textGlitchTimeout = null;
         let lastUpdateMinute = -1;
-        let scheduleTimeout = null;
+        let lastScheduleMinute = -1;
+        let isScheduleActive = false;
         
         let fetchStartTime = 0;
         let loadingTimeout = null;
@@ -1367,38 +1125,50 @@
             }
         }
         
-        function showScheduleOverlay() {
-            if (tickerLabel.classList.contains('image-mode-active')) return;
-
+        function generateScheduleHtml(title, startIndex, count) {
+            if (!currentThematicBlock) return '';
+            
             const currentIndex = THEMATIC_BLOCKS.findIndex(b => b.start === currentThematicBlock.start);
-            if (currentIndex === -1) return;
+            if (currentIndex === -1) return '';
 
-            let scheduleHTML = '<div class="schedule-title">Következik:</div>';
-            for (let i = 1; i <= 3; i++) {
+            let scheduleHTML = `<div class="schedule-title">${title}</div>`;
+            for (let i = startIndex; i < startIndex + count; i++) {
                 const nextBlockIndex = (currentIndex + i) % THEMATIC_BLOCKS.length;
                 const block = THEMATIC_BLOCKS[nextBlockIndex];
-                if (block.start === 0 && i > 1) break;
+                if (block.type === 'goodbye') continue;
+                
                 const startTime = formatBlockTime(block.start);
                 scheduleHTML += `<div class="schedule-item"><span class="time">${startTime}</span><span class="title">${block.name}</span></div>`;
             }
+            return scheduleHTML;
+        }
 
-            scheduleOverlayEl.innerHTML = scheduleHTML;
+        function displayFullScheduleSequence() {
+            isScheduleActive = true;
+            
+            scheduleOverlayEl.innerHTML = generateScheduleHtml("Következik:", 1, 3);
             tickerLabel.classList.add('schedule-mode-active');
+            
+            setTimeout(() => {
+                if (!isScheduleActive) return; 
+                scheduleOverlayEl.innerHTML = generateScheduleHtml("Később:", 4, 3);
+            }, 15000);
 
             setTimeout(() => {
                 tickerLabel.classList.remove('schedule-mode-active');
-            }, 15000); // 15 másodpercig látható
+                isScheduleActive = false;
+                
+                const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+                const currentItem = items[currentItemIndex];
+                if (currentItem) {
+                    const imageUrl = currentItem.dataset.imageUrl;
+                    if (imageUrl && imageUrl !== 'null') {
+                        labelImage.src = CORS_PROXY + imageUrl;
+                        tickerLabel.classList.add('image-mode-active');
+                    }
+                }
+            }, 30000);
         }
-
-        function scheduleNextOverlay() {
-            clearTimeout(scheduleTimeout);
-            const randomInterval = Math.floor(Math.random() * (20 * 60 * 1000 - 5 * 60 * 1000 + 1)) + 5 * 60 * 1000;
-            scheduleTimeout = setTimeout(() => {
-                showScheduleOverlay();
-                scheduleNextOverlay();
-            }, randomInterval);
-        }
-
 
         function getCurrentAndNextBlocks(now) {
             const currentTime = now.getHours() + now.getMinutes() / 60;
@@ -1428,7 +1198,6 @@
             
             const { current, next } = getCurrentAndNextBlocks(now);
 
-            // --- VÁLTOZTATÁS: Visszaszámláló óra logikája ---
             if (currentThematicBlock && currentThematicBlock.type !== 'summary_yesterday') {
                 if (minutes === 59 && seconds >= 50 && !isCountdownActive) {
                     isCountdownActive = true;
@@ -1444,29 +1213,30 @@
                 }
 
                 if (isCountdownActive) {
-                    const h = String(now.getHours()).padStart(2, '0');
-                    const m = String(now.getMinutes()).padStart(2, '0');
-                    const s = String(now.getSeconds()).padStart(2, '0');
-                    countdownClockEl.textContent = `${h}:${m}:${s}`;
+                    countdownClockEl.textContent = `${hours}:${minutes}:${String(seconds).padStart(2, '0')}`;
                 }
                 
                 if (minutes === 0 && seconds === 0 && isCountdownActive) {
                     isCountdownActive = false;
                     tickerWrap.classList.remove('countdown-active');
                     countdownOverlayEl.classList.remove('visible');
-                    
                     console.log("Visszaszámlálás vége, hírciklus indítása elölről.");
-                    // Mivel a triggerUpdate lefutott, a startFlipCycle(true) már a frissített tartalommal indul.
                     startFlipCycle(true);
                 }
             }
-            // --- Visszaszámláló vége ---
+
+            if ((minutes === 0 || minutes === 20 || minutes === 40) && seconds < 10 && minutes !== lastScheduleMinute) {
+                lastScheduleMinute = minutes;
+                if (document.visibilityState === 'visible' && !isCountdownActive) {
+                    console.log("Periódikus műsorterv megjelenítése...");
+                    displayFullScheduleSequence();
+                }
+            }
 
             if (currentThematicBlock === null || current.start !== currentThematicBlock.start) {
                 console.log(`Tematikus blokk váltás: ${current.name}`);
                 currentThematicBlock = current;
                 sessionStorage.removeItem('newsCache');
-                // Ha blokkváltás van, ne indítsuk el a visszaszámlálót azonnal
                 if(isCountdownActive) {
                     isCountdownActive = false;
                     tickerWrap.classList.remove('countdown-active');
@@ -1518,10 +1288,10 @@
         const formatBlockTime = (time) => { const hour = Math.floor(time); const minute = Math.round((time % 1) * 60); return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`; };
 
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
-        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
+        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && !isScheduleActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
         
         function showItemAtIndex(index, isManual = false) {
-            if (isInfoMessageActive || isCountdownActive) return;
+            if (isInfoMessageActive || isCountdownActive || isScheduleActive) return;
             pauseFlipCycle();
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
             if(items.length === 0) return;
@@ -1537,7 +1307,7 @@
 
                 let duration = FLIP_INTERVAL_REGULAR;
                 if (currentItem.classList.contains('announcement-item')) duration = FLIP_INTERVAL_ANNOUNCEMENT;
-                else if (currentItem.classList.contains('news-intro-item') || currentItem.classList.contains('calendar-item') || currentItem.classList.contains('quote-item') || currentItem.classList.contains('goodbye-item')) duration = FLIP_INTERVAL_INFO;
+                else if (currentItem.classList.contains('calendar-item-v2') || currentItem.classList.contains('quote-item-v2')) duration = FLIP_INTERVAL_INFO;
                 
                 progressBar.style.animationDuration = `${duration / 1000}s`;
                 progressBar.classList.add('animate');
@@ -1546,20 +1316,22 @@
                 breakingTitleLayerEl.style.display = isCurrentItemBreaking ? 'block' : 'none';
                 wasPreviousItemBreaking = isCurrentItemBreaking;
                 
-                const imageUrl = currentItem.dataset.imageUrl;
-                if (imageUrl && imageUrl !== 'null') {
-                    const img = new Image();
-                    img.onload = () => {
-                        labelImage.src = img.src;
-                        tickerLabel.classList.add('image-mode-active');
-                        tickerLabel.classList.remove('schedule-mode-active');
-                    };
-                    img.onerror = () => {
-                        tickerLabel.classList.remove('image-mode-active', 'schedule-mode-active');
+                if(!isScheduleActive){
+                    const imageUrl = currentItem.dataset.imageUrl;
+                    if (imageUrl && imageUrl !== 'null') {
+                        const img = new Image();
+                        img.onload = () => {
+                            labelImage.src = img.src;
+                            tickerLabel.classList.add('image-mode-active');
+                            tickerLabel.classList.remove('schedule-mode-active');
+                        };
+                        img.onerror = () => {
+                            tickerLabel.classList.remove('image-mode-active', 'schedule-mode-active');
+                        }
+                        img.src = CORS_PROXY + imageUrl;
+                    } else {
+                        tickerLabel.classList.remove('image-mode-active');
                     }
-                    img.src = CORS_PROXY + imageUrl;
-                } else {
-                    tickerLabel.classList.remove('image-mode-active');
                 }
 
                 requestAnimationFrame(() => { 
@@ -1574,7 +1346,7 @@
         }
 
         function cycleItems() { 
-            if (isInfoMessageActive || isCountdownActive) return;
+            if (isInfoMessageActive || isCountdownActive || isScheduleActive) return;
             showItemAtIndex(currentItemIndex + 1); 
         }
         
@@ -1679,7 +1451,7 @@
             
             if (!isContentLoaded) {
                 showRefreshState(true, isManualTrigger ? 'animation' : 'text');
-            } else {
+            } else if (!isCountdownActive) {
                 manualRefreshTriggerEl.innerHTML = 'Frissítem a híreket<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
                 manualRefreshTriggerEl.style.cursor = 'default';
                 manualRefreshTriggerEl.style.display = 'block';
@@ -1701,7 +1473,7 @@
             }, 25000);
             
             clearTimeout(newsFetchRetryTimeout);
-            pauseFlipCycle();
+            if(!isCountdownActive) pauseFlipCycle();
             timelineContainer.innerHTML = '';
             
             const CACHE_KEY = 'newsCache';
@@ -1829,73 +1601,69 @@
                 newsToDisplay = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
             }
 
-            if (!isManualTrigger && activeFilter === 'all') {
-                if (currentThematicBlock.type !== 'summary_yesterday') {
-                    const dayOfMonth = today.getDate();
-                    const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
-                    const year = today.getFullYear();
-                    const dayName = CALENDAR_DATA.napok[today.getDay()];
-                    const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
-                    const sunTimes = SunCalc.getTimes(today, NYIREGYHAZA_COORDS.lat, NYIREGYHAZA_COORDS.lon);
-                    const sunriseStr = formatTime(sunTimes.sunrise);
-                    const sunsetStr = formatTime(sunTimes.sunset);
-                    const nameDayText = names.length > 0 ? `<span class="date-nameday">${names.join(', ')}</span>` : '';
-                    
-                    const watermarkText = currentThematicBlock ? currentThematicBlock.name : '';
-
-                    const calendarHtml = `
-                    <div class="ticker-item calendar-item" data-image-url="">
-                        <div class="item-watermark">${watermarkText}</div>
-                        <div class="calendar-date-block">
-                            <div class="date-month-header">${monthName}</div>
-                            <span class="date-day-number">${String(dayOfMonth).padStart(2, '0')}</span>
-                            <span class="date-year">${year}</span>
+            if (activeFilter === 'all') {
+                const dayOfMonth = today.getDate();
+                const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
+                const year = today.getFullYear();
+                const dayName = CALENDAR_DATA.napok[today.getDay()];
+                const dayNameDisplay = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+                const sunTimes = SunCalc.getTimes(today, NYIREGYHAZA_COORDS.lat, NYIREGYHAZA_COORDS.lon);
+                const sunriseStr = formatTime(sunTimes.sunrise);
+                const sunsetStr = formatTime(sunTimes.sunset);
+                const nameDayText = names.length > 0 ? `<div class="ci-nameday">${names.join(', ')}</div>` : '';
+                
+                const watermarkHtml = `<div class="item-watermark watermark-punched">${currentThematicBlock.name}</div>`;
+                
+                const calendarHtml = `
+                    <div class="ticker-item calendar-item-v2" data-image-url="">
+                        ${watermarkHtml}
+                        <div class="ci-left">
+                            <div class="ci-day">${String(dayOfMonth).padStart(2, '0')}</div>
+                            <div class="ci-month-year">${year}. ${monthName}</div>
                         </div>
-                        <div class="calendar-details-block">
-                            <span class="date-dayname">${dayNameDisplay}</span>
+                        <div class="ci-right">
+                            <div class="ci-dayname">${dayNameDisplay}</div>
                             ${nameDayText}
-                            <span class="creative-info-text">Az év ${getDayOfYear(today)}. napja / ${getDaysLeftInYear(today)} nap van hátra.</span>
-                        </div>
-                        <div class="calendar-sun-info-block">
-                            <span class="sun-info-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
-                                <span>${sunriseStr}</span>
-                            </span>
-                            <span class="sun-info-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg>
-                                <span>${sunsetStr}</span>
-                            </span>
+                            <div class="ci-sun-info">
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg> ${sunriseStr}</span>
+                                <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg> ${sunsetStr}</span>
+                            </div>
                         </div>
                     </div>`;
-                    preliminaryItems.push(calendarHtml);
-                    
-                    const quoteHtml = `<div class="ticker-item quote-item" data-image-url=""><div class="item-watermark">${watermarkText}</div><blockquote>"${QUOTES[today.getDate() % QUOTES.length]}"</blockquote></div>`;
+                preliminaryItems.push(calendarHtml);
+                
+                if(currentThematicBlock.type !== 'summary_yesterday') {
+                    const quote = QUOTES[today.getDate() % QUOTES.length];
+                    const quoteHtml = `
+                        <div class="ticker-item quote-item-v2" data-image-url="">
+                            <div class="item-watermark">${currentThematicBlock.name}</div>
+                            <blockquote>“${quote.text}”</blockquote>
+                            <div class="quote-divider"><cite>${quote.author}</cite></div>
+                        </div>`;
                     preliminaryItems.push(quoteHtml);
                 }
             }
 
             newsToDisplay = [...preliminaryItems, ...newsToDisplay];
 
-            if (currentThematicBlock.type === 'summary_yesterday') {
-                generateTimeline();
-            }
+            if (currentThematicBlock.type === 'summary_yesterday') generateTimeline();
             
             masterNewsList = newsToDisplay;
             
-            const watermarkText = currentThematicBlock ? currentThematicBlock.name : '';
-
-            contentItems = masterNewsList.map(item => {
-                if (typeof item === 'string') return item;
+            contentItems = masterNewsList.map((item) => {
+                if (typeof item === 'string') {
+                    return item;
+                }
                 
                 const time = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
                 
-                let itemClass = `ticker-item ${isBreaking ? 'breaking-highlight' : ''}`;
-                
+                const watermarkHtml = `<div class="item-watermark watermark-punched">${currentThematicBlock.name}</div>`;
+
                 return `
-                    <a href="${item.link}" class="${itemClass}" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
-                        <div class="item-watermark">${watermarkText}</div>
+                    <a href="${item.link}" class="ticker-item ${isBreaking ? 'breaking-highlight' : ''}" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
+                        ${watermarkHtml}
                         <div class="ticker-item-content-wrapper">
                             <div class="ticker-item-header">
                                 <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span>
@@ -1923,7 +1691,6 @@
                     manualRefreshTriggerEl.style.cursor = 'pointer';
                 }
                 
-                // Ha a visszaszámláló aktív, nem váltunk kártyát, megvárjuk, hogy lejárjon
                 if (!isCountdownActive) {
                     requestAnimationFrame(() => {
                         tracks[standbyTrackKey].classList.add('visible');
@@ -2040,7 +1807,7 @@
             }, 500);
         };
         
-        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); clearTimeout(scheduleTimeout); }
+        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); }
         
         async function startAllTimers() { 
             triggerUpdate();
@@ -2053,7 +1820,6 @@
                  weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
             }
             startAllAnimatedEffects();
-            scheduleNextOverlay();
         };
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -2086,10 +1852,17 @@
                     if (bodyEl.classList.contains('intro-finished')) {
                         updateDynamicSkyAndTheme();
                         resumeFlipCycle();
-                        startAllTimers();
+                        startAllAnimatedEffects();
+                        if (!weatherDisplayInterval) {
+                            displayWeather();
+                            weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
+                        }
                     }
                 } else {
-                    stopAllTimers();
+                    pauseFlipCycle();
+                    stopAllAnimatedEffects();
+                    if(weatherDisplayInterval) clearInterval(weatherDisplayInterval);
+                    weatherDisplayInterval = null;
                 }
             });
 
