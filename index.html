@@ -121,7 +121,7 @@
             visibility: visible;
             transition: opacity 0.6s ease-in-out 0.2s, visibility 0s 0.2s;
         }
-        
+
         .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 0x; }
         .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; transition: width 0.4s ease, height 0.4s ease; }
         #eyelid, #eyelid-2 { transform-origin: center; transition: transform 0.1s ease-in-out; }
@@ -606,9 +606,9 @@
         #timeline-container button { flex-shrink: 0; padding: 2px 6px; font-size: 0.75rem; }
         #timeline-container button.active-hour { background-color: var(--accent-gold); border-color: var(--accent-gold); color: #000; text-shadow: none; }
         
-        #world-weather-container { flex-shrink: 0; width: 210px; border-left: 1px solid var(--border-color); padding: 0; display: flex; flex-direction: column; justify-content: center; background-size: cover; background-position: center; transition: border-color 2s ease-in-out; position: relative; }
+        #world-weather-container { flex-shrink: 0; width: 210px; border-left: 1px solid var(--border-color); padding: 0; display: flex; flex-direction: column; justify-content: center; background-size: cover; background-position: center; transition: border-color 2s ease-in-out; position: relative; overflow: hidden; }
         #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.4); z-index: 1; transition: background-color 2s ease-in-out; }
-        #schedule-widget { display: none; flex-direction: column; justify-content: center; height: 100%; padding: 8px 12px; position: relative; z-index: 2; color: #f0f2f5; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); }
+        #schedule-widget { display: none; flex-direction: column; justify-content: center; height: 100%; padding: 8px 12px; position: relative; z-index: 2; color: #f0f2f5; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); background-color: rgba(0,0,0,0.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .weather-bg-clear.day.summer { background-image: url('https://images.unsplash.com/photo-1590077428593-a55d22956163?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-clear.day.spring { background-image: url('https://images.unsplash.com/photo-1494949649109-ecfc3b8c35df?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-clear.day.autumn { background-image: url('https://images.unsplash.com/photo-1506371369522-c3521a248387?auto=format&fit=crop&w=400&q=80'); }
@@ -1680,7 +1680,7 @@
                 newsToDisplay = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
             }
 
-            if (activeFilter === 'all' || (isManualTrigger && currentFilterPage === 1)) {
+            if ((activeFilter === 'all' || (isManualTrigger && currentFilterPage === 1)) && !isManualTrigger) {
                 const dayOfMonth = today.getDate();
                 const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
                 const year = today.getFullYear();
@@ -1691,7 +1691,7 @@
                 const sunsetStr = formatTime(sunTimes.sunset);
                 const nameDayText = names.length > 0 ? `<div class="ci-nameday">${names.join(', ')}</div>` : '';
                 
-                const watermarkHtml = `<div class="item-watermark watermark-punched">${currentThematicBlock.name}</div>`;
+                const watermarkHtml = `<div class="item-watermark">${currentThematicBlock.name}</div>`;
                 
                 const calendarHtml = `
                     <div class="ticker-item calendar-item-v2" data-image-url="">
