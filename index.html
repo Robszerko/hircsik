@@ -19,6 +19,7 @@
             --font-display: 'Oswald', sans-serif;
             --font-body: 'Roboto', sans-serif;
             --font-quote: 'Playfair Display', serif;
+            --font-mono: 'Roboto Mono', monospace;
             
             /* Alapértelmezett (éjszakai) téma, JS felülírja */
             --bg-main-gradient: linear-gradient(145deg, #020111, #191621);
@@ -462,7 +463,7 @@
         .goodbye-item h2, .goodbye-item p {
             text-shadow: none;
         }
-
+        
         #progress-bar-container {
             position: absolute;
             bottom: 0;
@@ -483,6 +484,151 @@
             animation-timing-function: linear;
             animation-fill-mode: forwards;
         }
+        
+        /* === Műsorajánló Stílusok Kezdet === */
+        #world-weather-container.schedule-expanded {
+            width: 450px;
+        }
+
+        #schedule-widget {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(10, 20, 30, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        .schedule-card {
+            grid-area: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
+        }
+        .schedule-card.visible {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease-in-out, visibility 0s;
+        }
+
+        #schedule-intro .schedule-header {
+            font-size: 1.8rem;
+            animation: strobe-text 1s linear infinite alternate;
+        }
+        
+        @keyframes strobe-text {
+            from {
+                opacity: 1;
+                text-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 12px var(--accent-gold);
+            }
+            to {
+                opacity: 0.8;
+                text-shadow: 0 0 6px #fff, 0 0 10px #fff, 0 0 16px var(--accent-gold);
+            }
+        }
+        
+        .schedule-header {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #FFFFFF;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .schedule-header svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-gold);
+            filter: drop-shadow(0 0 3px var(--accent-gold));
+        }
+
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .schedule-item-v2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .schedule-time {
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #f0f2f5;
+            flex-shrink: 0;
+        }
+
+        .schedule-title-main {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #f0f2f5;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-left: 2px solid var(--accent-gold);
+            padding-left: 10px;
+        }
+
+        .credits-main-text {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 500;
+            text-align: center;
+            color: #f0f2f5;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .credits-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--font-display);
+            font-weight: 500;
+            color: var(--accent-gold);
+            vertical-align: middle;
+        }
+        .credits-logo {
+            width: 18px;
+            height: 18px;
+        }
+        .credits-logo use {
+             stroke: var(--accent-gold);
+             fill: var(--accent-gold);
+        }
+        .credits-footer {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        /* === Műsorajánló Stílusok Vége === */
         
         @keyframes fill-progress { from { width: 0%; } to { width: 100%; } }
         @keyframes strobe-in {
@@ -607,9 +753,22 @@
         #timeline-container button { flex-shrink: 0; padding: 2px 6px; font-size: 0.75rem; }
         #timeline-container button.active-hour { background-color: var(--accent-gold); border-color: var(--accent-gold); color: #000; text-shadow: none; }
         
-        #world-weather-container { flex-shrink: 0; width: 210px; border-left: 1px solid var(--border-color); padding: 0; display: flex; flex-direction: column; justify-content: center; background-size: cover; background-position: center; transition: border-color 2s ease-in-out; position: relative; overflow: hidden; }
+        #world-weather-container { 
+            flex-shrink: 0; 
+            width: 210px; 
+            border-left: 1px solid var(--border-color); 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            background-size: cover; 
+            background-position: center; 
+            transition: border-color 2s ease-in-out, width 1s ease-in-out; 
+            position: relative; 
+            overflow: hidden; 
+        }
         #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.4); z-index: 1; transition: background-color 2s ease-in-out; }
-        #schedule-widget { display: none; flex-direction: column; justify-content: center; height: 100%; padding: 8px 12px; position: relative; z-index: 2; color: #f0f2f5; text-shadow: 1px 1px 3px rgba(0,0,0,0.7); background-color: rgba(0,0,0,0.2); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        
         .weather-bg-clear.day.summer { background-image: url('https://images.unsplash.com/photo-1590077428593-a55d22956163?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-clear.day.spring { background-image: url('https://images.unsplash.com/photo-1494949649109-ecfc3b8c35df?auto=format&fit=crop&w=400&q=80'); }
         .weather-bg-clear.day.autumn { background-image: url('https://images.unsplash.com/photo-1506371369522-c3521a248387?auto=format&fit=crop&w=400&q=80'); }
@@ -656,7 +815,12 @@
         @media (max-width: 950px) {
             .news-ticker-container { flex-direction: column; }
             .ticker-controls { flex-wrap: wrap; }
-            #world-weather-container { width: 100%; border-left: none; border-top: 1px solid var(--border-color); padding: 10px 15px; }
+            #world-weather-container,
+            #world-weather-container.schedule-expanded { 
+                width: 100%; 
+                border-left: none; 
+                border-top: 1px solid var(--border-color); 
+            }
             .weather-widget { flex-direction: row; align-items: center; justify-content: space-around; text-align: left; }
             .weather-main-content { order: 1; }
             .weather-details { order: 2; grid-template-columns: 1fr; align-items: flex-start; border: none; margin: 0; padding: 0; gap: 5px; }
@@ -783,7 +947,7 @@
         
         <div id="world-weather-container">
              <div class="placeholder">Időjárás adatok betöltése...</div>
-             <div id="schedule-widget" style="display: none;"></div>
+             <div id="schedule-widget"></div>
         </div>
     </section>
 
@@ -820,16 +984,13 @@
         
         const THEMATIC_BLOCKS = [
             { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [] },
-            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    categories: [] },
-            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    categories: [] },
-            { start: 12,   name: 'Délidőben',            type: 'fresh',                    categories: [] },
-            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    categories: [] },
-            { start: 18,   name: 'Hazai Pálya',          type: 'fresh',                    categories: ['belföld'], timeWindowHours: 6 },
-            { start: 18.5, name: 'Esti gyors',           type: 'fresh',                    categories: [] },
-            { start: 22,   name: 'TKP SPORT',            type: 'summary_today',            categories: ['sport'] },
-            { start: 22.5, name: 'Sziréna',              type: 'summary_today',            categories: ['kékfény'] },
-            { start: 23,   name: 'Hazai Pálya+',         type: 'summary_today',            categories: ['belföld'] },
-            { start: 23.5, name: 'Napzárta',             type: 'special_summary_today_80', categories: [] },
+            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [] },
+            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [] },
+            { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [] },
+            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [] },
+            { start: 18,   name: 'Esti gyors',           type: 'fresh',                    timeWindowHours: 2, categories: [] },
+            { start: 20,   name: 'Este a TKP NEWS-al',   type: 'fresh',                    timeWindowHours: 2, categories: [] },
+            { start: 22,   name: 'Késő este a TKP NEWS-al', type: 'fresh',                 timeWindowHours: 4, refreshMinutes: 20, categories: [] },
             { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [] }
         ];
 
@@ -1177,45 +1338,122 @@
             }
         }
         
-        function generateScheduleHtml(title, startIndex, count) {
-            if (!currentThematicBlock) return '';
-            
-            const currentIndex = THEMATIC_BLOCKS.findIndex(b => b.start === currentThematicBlock.start);
-            if (currentIndex === -1) return '';
-
-            let scheduleHTML = `<div class="schedule-title">${title}</div>`;
+        function generateScheduleHtml(blocks, startIndex, count) {
+            let scheduleHTML = '';
             for (let i = startIndex; i < startIndex + count; i++) {
-                const nextBlockIndex = (currentIndex + i) % THEMATIC_BLOCKS.length;
-                const block = THEMATIC_BLOCKS[nextBlockIndex];
+                const blockIndex = (blocks.currentIndex + i) % blocks.all.length;
+                const block = blocks.all[blockIndex];
                 if (block.type === 'goodbye') continue;
                 
                 const startTime = formatBlockTime(block.start);
-                scheduleHTML += `<div class="schedule-item"><span class="time">${startTime}</span><span class="title">${block.name}</span></div>`;
+                scheduleHTML += `
+                    <div class="schedule-item-v2">
+                        <span class="schedule-time">${startTime}</span>
+                        <span class="schedule-title-main">${block.name}</span>
+                    </div>`;
             }
             return scheduleHTML;
         }
 
         function displayScheduleWidgetSequence() {
-            if (weatherDisplayInterval) clearInterval(weatherDisplayInterval);
-            weatherDisplayInterval = null;
-
-            worldWeatherContainer.innerHTML = `<div id="schedule-widget">${generateScheduleHtml("Következik:", 1, 3)}</div>`;
-            worldWeatherContainer.querySelector('#schedule-widget').style.display = 'flex';
-
+            if (weatherDisplayInterval) {
+                clearInterval(weatherDisplayInterval);
+                weatherDisplayInterval = null;
+            }
+            
             clearTimeout(scheduleWidgetTimeout);
 
-            scheduleWidgetTimeout = setTimeout(() => {
-                const scheduleWidget = worldWeatherContainer.querySelector('#schedule-widget');
-                if (scheduleWidget) scheduleWidget.innerHTML = generateScheduleHtml("Később:", 4, 3);
-            }, 15000);
+            const currentIndex = THEMATIC_BLOCKS.findIndex(b => b.start === currentThematicBlock.start);
+            if (currentIndex === -1) return;
 
+            const blockInfo = { all: THEMATIC_BLOCKS, currentIndex: currentIndex };
+
+            const nextItemsHtml = generateScheduleHtml(blockInfo, 1, 3);
+            const laterItemsHtml = generateScheduleHtml(blockInfo, 4, 3);
+
+            const fullHtml = `
+                <div id="schedule-widget">
+                    <div id="schedule-intro" class="schedule-card">
+                        <div class="schedule-header">Műsorajánló</div>
+                    </div>
+                    <div id="schedule-next" class="schedule-card">
+                        <div class="schedule-header">
+                            Következik
+                            <svg viewBox="0 0 24 24"><path d="M13 6l-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z M6 6l-1.41 1.41L9.17 12l-4.58 4.59L6 18l6-6z"></path></svg>
+                        </div>
+                        <div class="schedule-list">${nextItemsHtml}</div>
+                    </div>
+                    <div id="schedule-later" class="schedule-card">
+                        <div class="schedule-header">
+                            Később
+                            <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></svg>
+                        </div>
+                        <div class="schedule-list">${laterItemsHtml}</div>
+                    </div>
+                    <div id="schedule-credits" class="schedule-card">
+                        <div class="credits-main-text">
+                            Kövesd a 
+                            <span class="credits-brand">
+                                <svg class="credits-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
+                                TKP NEWS
+                            </span> 
+                            hírsávot a nap 24 órájában
+                        </div>
+                        <div class="credits-footer">
+                            <span>Készítette: Robi</span>
+                            <span>&copy; Copyright by: Robi</span>
+                        </div>
+                    </div>
+                </div>`;
+            
+            worldWeatherContainer.innerHTML = fullHtml;
+
+            const introCard = document.getElementById('schedule-intro');
+            const nextCard = document.getElementById('schedule-next');
+            const laterCard = document.getElementById('schedule-later');
+            const creditsCard = document.getElementById('schedule-credits');
+
+            // --- Animation Sequence ---
+            requestAnimationFrame(() => {
+                worldWeatherContainer.classList.add('schedule-expanded');
+                introCard.classList.add('visible');
+            });
+
+            // Stage 2: Show "Következik"
             scheduleWidgetTimeout = setTimeout(() => {
-                if (!weatherDisplayInterval) {
-                    displayWeather();
-                    weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
-                }
-            }, 30000);
+                introCard.classList.remove('visible');
+                nextCard.classList.add('visible');
+            }, 5000);
+
+            // Stage 3: Show "Később"
+            scheduleWidgetTimeout = setTimeout(() => {
+                nextCard.classList.remove('visible');
+                laterCard.classList.add('visible');
+            }, 20000); // 5s + 15s
+
+            // Stage 4: Show Credits
+            scheduleWidgetTimeout = setTimeout(() => {
+                laterCard.classList.remove('visible');
+                creditsCard.classList.add('visible');
+            }, 35000); // 5s + 15s + 15s
+
+            // End Sequence
+            scheduleWidgetTimeout = setTimeout(() => {
+                creditsCard.classList.remove('visible');
+                worldWeatherContainer.classList.remove('schedule-expanded');
+                
+                // Wait for contraction to finish, then restore weather
+                scheduleWidgetTimeout = setTimeout(() => {
+                    worldWeatherContainer.innerHTML = '<div class="placeholder"></div>'; // Clear content
+                    if (!weatherDisplayInterval) {
+                        displayWeather(); // Show first weather immediately
+                        weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
+                    }
+                }, 1000); // Corresponds to width transition duration
+
+            }, 45000); // 5s + 15s + 15s + 10s
         }
+
 
         function getCurrentAndNextBlocks(now) {
             const currentTime = now.getHours() + now.getMinutes() / 60;
@@ -1271,8 +1509,8 @@
                     startFlipCycle(true);
                 }
             }
-
-            if ((minutes % 15 === 0) && seconds < 10 && minutes !== lastScheduleMinute) {
+            
+            if ((minutes % 20 === 0) && seconds < 10 && minutes !== lastScheduleMinute) {
                 lastScheduleMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
                     console.log("Periódikus műsorterv megjelenítése...");
@@ -1305,10 +1543,11 @@
                 nextBlockIndicatorEl.style.display = 'none';
             }
             
-            if (current.type === 'fresh' && minutes % 15 === 0 && seconds === 0 && minutes !== lastUpdateMinute) {
+            const refreshInterval = currentThematicBlock.refreshMinutes || 15;
+            if (currentThematicBlock.type === 'fresh' && minutes % refreshInterval === 0 && seconds === 0 && minutes !== lastUpdateMinute) {
                 lastUpdateMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
-                    console.log("Automatikus frissítés (negyedóránként)...");
+                    console.log(`Automatikus frissítés (${refreshInterval} percenként)...`);
                     sessionStorage.removeItem('newsCache');
                     triggerUpdate(true);
                 }
@@ -1642,8 +1881,6 @@
             } else if (currentThematicBlock.type === 'fresh') {
                 const hours = currentThematicBlock.timeWindowHours || 2;
                 timeLimit.setHours(timeLimit.getHours() - hours);
-            } else if (currentThematicBlock.type.startsWith('summary_today')) {
-                timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.type === 'summary_yesterday') {
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
@@ -1662,33 +1899,21 @@
                 }
                 return itemDate >= timeLimit;
             });
-            
-            // News filtering based on active filter or block category
-            if (currentThematicBlock.categories.length > 0 && activeFilter === 'all') {
-                filteredNews = filteredNews.filter(item => item.categories && item.categories.some(cat => currentThematicBlock.categories.includes(cat)));
-            } else if (activeFilter !== 'all') {
+
+            if (activeFilter !== 'all') {
                 filteredNews = filterNews(filteredNews, activeFilter);
             }
             
             fullFilteredNewsList = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-            
-            const specialShows = ['Hazai Pálya', 'TKP SPORT', 'Sziréna', 'Hazai Pálya+'];
 
-            // News selection logic
-            if (specialShows.includes(currentThematicBlock.name) && activeFilter === 'all') {
-                newsToDisplay = fullFilteredNewsList.slice(0, 50);
-            } else if (activeFilter !== 'all') {
+            if (activeFilter !== 'all') {
                 newsToDisplay = fullFilteredNewsList.slice(0, currentFilterPage * FILTER_CHUNK_SIZE);
-            } else if (currentThematicBlock.type === 'special_summary_today_80') {
-                 newsToDisplay = shuffleArray(fullFilteredNewsList).slice(0, 80);
             } else if(currentThematicBlock.type === 'summary_yesterday') {
                 newsToDisplay = filteredNews.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
             } else {
                 newsToDisplay = fullFilteredNewsList;
             }
-            
-            const watermarkText = (activeFilter !== 'all') ? activeFilter : currentThematicBlock.name;
-            
+
             if ((activeFilter === 'all' || (isManualTrigger && currentFilterPage === 1)) && !isManualTrigger) {
                 const dayOfMonth = today.getDate();
                 const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
@@ -1700,7 +1925,7 @@
                 const sunsetStr = formatTime(sunTimes.sunset);
                 const nameDayText = names.length > 0 ? `<div class="ci-nameday">${names.join(', ')}</div>` : '';
                 
-                const watermarkHtml = `<div class="item-watermark">${watermarkText}</div>`;
+                const watermarkHtml = `<div class="item-watermark">${currentThematicBlock.name}</div>`;
                 
                 const calendarHtml = `
                     <div class="ticker-item calendar-item-v2" data-image-url="">
@@ -1724,7 +1949,7 @@
                     const quote = QUOTES[dayOfMonth % QUOTES.length];
                     const quoteHtml = `
                         <div class="ticker-item quote-item-v2" data-image-url="">
-                            <div class="item-watermark">${watermarkText}</div>
+                            <div class="item-watermark">${currentThematicBlock.name}</div>
                             <blockquote>“${quote.text}”</blockquote>
                             <div class="quote-divider"><cite>${quote.author}</cite></div>
                         </div>`;
@@ -1745,6 +1970,7 @@
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
                 
+                const watermarkText = (activeFilter !== 'all') ? activeFilter : currentThematicBlock.name;
                 const watermarkHtml = `<div class="item-watermark watermark-punched">${watermarkText}</div>`;
                 const breakingIndicatorHtml = `<div class="item-breaking-indicator">Rendkívüli hír</div>`;
 
