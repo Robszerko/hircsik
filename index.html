@@ -449,17 +449,30 @@
         }
 
         .goodbye-item {
-            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            gap: 10px;
             background: transparent;
             border: none;
             box-shadow: none;
         }
-
+        .goodbye-item .goodbye-logo-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .goodbye-item h2 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+        .goodbye-item p {
+            color: var(--text-secondary);
+            max-width: 85%;
+            font-size: 0.95rem;
+        }
         .goodbye-item h2, .goodbye-item p {
             text-shadow: none;
         }
@@ -523,17 +536,19 @@
 
         #schedule-intro .schedule-header {
             font-size: 1.8rem;
-            animation: strobe-text 1s linear infinite alternate;
+            animation: pulse-glow 2s ease-in-out infinite;
         }
-        
-        @keyframes strobe-text {
-            from {
-                opacity: 1;
-                text-shadow: 0 0 4px #fff, 0 0 8px #fff, 0 0 12px var(--accent-gold);
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                opacity: 0.9;
+                transform: scale(1);
+                text-shadow: 0 0 5px rgba(255,255,255,0.5);
             }
-            to {
-                opacity: 0.8;
-                text-shadow: 0 0 6px #fff, 0 0 10px #fff, 0 0 16px var(--accent-gold);
+            50% {
+                opacity: 1;
+                transform: scale(1.03);
+                text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold);
             }
         }
         
@@ -570,6 +585,16 @@
             align-items: center;
             gap: 12px;
             width: 100%;
+            padding: 4px 6px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .schedule-item-v2.highlight-gold {
+            border-color: var(--accent-gold);
+            transform: scale(1.02);
+            box-shadow: 0 0 10px rgba(184, 134, 11, 0.5);
         }
 
         .schedule-time {
@@ -1440,45 +1465,60 @@
             const laterCard = document.getElementById('schedule-later');
             const creditsCard = document.getElementById('schedule-credits');
 
+            const highlightSequence = (cardElement) => {
+                const items = cardElement.querySelectorAll('.schedule-item-v2');
+                if (items.length === 0) return;
+
+                setTimeout(() => items[0].classList.add('highlight-gold'), 500); // Start after fade-in
+                setTimeout(() => {
+                    items[0].classList.remove('highlight-gold');
+                    if (items[1]) items[1].classList.add('highlight-gold');
+                }, 3500);
+                setTimeout(() => {
+                    if (items[1]) items[1].classList.remove('highlight-gold');
+                    if (items[2]) items[2].classList.add('highlight-gold');
+                }, 6500);
+                 setTimeout(() => {
+                    if (items[2]) items[2].classList.remove('highlight-gold');
+                }, 9500);
+            };
+
             // --- Animation Sequence ---
             requestAnimationFrame(() => {
                 worldWeatherContainer.classList.add('schedule-expanded');
                 introCard.classList.add('visible');
             });
 
-            // Stage 2: Show "Következik"
             scheduleWidgetTimeout = setTimeout(() => {
                 introCard.classList.remove('visible');
                 nextCard.classList.add('visible');
+                highlightSequence(nextCard);
             }, 5000);
 
-            // Stage 3: Show "Később"
             scheduleWidgetTimeout = setTimeout(() => {
                 nextCard.classList.remove('visible');
                 laterCard.classList.add('visible');
-            }, 20000); // 5s + 15s
-
-            // Stage 4: Show Credits
+                highlightSequence(laterCard);
+            }, 20000); 
+            
             scheduleWidgetTimeout = setTimeout(() => {
                 laterCard.classList.remove('visible');
                 creditsCard.classList.add('visible');
-            }, 35000); // 5s + 15s + 15s
+            }, 35000); 
 
-            // End Sequence
             scheduleWidgetTimeout = setTimeout(() => {
                 creditsCard.classList.remove('visible');
                 worldWeatherContainer.classList.remove('schedule-expanded');
                 
-                // Wait for contraction to finish, then restore weather
                 scheduleWidgetTimeout = setTimeout(() => {
-                    worldWeatherContainer.innerHTML = '<div class="placeholder"></div>'; // Clear content
+                    worldWeatherContainer.innerHTML = '<div class="placeholder"></div>';
                     if (!weatherDisplayInterval) {
-                        displayWeather(); // Show first weather immediately
+                        displayWeather();
                         weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
                     }
-                }, 1000); // Corresponds to width transition duration
+                }, 1000);
 
-            }, 45000); // 5s + 15s + 15s + 10s
+            }, 45000);
         }
 
 
@@ -1774,11 +1814,12 @@
                 
                 standbyContent.innerHTML = `
                     <div class="ticker-item visible goodbye-item">
-                        <svg class="ticker-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:48px; height:48px; margin-bottom: 15px;">
-                           <use href="#eye-paths"/>
-                        </svg>
-                        <h2 style="font-family: var(--font-display); color: var(--text-primary); font-size: 1.5rem;">Köszönjük a figyelmet!</h2>
-                        <p style="color: var(--text-secondary); font-size: 1rem;">Jó éjszakát és kellemes pihenést kíván a TKP NEWS csapata!</p>
+                        <div class="goodbye-logo-row">
+                            <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
+                            <h2>Nyugodalmas éjszakát kíván a TKP NEWS</h2>
+                            <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
+                        </div>
+                        <p>Friss hírek legközelebb reggel 6-tól, addig a nap összefoglalója következik.</p>
                     </div>`;
                 
                 requestAnimationFrame(() => {
@@ -1815,7 +1856,7 @@
                 tracks[standbyTrackKey].classList.add('visible');
                 tracks[activeTrackKey].classList.remove('visible');
                 console.error("News fetch timed out.");
-            }, 35000); // Increased timeout for multiple proxies
+            }, 35000);
             
             clearTimeout(newsFetchRetryTimeout);
             if(!isCountdownActive) pauseFlipCycle();
