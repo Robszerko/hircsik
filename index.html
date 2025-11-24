@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V9 (Night Info)</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V10</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -424,6 +424,7 @@
         /* PWS Grid frissített stílusok */
         .weather-header { text-align: center; margin-bottom: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; flex-shrink: 0; }
         .weather-location { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* JAVÍTOTT SZÍN: Világos szürke a láthatóságért */
         .weather-time { font-size: 0.65rem; font-weight: 500; opacity: 0.9; color: #ddd; }
         .pws-main-data { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 1px 0; flex-shrink: 0; }
         .pws-temp { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
@@ -1541,30 +1542,35 @@
                 }
             }
             
-            if ((minutes % 20 === 0) && seconds < 10 && minutes !== lastScheduleMinute) {
+            // Műsorajánló logika
+            const isSpecialTime = (hours === "00" && minutes === "01");
+            const isRegularTime = (parseInt(minutes) % 20 === 0) && !(hours === "00" && minutes === "00");
+
+            if ((isSpecialTime || isRegularTime) && seconds < 10 && minutes !== lastScheduleMinute) {
                 lastScheduleMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
-                     // FIX: Az éjféli műsorajánlót kivételesen 00:01-re tesszük
-                     if (hours === "00" && minutes === "00") {
-                         // Ne fusson le, mert épp az átállás van
-                     } else if (hours === "00" && minutes === "01") {
-                         displayScheduleWidgetSequence(); // Kivételes futtatás
-                     } else {
-                         displayScheduleWidgetSequence();
-                     }
+                    displayScheduleWidgetSequence();
                 }
             }
 
             if (currentThematicBlock === null || current.start !== currentThematicBlock.start) {
                 console.log(`Tematikus blokk váltás: ${current.name}`);
                 currentThematicBlock = current;
-                sessionStorage.removeItem('newsCache');
-                if(isCountdownActive) {
-                    isCountdownActive = false;
-                    tickerWrap.classList.remove('countdown-active');
-                    countdownOverlayEl.classList.remove('visible');
+                
+                // ÉJFÉLI JAVÍTÁS: Ha átlépünk "summary_yesterday" módba (00:00),
+                // akkor kényszerítjük az adatbázis frissítését és a "tegnapi" szűrő alkalmazását.
+                if (current.type === 'summary_yesterday') {
+                    sessionStorage.removeItem('newsCache');
+                    triggerUpdate(true);
+                } else {
+                    sessionStorage.removeItem('newsCache');
+                    if(isCountdownActive) {
+                        isCountdownActive = false;
+                        tickerWrap.classList.remove('countdown-active');
+                        countdownOverlayEl.classList.remove('visible');
+                    }
+                    triggerUpdate(true);
                 }
-                triggerUpdate(true);
                 return;
             }
             
@@ -1777,10 +1783,8 @@
         }
 
         async function fetchAndDisplayContent(isManualTrigger = false) {
-            // FIX: Ha az első betöltésnél még nincs feed, de a Firebase már elindult, várjunk kicsit
             if (Object.keys(rssFeeds).length === 0) {
                  console.log("Várakozás feedekre...");
-                 // Nem return-ölünk azonnal, hanem próbálkozunk
             }
             if (!currentThematicBlock) return;
             
@@ -1850,7 +1854,6 @@
 
             if (!allNewsItems) {
                 console.log("Hírek letöltése a hálózatról...");
-                 // Ha üres a feed lista, ne próbálkozzon, de ne is akadjon el
                  const feedList = Object.keys(rssFeeds).length > 0 ? rssFeeds : {};
 
                  const newsPromises = Object.entries(feedList).map(async ([key, url]) => {
@@ -1888,7 +1891,6 @@
             
             if (!allNewsItems || allNewsItems.length === 0) {
                 console.warn("Nincsenek megjeleníthető hírek, újrapróbálkozás 5 másodperc múlva...");
-                // Ne vegyük le a loading képernyőt ha ez az első futás
                 if (isContentLoaded) manualRefreshTriggerEl.style.display = 'none';
 
                 newsFetchRetryTimeout = setTimeout(() => triggerUpdate(true), 5000);
@@ -1922,6 +1924,7 @@
                 const hours = currentThematicBlock.timeWindowHours || 2;
                 timeLimit.setHours(timeLimit.getHours() - hours);
             } else if (currentThematicBlock.type === 'summary_yesterday') {
+                // ÉJFÉLI JAVÍTÁS: Ha éjszakai műszak van, akkor az egész tegnapi napot vesszük
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
                 yesterday.setHours(0, 0, 0, 0);
