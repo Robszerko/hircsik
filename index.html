@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - RealFeel PWS</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V9 (Night Info)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -41,6 +41,11 @@
             overflow: hidden; border: 1px solid var(--border-color);
             transition: background 2s ease-in-out, border-color 2s ease-in-out;
             position: relative; 
+            height: 160px; 
+        }
+
+        @media (max-width: 950px) {
+            .news-ticker-container { height: auto; flex-direction: column; }
         }
 
         .ticker-body { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -187,6 +192,7 @@
             width: 100%; height: 100%;
             background: var(--bg-main-gradient);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 10;
@@ -201,12 +207,20 @@
         }
         #countdown-clock {
             font-family: 'Roboto Mono', monospace;
-            font-size: 6vw;
+            font-size: 5rem; 
             font-weight: 700;
             color: var(--text-primary);
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 2px 5px rgba(0,0,0,0.5);
             letter-spacing: 0.05em;
             transition: color 2s ease-in-out;
+        }
+        #countdown-message {
+            font-family: var(--font-quote);
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+            margin-top: 10px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
         .ticker-track { 
@@ -347,27 +361,83 @@
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-main)); border-radius: 0 2px 2px 0; }
         #progress-bar.animate { animation-name: fill-progress; animation-timing-function: linear; animation-fill-mode: forwards; }
         
+        /* === STABILIZÁLT LAYOUT ÉS MŰSORAJÁNLÓ === */
+        
+        #world-weather-container { 
+            flex-shrink: 0; 
+            width: 210px; 
+            border-left: 1px solid var(--border-color); 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            background: linear-gradient(145deg, #1e2025, #2c3038);
+            transition: border-color 2s ease-in-out, width 1s ease-in-out; 
+            position: relative; 
+            overflow: hidden;
+            height: 100%; 
+            min-height: 125px;
+            max-height: 160px;
+        }
+        
         #world-weather-container.schedule-expanded { width: 450px; }
-        #schedule-widget { display: grid; place-items: center; width: 100%; height: 100%; background-color: rgba(10, 20, 30, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 15px; overflow: hidden; }
+        
+        #schedule-widget { 
+            display: grid; place-items: center; width: 100%; height: 100%; 
+            background-color: rgba(10, 20, 30, 0.5); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-left: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 10px 15px; 
+            overflow: hidden; 
+            box-sizing: border-box;
+        }
+
         .schedule-card { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s 0.5s; }
         .schedule-card.visible { opacity: 1; visibility: visible; transition: opacity 0.5s ease-in-out, visibility 0s; }
         #schedule-intro .schedule-header { font-size: 1.8rem; animation: pulse-glow 2s ease-in-out infinite; }
+        
         @keyframes pulse-glow { 0%, 100% { opacity: 0.9; transform: scale(1); text-shadow: 0 0 5px rgba(255,255,255,0.5); } 50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold); } }
-        .schedule-header { font-family: var(--font-display); font-size: 1.1rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-        .schedule-header svg { width: 20px; height: 20px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
-        .schedule-list { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-        .schedule-item-v2 { display: flex; align-items: center; gap: 12px; width: 100%; padding: 4px 6px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
-        .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.02); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
-        .schedule-time { font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; color: #f0f2f5; flex-shrink: 0; }
-        .schedule-info { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; border-left: 2px solid var(--accent-gold); padding-left: 10px; }
-        .schedule-title-main { font-size: 0.9rem; font-weight: 400; color: #f0f2f5; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .schedule-desc { font-size: 0.75rem; color: var(--text-secondary); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+        
+        .schedule-header { font-family: var(--font-display); font-size: 1.0rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .schedule-header svg { width: 18px; height: 18px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
+        
+        .schedule-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+        
+        .schedule-item-v2 { display: flex; align-items: center; gap: 10px; width: 100%; padding: 3px 6px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.01); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
+        
+        .schedule-time { font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; color: #f0f2f5; flex-shrink: 0; }
+        
+        .schedule-info { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; border-left: 2px solid var(--accent-gold); padding-left: 8px; justify-content: center; }
+        .schedule-title-main { font-size: 0.9rem; font-weight: 500; color: #f0f2f5; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+        .schedule-desc { font-size: 0.7rem; color: #aaa; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; line-height: 1.1; }
 
         #schedule-credits .credits-main-text { font-family: var(--font-body); font-size: 1rem; font-weight: 500; text-align: center; color: #FFFFFF; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8); line-height: 1.6; margin-bottom: 20px; }
         #schedule-credits .credits-brand { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; color: var(--accent-gold); vertical-align: middle; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
         #schedule-credits .credits-brand .ticker-logo { width: 20px; height: 20px; }
         #schedule-credits .credits-brand .ticker-logo use { stroke: var(--accent-gold) !important; fill: var(--accent-gold) !important; }
         #schedule-credits .credits-footer { font-size: 0.75rem; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); opacity: 0.8; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        
+        #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 1; transition: background-color 2s ease-in-out; }
+        .weather-widget { padding: 2px 4px; animation: widget-fade-in 0.8s ease-in-out; display: flex; flex-direction: column; text-align: center; position: relative; z-index: 2; width: 100%; height: 100%; justify-content: flex-start; overflow: hidden; }
+        
+        /* PWS Grid frissített stílusok */
+        .weather-header { text-align: center; margin-bottom: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; flex-shrink: 0; }
+        .weather-location { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; }
+        .weather-time { font-size: 0.65rem; font-weight: 500; opacity: 0.9; color: #ddd; }
+        .pws-main-data { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 1px 0; flex-shrink: 0; }
+        .pws-temp { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .pws-unit { font-size: 0.85rem; vertical-align: top; color: var(--text-secondary); margin-left: 2px; }
+        
+        /* A Grid kitölti a maradék helyet */
+        .pws-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; font-size: 0.7rem; width: 100%; padding: 0; margin-top: 1px; flex-grow: 1; }
+        
+        /* Az elemek központosítva és kitöltve */
+        .pws-item { display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); padding: 2px 3px; border-radius: 3px; overflow: hidden; }
+        
+        .pws-label { font-size: 0.5rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; line-height: 1; width: 100%; text-align: center; border-bottom: none; padding-bottom: 0; }
+        .pws-value { font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; width: 100%; text-align: center; color: #eee; margin: 1px 0; }
+        .pws-sub-value { font-size: 0.55rem; color: #ccc; text-align: center; width: 100%; }
         
         @keyframes fill-progress { from { width: 0%; } to { width: 100%; } }
         @keyframes strobe-in { 0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); } 12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); } }
@@ -423,41 +493,6 @@
         #timeline-container button { flex-shrink: 0; padding: 2px 6px; font-size: 0.75rem; }
         #timeline-container button.active-hour { background-color: var(--accent-gold); border-color: var(--accent-gold); color: #000; text-shadow: none; }
         
-        #world-weather-container { 
-            flex-shrink: 0; 
-            width: 210px; 
-            border-left: 1px solid var(--border-color); 
-            padding: 0; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            background: linear-gradient(145deg, #1e2025, #2c3038);
-            transition: border-color 2s ease-in-out, width 1s ease-in-out; 
-            position: relative; 
-            overflow: hidden; 
-        }
-        #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 1; transition: background-color 2s ease-in-out; }
-        
-        .weather-widget { padding: 5px 8px; animation: widget-fade-in 0.8s ease-in-out; display: flex; flex-direction: column; text-align: center; position: relative; z-index: 2; width: 100%; height: 100%; justify-content: flex-start; }
-        #world-weather-container .weather-widget, #world-weather-container .weather-widget * { color: #ffffff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
-        .weather-header { text-align: center; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; }
-        .weather-location { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; }
-        .weather-time { font-size: 0.7rem; font-weight: 500; opacity: 0.8; }
-        
-        .pws-main-data { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 0; }
-        .pws-temp { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .pws-unit { font-size: 0.9rem; vertical-align: top; color: var(--text-secondary); margin-left: 2px; }
-        
-        .pws-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; font-size: 0.7rem; width: 100%; padding: 0; margin-top: 2px; }
-        .pws-item { display: flex; flex-direction: column; align-items: flex-start; background: rgba(255,255,255,0.03); padding: 2px 4px; border-radius: 3px; overflow: hidden; }
-        .pws-label { font-size: 0.55rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0; line-height: 1; width: 100%; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1px; }
-        .pws-value { font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; width: 100%; text-align: right; color: #eee; }
-        .pws-sub-value { font-size: 0.6rem; color: #ccc; text-align: right; width: 100%; }
-        
-        #weather-attribution { font-size: 0.55rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: auto; z-index: 2; position: relative; padding-bottom: 2px; letter-spacing: 0.5px; }
-        #weather-attribution a { color: inherit; text-decoration: none; }
-        #world-weather-container .placeholder { font-size: 0.8rem; color: #fff; text-shadow: 1px 1px 2px #000; text-align: center; position: relative; z-index: 2; padding: 8px 12px; }
-        
         #refresh-overlay { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; z-index: 15; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; gap: 10px; }
         #refresh-overlay.visible { opacity: 1; visibility: visible; }
         .refresh-text { font-size: 0.8rem; font-family: var(--font-body); color: var(--accent-main); font-weight: 500; }
@@ -473,29 +508,6 @@
         #refresh-overlay.refresh-animation-active #animated-eye-logo-2 { animation: eye-move-out-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards; }
         #refresh-overlay.refresh-animation-active #animated-brand-name { visibility: visible; animation: brand-name-reveal 0.8s ease-out 0.8s forwards; }
         #refresh-overlay.refresh-animation-active .eyelid-anim { transform-origin: center; animation: animated-eyelid-blink 0.2s linear 0.2s 1; }
-        
-        @media (max-width: 950px) {
-            .news-ticker-container { flex-direction: column; }
-            .ticker-controls { flex-wrap: wrap; }
-            #world-weather-container,
-            #world-weather-container.schedule-expanded { width: 100%; border-left: none; border-top: 1px solid var(--border-color); }
-            .weather-widget { flex-direction: row; align-items: center; justify-content: space-around; text-align: left; }
-            .pws-main-data { margin: 0; }
-            .pws-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-            .pws-item { min-width: 60px; }
-            #next-block-indicator { order: 3; flex-basis: 100%; text-align: center; margin-top: 5px; margin-left: 0; }
-            #countdown-clock { font-size: 10vw; }
-        }
-        @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } .label-content { padding: 0 10px; } }
-        @media (max-width: 520px) {
-            .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; } #clock { margin-top: 0; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; } .label-content { padding: 5px 10px; }
-            .weather-widget { flex-direction: column; text-align: center; gap: 8px; }
-            .pws-grid { display: grid; grid-template-columns: 1fr 1fr; }
-            .calendar-item-v2 { flex-direction: column; text-align: center; gap: 15px; }
-            .calendar-item-v2 .ci-right { border-left: none; padding-left: 0; align-items: center; }
-            #countdown-clock { font-size: 12vw; }
-        }
-        @media (max-width: 380px) { .label-top-row { gap: 5px; } .brand-name { font-size: 1.1rem; } body.night-mode-active .ticker-logo { width: 20px; height: 20px; } .ticker-logo { width: 22px; height: 22px; } #clock { font-size: 0.8rem; } .control-group-label { display: none; } }
     </style>
 </head>
 <body data-theme-key="night">
@@ -575,7 +587,10 @@
                     </div>
                 </div>
                 <div class="ticker-wrap" id="ticker-wrap">
-                    <div id="countdown-overlay"><div id="countdown-clock"></div></div>
+                    <div id="countdown-overlay">
+                        <div id="countdown-clock"></div>
+                        <div id="countdown-message">Nyugodalmas jó éjszakát!</div>
+                    </div>
                     <div id="block-title-layer"></div>
                     <div id="breaking-title-layer"></div>
                     <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
@@ -616,6 +631,37 @@
         
         // PWS Állomások (ID -> Név)
         const PWS_MAP = {
+            "ISRVR13": "Sárvár",
+            "IOSZK4": "Oszkó",
+            "ISZNTD6": "Szántód",
+            "IBALAT149": "Balatonszemes",
+            "IBUZSK1": "Csisztapuszta",
+            "ISZEKS12": "Szekszárd",
+            "IJNOSH2": "Jánoshalma",
+            "IPCS52": "Pécs",
+            "IPPRD1": "Páprád",
+            "IKISKU42": "Kiskunhalas",
+            "INEMES10": "Nemesnádudvar",
+            "ISZEGE67": "Szeged",
+            "IBKSCS12": "Békéscsaba",
+            "IFZESG2": "Füzesgyarmat",
+            "IMIKEP2": "Mikepércs",
+            "ITGLS2": "Téglás",
+            "IGACSL1": "Gacsály",
+            "IFLESD1": "Fülesd",
+            "IKISSZ3": "Kisszekeres",
+            "ILEVEL2": "Levelek",
+            "IKEMEC2": "Kemecse",
+            "INAGYC6": "Nagycserkesz",
+            "ITISZA15": "Tiszavasvári",
+            "INEMES19": "Nemesbikk",
+            "IEGERS22": "Egerszólát",
+            "IBKKSZ5": "Bükkszenterzsébet",
+            "IPSZT1": "Pásztó",
+            "IPALOT13": "Palotás",
+            "IGDLL37": "Gödöllő",
+            "IZSMBK6": "Zsámbék",
+            "ICSORN6": "Csorna",
             "IGAGYV1": "Gagyvendégi",
             "IMARTO122": "Martonyi",
             "IKAZIN14": "Kazincbarcika",
@@ -735,15 +781,15 @@
         const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "01-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"09-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
         
         const THEMATIC_BLOCKS = [
-            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [], desc: "Az elmúlt nap legfontosabb hírei." },
-            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Indítsd a napot a legfrissebbekkel!" },
-            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Aktuális információk, munka mellé." },
-            { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Ebédidő, hírek friss tálalásban." },
-            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Mi történt eddig a nap folyamán?" },
-            { start: 18,   name: 'Esti gyors',           type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "A nap legfontosabb eseményei." },
-            { start: 20,   name: 'Este a TKP NEWS-al',   type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Lazítás mellé a nagyvilág hírei." },
-            { start: 22,   name: 'Késő este a TKP NEWS-al', type: 'fresh',                 timeWindowHours: 4, refreshMinutes: 20, categories: [], desc: "Éjszakai baglyoknak frissítve." },
-            { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [], desc: "Viszontlátásra holnap reggel!" }
+            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [], desc: "Csendes percek, amíg a város alszik – itt a tegnap legjava." },
+            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Jó reggelt! Kávé mellé tálaljuk az éjszaka híreit." },
+            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Lendületben a nap – tarts velünk munka közben is!" },
+            { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Ebédidő? Kapcsolódj ki egy kis friss információval!" },
+            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Délutáni körkép: lássuk, merre tart a világ ma." },
+            { start: 18,   name: 'Esti gyors',           type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Munkából hazafelé? Ez történt, míg te dolgoztál." },
+            { start: 20,   name: 'Este a TKP NEWS-al',   type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Esti lazítás: a nap legfontosabb pillanatai egy helyen." },
+            { start: 22,   name: 'Késő este a TKP NEWS-al', type: 'fresh',                 timeWindowHours: 4, refreshMinutes: 20, categories: [], desc: "Még nem alszol? Mi sem! Friss hírek éjszakai baglyoknak." },
+            { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [], desc: "Köszönjük a figyelmed, holnap is várunk szeretettel!" }
         ];
 
         const NYIREGYHAZA_COORDS = { lat: 47.95, lon: 21.71 };
@@ -893,6 +939,7 @@
             return "Felhőszakadás";
         }
 
+        // Hó/Eső megkülönböztetés és szöveges leírás
         function getPrecipitationText(rate, temp) {
             if (rate <= 0) return null;
             const isSnow = temp <= 1.5; 
@@ -999,7 +1046,10 @@
                             precipRate: obs.metric.precipRate,
                             precipTotal: obs.metric.precipTotal,
                             uv: obs.uv,
-                            solarRad: obs.solarRadiation
+                            solarRad: obs.solarRadiation,
+                            heatIndex: obs.metric.heatIndex,
+                            windChill: obs.metric.windChill,
+                            dewpt: obs.metric.dewpt
                         };
                     } catch (error) { return null; }
                 });
@@ -1106,10 +1156,7 @@
                         items[3].querySelector('.pws-sub-value').textContent = "";
                     } else {
                         items[3].querySelector('.pws-label').textContent = "Valós hőérzet";
-                        
-                        // ÚJ SZÁMÍTÁS HASZNÁLATA
                         let feelsLike = calculateComplexRealFeel(data.temp, data.humidity, data.windSpeed, data.solarRad);
-                        
                         items[3].querySelector('.pws-value').textContent = `${feelsLike.toFixed(1)}°C`;
                         items[3].querySelector('.pws-value').style = "font-size: 0.7rem; color: #eee;";
                         items[3].querySelector('.pws-sub-value').textContent = "";
@@ -1168,7 +1215,6 @@
                     topValue = precipText;
                     topValueStyle = "font-size: 0.7rem; color: #4fc3f7;";
                 } else {
-                    // ÚJ SZÁMÍTÁS HASZNÁLATA
                     let feelsLike = calculateComplexRealFeel(currentData.temp, currentData.humidity, currentData.windSpeed, currentData.solarRad);
                     topValue = `${feelsLike.toFixed(1)}°C`;
                 }
@@ -1196,7 +1242,7 @@
                                 <div class="pws-sub-value" style="font-size: 0.6rem;">${windDirText}</div>
                             </div>
                              <div class="pws-item" title="Csapadék">
-                                <div class="pws-label">Eddig ma:</div>
+                                <div class="pws-label">Eddig ma</div>
                                 <div class="pws-value" style="${precipTotal > 0 ? 'color:#4fc3f7' : ''}">${precipTotal} mm</div>
                             </div>
                             <div class="pws-item" title="Extra">
@@ -1205,8 +1251,7 @@
                                 <div class="pws-sub-value">${topSubValue}</div>
                             </div>
                         </div>
-                    </div>
-                    <div id="weather-attribution">Forrás: PWS Network</div>`;
+                    </div>`;
             } else {
                 const temp = Math.round(currentData.temp);
                 
@@ -1233,8 +1278,7 @@
                                 <div class="pws-value">${Math.round(currentData.pressure)} hPa</div>
                             </div>
                         </div>
-                    </div>
-                    <div id="weather-attribution">Forrás: Open-Meteo</div>`;
+                    </div>`;
             }
             
             worldWeatherContainer.innerHTML = widgetHtml;
@@ -1500,8 +1544,14 @@
             if ((minutes % 20 === 0) && seconds < 10 && minutes !== lastScheduleMinute) {
                 lastScheduleMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
-                    console.log("Periódikus műsorterv megjelenítése...");
-                    displayScheduleWidgetSequence();
+                     // FIX: Az éjféli műsorajánlót kivételesen 00:01-re tesszük
+                     if (hours === "00" && minutes === "00") {
+                         // Ne fusson le, mert épp az átállás van
+                     } else if (hours === "00" && minutes === "01") {
+                         displayScheduleWidgetSequence(); // Kivételes futtatás
+                     } else {
+                         displayScheduleWidgetSequence();
+                     }
                 }
             }
 
@@ -1521,13 +1571,30 @@
             const nextStartTime = new Date(now);
             nextStartTime.setHours(Math.floor(next.start), Math.round((next.start % 1) * 60), 0, 0);
             if (next.start < current.start) nextStartTime.setDate(nextStartTime.getDate() + 1);
-            const timeToNext = nextStartTime - now;
-            if (timeToNext > 0 && timeToNext < 15 * 60 * 1000) {
-                const nextBlockStartTime = formatBlockTime(next.start);
-                nextBlockIndicatorEl.textContent = `Következik ${nextBlockStartTime}-tól: ${next.name}`;
-                nextBlockIndicatorEl.style.display = 'block';
-            } else {
-                nextBlockIndicatorEl.style.display = 'none';
+            
+            // --- NIGHT SHIFT LOGIC START ---
+            const secondsSinceMidnight = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const limitSeconds = 5 * 3600 + 45 * 60; // 05:45:00
+            let customNightMessage = false;
+
+            if (currentThematicBlock && currentThematicBlock.start === 0) {
+                 if (secondsSinceMidnight >= 30 && secondsSinceMidnight < limitSeconds) {
+                     nextBlockIndicatorEl.textContent = "06:00-ig az előző nap hírei olvashatók";
+                     nextBlockIndicatorEl.style.display = 'block';
+                     customNightMessage = true;
+                 }
+            }
+            // --- NIGHT SHIFT LOGIC END ---
+
+            if (!customNightMessage) {
+                const timeToNext = nextStartTime - now;
+                if (timeToNext > 0 && timeToNext < 15 * 60 * 1000) {
+                    const nextBlockStartTime = formatBlockTime(next.start);
+                    nextBlockIndicatorEl.textContent = `Következik ${nextBlockStartTime}-tól: ${next.name}`;
+                    nextBlockIndicatorEl.style.display = 'block';
+                } else {
+                    nextBlockIndicatorEl.style.display = 'none';
+                }
             }
             
             const refreshInterval = currentThematicBlock.refreshMinutes || 15;
