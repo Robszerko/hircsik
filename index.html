@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag</title>
+    <title>Dinamikus Napszak Hírszalag - RealFeel PWS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -21,14 +21,12 @@
             --font-quote: 'Playfair Display', serif;
             --font-mono: 'Roboto Mono', monospace;
             
-            /* Alapértelmezett (éjszakai) téma, JS felülírja */
             --bg-main-gradient: linear-gradient(145deg, #020111, #191621);
             --text-primary: #f0f2f5;
             --text-secondary: #a8b3c2;
             --border-color: #3A3B3C;
             --item-bg-color: rgba(28, 28, 30, 0.85);
             --item-border-color: rgba(255, 255, 255, 0.2);
-
 
             --stars1: radial-gradient(1px 1px at 20px 30px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 40px 70px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 50px 160px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 90px 40px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 130px 80px, white, rgba(255,255,255,0)), radial-gradient(1px 1px at 160px 120px, white, rgba(255,255,255,0));
             --stars2: radial-gradient(1.5px 1.5px at 10px 90px, white, rgba(255,255,255,0)), radial-gradient(1.5px 1.5px at 70px 20px, white, rgba(255,255,255,0)), radial-gradient(1.5px 1.5px at 120px 140px, white, rgba(255,255,255,0));
@@ -78,7 +76,7 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             width: 100%; height: 100%;
             padding: 0 15px;
-            opacity: 0; /* Alapból láthatatlan */
+            opacity: 0; 
             position: absolute;
             transition: opacity 0.6s ease-in-out, visibility 0s;
         }
@@ -123,7 +121,7 @@
             transition: opacity 0.6s ease-in-out 0.2s, visibility 0s 0.2s;
         }
 
-        .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative;  left: 0x; }
+        .label-top-row { display: flex; align-items: center; gap: 8px;  position: relative; }
         .ticker-logo { width: 28px; height: 28px; flex-shrink: 0; transition: width 0.4s ease, height 0.4s ease; }
         #eyelid, #eyelid-2 { transform-origin: center; transition: transform 0.1s ease-in-out; }
 
@@ -171,7 +169,7 @@
             font-size: 0.8rem;
             padding: 2px 8px;
             margin-top: 5px;
-            display: none; /* Initially hidden */
+            display: none;
         }
         
         .dot { opacity: 0; animation: loading-dots 1.4s infinite; display: inline-block; }
@@ -181,9 +179,7 @@
 
         .ticker-wrap { flex-grow: 1; overflow: hidden; position: relative; min-width: 0; }
         
-        #block-title-layer, #breaking-title-layer {
-           display: none !important;
-        }
+        #block-title-layer, #breaking-title-layer { display: none !important; }
         
         #countdown-overlay {
             position: absolute;
@@ -222,10 +218,7 @@
             transform: translateY(10px); 
             z-index: 1;
         }
-        .ticker-wrap.countdown-active .ticker-track {
-            visibility: hidden;
-            opacity: 0;
-        }
+        .ticker-wrap.countdown-active .ticker-track { visibility: hidden; opacity: 0; }
 
         .ticker-track.visible { 
             opacity: 1; 
@@ -307,10 +300,7 @@
             display: none;
         }
 
-        .ticker-item.visible, a.ticker-item.visible {
-            opacity: 1;
-            visibility: visible;
-        }
+        .ticker-item.visible, a.ticker-item.visible { opacity: 1; visibility: visible; }
         
         .ticker-item-content-wrapper { display: flex; flex-direction: column; flex-grow: 1; min-width: 0; height: 100%; justify-content: center; }
         
@@ -322,361 +312,72 @@
         a.ticker-item:hover .ticker-item-title { color: var(--accent-main); }
         .ticker-item-description { font-size: 0.9rem; font-weight: 400; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; transition: color 2s ease-in-out; text-shadow: none; line-height: 1.5; }
         
-        .ticker-item.breaking-highlight { 
-            animation: pulse-bg 2s infinite; 
-        }
-
+        .ticker-item.breaking-highlight { animation: pulse-bg 2s infinite; }
         .ticker-item svg { width: 16px; height: 16px; margin-right: 10px; flex-shrink: 0; stroke-width: 2; }
         
-        .announcement-item {
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
+        .announcement-item { flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
         .announcement-item .brand-name { font-size: 1.2rem; color: var(--text-primary); }
         .announcement-item .ticker-logo { width: 24px; height: 24px; }
-        .announcement-item p {
-            font-size: 0.9rem;
-            text-align: center;
-            color: var(--text-secondary);
-            max-width: 80%;
-            text-shadow: none;
-        }
+        .announcement-item p { font-size: 0.9rem; text-align: center; color: var(--text-secondary); max-width: 80%; text-shadow: none; }
 
-        .calendar-item-v2 {
-            display: flex;
-            gap: 25px;
-            align-items: center;
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 10px 25px;
-        }
-        .calendar-item-v2 .ci-left {
-            text-align: center;
-        }
-        .calendar-item-v2 .ci-day {
-            font-family: var(--font-display);
-            font-size: 4rem;
-            font-weight: 500;
-            line-height: 1;
-            background: linear-gradient(145deg, var(--accent-gold), #ffb700);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: none;
-        }
-        .calendar-item-v2 .ci-month-year {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-        .calendar-item-v2 .ci-right {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex-grow: 1;
-            border-left: 1px solid var(--border-color);
-            padding-left: 25px;
-        }
-        .calendar-item-v2 .ci-dayname {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            color: var(--text-primary);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-        }
-        .calendar-item-v2 .ci-nameday {
-            font-size: 1rem;
-            color: var(--accent-gold);
-            font-weight: 700;
-        }
-        .calendar-item-v2 .ci-sun-info {
-            display: flex;
-            gap: 15px;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
-        .calendar-item-v2 .ci-sun-info span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .calendar-item-v2 .ci-sun-info svg {
-            width: 16px;
-            height: 16px;
-            stroke: var(--accent-gold);
-        }
+        .calendar-item-v2 { display: flex; gap: 25px; align-items: center; background: transparent; border: none; box-shadow: none; padding: 10px 25px; }
+        .calendar-item-v2 .ci-left { text-align: center; }
+        .calendar-item-v2 .ci-day { font-family: var(--font-display); font-size: 4rem; font-weight: 500; line-height: 1; background: linear-gradient(145deg, var(--accent-gold), #ffb700); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; }
+        .calendar-item-v2 .ci-month-year { font-size: 0.8rem; color: var(--text-secondary); }
+        .calendar-item-v2 .ci-right { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; border-left: 1px solid var(--border-color); padding-left: 25px; }
+        .calendar-item-v2 .ci-dayname { font-family: var(--font-display); font-size: 1.5rem; color: var(--text-primary); text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        .calendar-item-v2 .ci-nameday { font-size: 1rem; color: var(--accent-gold); font-weight: 700; }
+        .calendar-item-v2 .ci-sun-info { display: flex; gap: 15px; font-size: 0.8rem; color: var(--text-secondary); margin-top: 5px; }
+        .calendar-item-v2 .ci-sun-info span { display: flex; align-items: center; gap: 5px; }
+        .calendar-item-v2 .ci-sun-info svg { width: 16px; height: 16px; stroke: var(--accent-gold); }
 
-        .quote-item-v2 {
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            gap: 12px;
-        }
-        .quote-item-v2 blockquote {
-            font-family: var(--font-quote);
-            font-style: italic;
-            font-size: 1.1rem;
-            color: var(--text-primary);
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-            max-width: 90%;
-            line-height: 1.6;
-        }
-        .quote-item-v2 .quote-divider {
-            display: flex;
-            align-items: center;
-            width: 80%;
-            gap: 10px;
-        }
-        .quote-item-v2 .quote-divider::before,
-        .quote-item-v2 .quote-divider::after {
-            content: '';
-            flex-grow: 1;
-            height: 1px;
-            background-color: var(--border-color);
-        }
-        .quote-item-v2 cite {
-            font-family: var(--font-body);
-            font-style: normal;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--accent-gold);
-        }
+        .quote-item-v2 { flex-direction: column; justify-content: center; align-items: center; text-align: center; background: transparent; border: none; box-shadow: none; gap: 12px; }
+        .quote-item-v2 blockquote { font-family: var(--font-quote); font-style: italic; font-size: 1.1rem; color: var(--text-primary); text-shadow: 1px 1px 3px rgba(0,0,0,0.4); max-width: 90%; line-height: 1.6; }
+        .quote-item-v2 .quote-divider { display: flex; align-items: center; width: 80%; gap: 10px; }
+        .quote-item-v2 .quote-divider::before, .quote-item-v2 .quote-divider::after { content: ''; flex-grow: 1; height: 1px; background-color: var(--border-color); }
+        .quote-item-v2 cite { font-family: var(--font-body); font-style: normal; font-size: 0.9rem; font-weight: 500; color: var(--accent-gold); }
 
-        .goodbye-item {
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            background: transparent;
-            border: none;
-            box-shadow: none;
-        }
-        .goodbye-item .goodbye-logo-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .goodbye-item h2 {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            color: var(--text-primary);
-        }
-        .goodbye-item p {
-            color: var(--text-secondary);
-            max-width: 85%;
-            font-size: 0.95rem;
-        }
-        .goodbye-item h2, .goodbye-item p {
-            text-shadow: none;
-        }
+        .goodbye-item { flex-direction: column; justify-content: center; align-items: center; text-align: center; background: transparent; border: none; box-shadow: none; }
+        .goodbye-item .goodbye-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .goodbye-item h2 { font-family: var(--font-display); font-size: 1.5rem; color: var(--text-primary); }
+        .goodbye-item p { color: var(--text-secondary); max-width: 85%; font-size: 0.95rem; }
+        .goodbye-item h2, .goodbye-item p { text-shadow: none; }
         
-        #progress-bar-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background-color: rgba(0,0,0,0.2);
-            z-index: 6;
-        }
-        #progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent-gold), var(--accent-main));
-            border-radius: 0 2px 2px 0;
-        }
-        #progress-bar.animate {
-            animation-name: fill-progress;
-            animation-timing-function: linear;
-            animation-fill-mode: forwards;
-        }
+        #progress-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background-color: rgba(0,0,0,0.2); z-index: 6; }
+        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-main)); border-radius: 0 2px 2px 0; }
+        #progress-bar.animate { animation-name: fill-progress; animation-timing-function: linear; animation-fill-mode: forwards; }
         
-        /* === Műsorajánló Stílusok Kezdet === */
-        #world-weather-container.schedule-expanded {
-            width: 450px;
-        }
+        #world-weather-container.schedule-expanded { width: 450px; }
+        #schedule-widget { display: grid; place-items: center; width: 100%; height: 100%; background-color: rgba(10, 20, 30, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-left: 1px solid rgba(255, 255, 255, 0.1); padding: 15px; overflow: hidden; }
+        .schedule-card { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s 0.5s; }
+        .schedule-card.visible { opacity: 1; visibility: visible; transition: opacity 0.5s ease-in-out, visibility 0s; }
+        #schedule-intro .schedule-header { font-size: 1.8rem; animation: pulse-glow 2s ease-in-out infinite; }
+        @keyframes pulse-glow { 0%, 100% { opacity: 0.9; transform: scale(1); text-shadow: 0 0 5px rgba(255,255,255,0.5); } 50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold); } }
+        .schedule-header { font-family: var(--font-display); font-size: 1.1rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .schedule-header svg { width: 20px; height: 20px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
+        .schedule-list { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .schedule-item-v2 { display: flex; align-items: center; gap: 12px; width: 100%; padding: 4px 6px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.02); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
+        .schedule-time { font-family: var(--font-mono); font-weight: 700; font-size: 0.9rem; color: #f0f2f5; flex-shrink: 0; }
+        .schedule-info { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; border-left: 2px solid var(--accent-gold); padding-left: 10px; }
+        .schedule-title-main { font-size: 0.9rem; font-weight: 400; color: #f0f2f5; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .schedule-desc { font-size: 0.75rem; color: var(--text-secondary); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
 
-        #schedule-widget {
-            display: grid;
-            place-items: center;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(10, 20, 30, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            overflow: hidden;
-        }
-
-        .schedule-card {
-            grid-area: 1 / 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease-in-out, visibility 0s 0.5s;
-        }
-        .schedule-card.visible {
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.5s ease-in-out, visibility 0s;
-        }
-
-        #schedule-intro .schedule-header {
-            font-size: 1.8rem;
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% {
-                opacity: 0.9;
-                transform: scale(1);
-                text-shadow: 0 0 5px rgba(255,255,255,0.5);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.03);
-                text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold);
-            }
-        }
-        
-        .schedule-header {
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #FFFFFF;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        
-        .schedule-header svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--accent-gold);
-            filter: drop-shadow(0 0 3px var(--accent-gold));
-        }
-
-        .schedule-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            width: 100%;
-        }
-
-        .schedule-item-v2 {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            padding: 4px 6px;
-            border-radius: 4px;
-            border: 1px solid transparent;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        .schedule-item-v2.highlight-gold {
-            border-color: var(--accent-gold);
-            transform: scale(1.02);
-            box-shadow: 0 0 10px rgba(184, 134, 11, 0.5);
-        }
-
-        .schedule-time {
-            font-family: var(--font-mono);
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #f0f2f5;
-            flex-shrink: 0;
-        }
-
-        .schedule-title-main {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: #f0f2f5;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border-left: 2px solid var(--accent-gold);
-            padding-left: 10px;
-        }
-
-        #schedule-credits .credits-main-text {
-            font-family: var(--font-body);
-            font-size: 1rem;
-            font-weight: 500;
-            text-align: center;
-            color: #FFFFFF;
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        #schedule-credits .credits-brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-family: var(--font-display);
-            font-weight: 500;
-            font-size: 1.1rem;
-            color: var(--accent-gold);
-            vertical-align: middle;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
-        }
-        #schedule-credits .credits-brand .ticker-logo {
-            width: 20px;
-            height: 20px;
-        }
-         #schedule-credits .credits-brand .ticker-logo use {
-            stroke: var(--accent-gold) !important;
-            fill: var(--accent-gold) !important;
-         }
-
-        #schedule-credits .credits-footer {
-            font-size: 0.75rem;
-            color: #FFFFFF;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-            opacity: 0.8;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        /* === Műsorajánló Stílusok Vége === */
+        #schedule-credits .credits-main-text { font-family: var(--font-body); font-size: 1rem; font-weight: 500; text-align: center; color: #FFFFFF; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8); line-height: 1.6; margin-bottom: 20px; }
+        #schedule-credits .credits-brand { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; color: var(--accent-gold); vertical-align: middle; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
+        #schedule-credits .credits-brand .ticker-logo { width: 20px; height: 20px; }
+        #schedule-credits .credits-brand .ticker-logo use { stroke: var(--accent-gold) !important; fill: var(--accent-gold) !important; }
+        #schedule-credits .credits-footer { font-size: 0.75rem; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); opacity: 0.8; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         
         @keyframes fill-progress { from { width: 0%; } to { width: 100%; } }
-        @keyframes strobe-in {
-            0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); }
-            12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); }
-        }
-        .strobe-in {
-            animation: strobe-in 2s ease-in-out forwards;
-        }
+        @keyframes strobe-in { 0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); } 12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); } }
+        .strobe-in { animation: strobe-in 2s ease-in-out forwards; }
         @keyframes glitch-text { 0%, 100% { text-shadow: 1px 1px 0 #00FFFF, -1px -1px 0 #FF00FF; opacity: 1; } 5% { opacity: 0.8; } 10% { opacity: 1; } 15% { opacity: 0.6; } 20% { opacity: 1; text-shadow: -1px -1px 0 #00FFFF, 1px 1px 0 #FF00FF; } 25% { opacity: 0.9; } 30% { opacity: 1; } 50% { text-shadow: 1px -1px 0 #00FFFF, -1px 1px 0 #FF00FF; } 75% { text-shadow: -1px 1px 0 #00FFFF, 1px -1px 0 #FF00FF; } }
         @keyframes static-move { 0% { background-position: 0 0; } 100% { background-position: 4px 6px; } }
         @keyframes static-fade-in-out { 0% { opacity: 0; } 10% { opacity: 0.8; } 85% { opacity: 0.6; } 100% { opacity: 0; } }
         @keyframes content-glitch-in { 0% { opacity: 0; transform: translateY(20px) scale(1.02); text-shadow: -2px -2px 0 red, 2px 2px 0 cyan; } 15% { opacity: 0.4; transform: translateY(18px) scale(1) skew(-3deg); text-shadow: 2px 2px 0 red, -2px -2px 0 cyan; } 30% { opacity: 0.1; transform: translateY(20px) scale(1.01) skew(3deg); } 45% { opacity: 0.7; transform: translateY(10px) scale(1) skew(0deg); text-shadow: 1px 1px 0 red, -1px -1px 0 cyan; } 60% { opacity: 0.5; transform: translateY(15px); } 85% { opacity: 0.9; transform: translateY(5px); text-shadow: none; } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes blink { 50% { opacity: 0; } }
-        @keyframes pulse-bg {
-            0% { box-shadow: inset 0 0 0 0 rgba(211, 47, 47, 0.4), 0 0 8px 2px rgba(211, 47, 47, 0.2); }
-            50% { box-shadow: inset 0 0 10px 2px rgba(211, 47, 47, 0.1), 0 0 16px 6px rgba(211, 47, 47, 0.4); }
-            100% { box-shadow: inset 0 0 0 0 rgba(211, 47, 47, 0.4), 0 0 8px 2px rgba(211, 47, 47, 0.2); }
-        }
+        @keyframes pulse-bg { 0% { box-shadow: inset 0 0 0 0 rgba(211, 47, 47, 0.4), 0 0 8px 2px rgba(211, 47, 47, 0.2); } 50% { box-shadow: inset 0 0 10px 2px rgba(211, 47, 47, 0.1), 0 0 16px 6px rgba(211, 47, 47, 0.4); } 100% { box-shadow: inset 0 0 0 0 rgba(211, 47, 47, 0.4), 0 0 8px 2px rgba(211, 47, 47, 0.2); } }
         @keyframes widget-fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
         #intro-animation-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 9; opacity: 0; pointer-events: none; }
@@ -705,75 +406,15 @@
         #filter-controls, #timeline-container { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
         #filter-controls::-webkit-scrollbar, #timeline-container::-webkit-scrollbar { display: none; }
         
-        .control-group-label {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #f0f2f5;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            white-space: nowrap;
-        }
-        .ticker-controls button {
-            background-color: transparent;
-            border: 1px solid #f0f2f5;
-            color: #f0f2f5;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-family: var(--font-body);
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: capitalize;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .ticker-controls button:hover {
-            background-color: #f0f2f5;
-            color: #111;
-            text-shadow: none;
-        }
-        .ticker-controls button.active {
-            background-color: var(--accent-main);
-            color: white;
-            border-color: var(--accent-main);
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-        }
+        .control-group-label { font-size: 0.8rem; font-weight: 700; color: #f0f2f5; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); white-space: nowrap; }
+        .ticker-controls button { background-color: transparent; border: 1px solid #f0f2f5; color: #f0f2f5; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); border-radius: 4px; padding: 2px 8px; font-family: var(--font-body); font-size: 0.8rem; cursor: pointer; transition: all 0.2s; text-transform: capitalize; display: flex; align-items: center; gap: 5px; }
+        .ticker-controls button:hover { background-color: #f0f2f5; color: #111; text-shadow: none; }
+        .ticker-controls button.active { background-color: var(--accent-main); color: white; border-color: var(--accent-main); text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); }
         .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
-        #night-mode-message {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #f0f2f5;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            transition: opacity 0.5s;
-            white-space: nowrap;
-            margin-left: auto;
-        }
-        #next-block-indicator {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #FFFFFF;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            background-color: var(--accent-gold);
-            transition: all 0.5s ease-in-out;
-            white-space: nowrap;
-            margin-left: auto;
-            padding: 3px 10px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
+        #night-mode-message { font-size: 0.8rem; font-weight: 500; color: #f0f2f5; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); transition: opacity 0.5s; white-space: nowrap; margin-left: auto; }
+        #next-block-indicator { font-size: 0.8rem; font-weight: 700; color: #FFFFFF; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); background-color: var(--accent-gold); transition: all 0.5s ease-in-out; white-space: nowrap; margin-left: auto; padding: 3px 10px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
         .nav-controls { display: flex; align-items: center; gap: 10px; }
-        #news-counter {
-            font-size: 0.8rem;
-            font-weight: 700;
-            font-family: var(--font-display);
-            letter-spacing: 0.5px;
-            color: #f0f2f5;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-            padding: 2px 8px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
+        #news-counter { font-size: 0.8rem; font-weight: 700; font-family: var(--font-display); letter-spacing: 0.5px; color: #f0f2f5; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); padding: 2px 8px; border: 1px solid transparent; border-radius: 4px; }
         
         #timeline-container { display: none; width: 100%; }
         #filter-control-group { display: flex; }
@@ -790,38 +431,30 @@
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
-            background-size: cover; 
-            background-position: center; 
+            background: linear-gradient(145deg, #1e2025, #2c3038);
             transition: border-color 2s ease-in-out, width 1s ease-in-out; 
             position: relative; 
             overflow: hidden; 
         }
-        #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.4); z-index: 1; transition: background-color 2s ease-in-out; }
+        #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 1; transition: background-color 2s ease-in-out; }
         
-        .weather-bg-clear.day.summer { background-image: url('https://images.unsplash.com/photo-1590077428593-a55d22956163?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-clear.day.spring { background-image: url('https://images.unsplash.com/photo-1494949649109-ecfc3b8c35df?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-clear.day.autumn { background-image: url('https://images.unsplash.com/photo-1506371369522-c3521a248387?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-clear.day.winter { background-image: url('https://images.unsplash.com/photo-1517299354238-c7e477dd5480?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-clear.night { background-image: url('https://images.unsplash.com/photo-1444703686981-a3abbc4d42e2?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-cloudy.day, .weather-bg-cloudy.night { background-image: url('https://images.unsplash.com/photo-1517685352821-92cf884ee6a5?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-rain { background-image: url('https://images.unsplash.com/photo-1515694346937-94d85e41e622?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-thunderstorm { background-image: url('https://images.unsplash.com/photo-1605727226462-581b3d613247?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-snow { background-image: url('https://images.unsplash.com/photo-1547754980-3df97fed72a8?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-fog { background-image: url('https://images.unsplash.com/photo-1487621167335-f0249b9e2888?auto=format&fit=crop&w=400&q=80'); }
-        .weather-bg-default { background: linear-gradient(145deg, #757F9A, #D7DDE8); }
-        .weather-widget { padding: 8px 12px; animation: widget-fade-in 0.8s ease-in-out; display: flex; flex-direction: column; text-align: center; position: relative; z-index: 2; }
-        #world-weather-container .weather-widget, #world-weather-container .weather-widget * { color: #ffffff; text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7); }
-        .weather-header { text-align: center; margin-bottom: 4px; }
-        .weather-location { font-size: 1.0rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .weather-time { font-size: 0.7rem; font-weight: 500; }
-        .weather-main-content { display: flex; align-items: center; justify-content: space-around; gap: 10px; }
-        .weather-main-icon svg { width: 48px; height: 48px; filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.5)); }
-        .weather-temp { font-family: var(--font-display); font-size: 2.2rem; line-height: 1; }
-        .weather-description { font-size: 0.8rem; font-weight: 500; margin-top: 4px; text-transform: capitalize; }
-        .weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 0.7rem; border-top: 1px solid rgba(255, 255, 255, 0.3); margin-top: 5px; padding-top: 5px; opacity: 0.9; }
-        .weather-detail-item { display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .weather-detail-item svg { width: 14px; height: 14px; flex-shrink: 0; }
-        #weather-attribution { font-size: 0.6rem; color: rgba(255,255,255,0.6); text-align: center; margin-top: 4px; z-index: 2; position: relative; }
+        .weather-widget { padding: 5px 8px; animation: widget-fade-in 0.8s ease-in-out; display: flex; flex-direction: column; text-align: center; position: relative; z-index: 2; width: 100%; height: 100%; justify-content: flex-start; }
+        #world-weather-container .weather-widget, #world-weather-container .weather-widget * { color: #ffffff; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); }
+        .weather-header { text-align: center; margin-bottom: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; }
+        .weather-location { font-size: 0.95rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; }
+        .weather-time { font-size: 0.7rem; font-weight: 500; opacity: 0.8; }
+        
+        .pws-main-data { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 2px 0; }
+        .pws-temp { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .pws-unit { font-size: 0.9rem; vertical-align: top; color: var(--text-secondary); margin-left: 2px; }
+        
+        .pws-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; font-size: 0.7rem; width: 100%; padding: 0; margin-top: 2px; }
+        .pws-item { display: flex; flex-direction: column; align-items: flex-start; background: rgba(255,255,255,0.03); padding: 2px 4px; border-radius: 3px; overflow: hidden; }
+        .pws-label { font-size: 0.55rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0; line-height: 1; width: 100%; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1px; }
+        .pws-value { font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; width: 100%; text-align: right; color: #eee; }
+        .pws-sub-value { font-size: 0.6rem; color: #ccc; text-align: right; width: 100%; }
+        
+        #weather-attribution { font-size: 0.55rem; color: rgba(255,255,255,0.4); text-align: center; margin-top: auto; z-index: 2; position: relative; padding-bottom: 2px; letter-spacing: 0.5px; }
         #weather-attribution a { color: inherit; text-decoration: none; }
         #world-weather-container .placeholder { font-size: 0.8rem; color: #fff; text-shadow: 1px 1px 2px #000; text-align: center; position: relative; z-index: 2; padding: 8px 12px; }
         
@@ -845,25 +478,19 @@
             .news-ticker-container { flex-direction: column; }
             .ticker-controls { flex-wrap: wrap; }
             #world-weather-container,
-            #world-weather-container.schedule-expanded { 
-                width: 100%; 
-                border-left: none; 
-                border-top: 1px solid var(--border-color); 
-            }
+            #world-weather-container.schedule-expanded { width: 100%; border-left: none; border-top: 1px solid var(--border-color); }
             .weather-widget { flex-direction: row; align-items: center; justify-content: space-around; text-align: left; }
-            .weather-main-content { order: 1; }
-            .weather-details { order: 2; grid-template-columns: 1fr; align-items: flex-start; border: none; margin: 0; padding: 0; gap: 5px; }
-            .weather-header, .weather-description { display: none; }
+            .pws-main-data { margin: 0; }
+            .pws-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+            .pws-item { min-width: 60px; }
             #next-block-indicator { order: 3; flex-basis: 100%; text-align: center; margin-top: 5px; margin-left: 0; }
             #countdown-clock { font-size: 10vw; }
         }
         @media (max-width: 768px) { .ticker-label { min-width: 180px; padding: 0; } .brand-name { font-size: 1.3rem; } .ticker-controls { justify-content: flex-start; } #night-mode-message { text-align: left; } .label-content { padding: 0 10px; } }
         @media (max-width: 520px) {
-            .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; } #clock { margin-top: 0; } #night-shift-label { font-size: 0.8rem; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; } .label-content { padding: 5px 10px; }
-            .weather-widget { flex-direction: column; text-align: center; }
-             .weather-main-content, .weather-details { order: 0; }
-             .weather-details { grid-template-columns: 1fr 1fr; }
-             .weather-header, .weather-description { display: block; }
+            .ticker-body { min-height: 155px; } .ticker-main-row { flex-direction: column; } .ticker-label { min-width: 100%; border-right: none; border-bottom: 1px solid #444; flex-direction: row; justify-content: space-between; } #clock { margin-top: 0; } .ticker-wrap { height: 105px; } .ticker-controls { padding: 8px 10px; } #night-mode-message { flex-basis: 100%; } .ticker-controls button span { display: none; } .icon-button { padding: 4px; } .label-content { padding: 5px 10px; }
+            .weather-widget { flex-direction: column; text-align: center; gap: 8px; }
+            .pws-grid { display: grid; grid-template-columns: 1fr 1fr; }
             .calendar-item-v2 { flex-direction: column; text-align: center; gap: 15px; }
             .calendar-item-v2 .ci-right { border-left: none; padding-left: 0; align-items: center; }
             #countdown-clock { font-size: 12vw; }
@@ -975,7 +602,7 @@
         </div>
         
         <div id="world-weather-container">
-             <div class="placeholder">Időjárás adatok betöltése...</div>
+             <div class="placeholder">Időjárás adatok...</div>
              <div id="schedule-widget"></div>
         </div>
     </section>
@@ -984,6 +611,102 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
         
+        // --- KONFIGURÁCIÓ ---
+        const WUNDERGROUND_API_KEY = "e1f10a1e78da46f5b10a1e78da96f525"; 
+        
+        // PWS Állomások (ID -> Név)
+        const PWS_MAP = {
+            "IGAGYV1": "Gagyvendégi",
+            "IMARTO122": "Martonyi",
+            "IKAZIN14": "Kazincbarcika",
+            "IPUTNO1": "Putnok",
+            "IZABAR1": "Zabar",
+            "ISALGT1": "Salgótarján",
+            "IKARAN11": "Karancslapujtő",
+            "IBEKLC3": "Bekölce",
+            "IMTRAB1": "Mátraballa",
+            "IVC267": "Vác",
+            "IPILIS37": "Pilisvörösvár",
+            "IFELCS4": "Felcsút",
+            "IBUDAK6": "Budakeszi",
+            "IBIATO9": "Biatorbágy",
+            "ICSKVR4": "Csákvár",
+            "IOROSZ2": "Oroszlány",
+            "IBALINKA2": "Bakony",
+            "ISR67": "Súr",
+            "IPANNO3": "Pannonhalma",
+            "IKAJRP2": "Kajárpéc",
+            "IPPA11": "Pápa",
+            "ICELLD14": "Celldömölk",
+            "IHEVES2": "Heves",
+            "IGYNGY22": "Gyöngyös",
+            "ISZCSN9": "Szécsény",
+            "ITAHIT11": "Tahitótfalu",
+            "IESZTE5": "Esztergom",
+            "ITATA16": "Tata",
+            "IKARTAL4": "Kartal",
+            "IMARTO67": "Martonvásár",
+            "ISZOLNOK10": "Szolnok", 
+            "ISZOLN13": "Szolnok",
+            "INAGYK59": "Nagykőrös",
+            "IKECSK31": "Kecskemét",
+            "IKALOCSA2": "Kalocsa",
+            "IBONYH1": "Bonyhád",
+            "ISZENT114": "Szentlőrinc",
+            "ILJUBL47": "Ljubljana",
+            "IBAKTA4": "Baktalórántháza",
+            "IJFEHR1": "Újfehértó",
+            "IPAPOS6": "Papos",
+            "ISONKD1": "Sonkád",
+            "INAPKO1": "Napkor",
+            "IHARSN4": "Harsány",
+            "IBKKSZ2": "Bükkszentkereszt",
+            "INYREG37": "Nyíregyháza",
+            "IPUSZT3": "Pusztadobos",
+            "ITISZA93": "Tiszaújváros",
+            "IEGER76": "Eger",
+            "IHAJDD7": "Hajdúdorog"
+        };
+
+        // Külföldi városlista (Open-Meteo)
+        const FOREIGN_CITIES = [ 
+            { name: 'London', lat: 51.50, lon: -0.12 }, 
+            { name: 'New York', lat: 40.71, lon: -74.00 }, 
+            { name: 'Tokió', lat: 35.68, lon: 139.69 }, 
+            { name: 'Peking', lat: 39.90, lon: 116.40 },
+            { name: 'Moszkva', lat: 55.75, lon: 37.61 },
+            { name: 'Sydney', lat: -33.86, lon: 151.20 }, 
+            { name: 'Párizs', lat: 48.85, lon: 2.35 }, 
+            { name: 'Berlin', lat: 52.52, lon: 13.40 }, 
+            { name: 'Róma', lat: 41.90, lon: 12.49 }, 
+            { name: 'Dubai', lat: 25.20, lon: 55.27 }, 
+            { name: 'Isztambul', lat: 41.00, lon: 28.97 }, 
+            { name: 'Bécs', lat: 48.20, lon: 16.37 },
+            { name: 'Los Angeles', lat: 34.05, lon: -118.24 },
+            { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 },
+            { name: 'Kairó', lat: 30.04, lon: 31.23 },
+            { name: 'Fokváros', lat: -33.92, lon: 18.42 },
+            { name: 'Oslo', lat: 59.91, lon: 10.75 },
+            { name: 'Szingapúr', lat: 1.35, lon: 103.81 },
+            { name: 'Buenos Aires', lat: -34.60, lon: -58.38 },
+            { name: 'Madrid', lat: 40.41, lon: -3.70 },
+            { name: 'Amszterdam', lat: 52.36, lon: 4.89 },
+            { name: 'Toronto', lat: 43.65, lon: -79.38 },
+            { name: 'Helsinki', lat: 60.16, lon: 24.93 },
+            { name: 'Lisszabon', lat: 38.72, lon: -9.13 },
+            { name: 'Athén', lat: 37.98, lon: 23.72 },
+            { name: 'Dublin', lat: 53.34, lon: -6.26 },
+            { name: 'Újdelhi', lat: 28.61, lon: 77.20 },
+            { name: 'Bangkok', lat: 13.75, lon: 100.50 },
+            { name: 'Szöul', lat: 37.56, lon: 126.97 },
+            { name: 'Jakarta', lat: -6.20, lon: 106.84 },
+            { name: 'Lima', lat: -12.04, lon: -77.04 },
+            { name: 'Nairobi', lat: -1.29, lon: 36.82 },
+            { name: 'Stockholm', lat: 59.32, lon: 18.06 },
+            { name: 'Varsó', lat: 52.22, lon: 21.01 },
+            { name: 'Prága', lat: 50.07, lon: 14.43 }
+        ];
+
         const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
         
         const CORS_PROXIES = [
@@ -993,9 +716,6 @@
         ];
         
         const BREAKING_KEYWORDS = ['rendkívüli', 'fontos bejelentés', 'most érkezett', 'élőben', 'percről percre', 'breaking', 'rakétacsapás', 'háború'];
-        
-        const HUNGARIAN_CITIES = [ { name: 'Budapest', lat: 47.49, lon: 19.04 }, { name: 'Debrecen', lat: 47.53, lon: 21.62 }, { name: 'Szeged', lat: 46.25, lon: 20.14 }, { name: 'Miskolc', lat: 48.10, lon: 20.79 }, { name: 'Pécs', lat: 46.07, lon: 18.23 }, { name: 'Győr', lat: 47.68, lon: 17.63 }, { name: 'Nyíregyháza', lat: 47.95, lon: 21.71 }, { name: 'Kecskemét', lat: 46.90, lon: 19.69 }, { name: 'Székesfehérvár', lat: 47.19, lon: 18.41 }, { name: 'Szombathely', lat: 47.23, lon: 16.62 }, { name: 'Szolnok', lat: 47.17, lon: 20.19 }, { name: 'Tatabánya', lat: 47.58, lon: 18.39 }, { name: 'Kaposvár', lat: 46.36, lon: 17.78 }, { name: 'Érd', lat: 47.38, lon: 18.92 }, { name: 'Veszprém', lat: 47.09, lon: 17.90 }, { name: 'Békéscsaba', lat: 46.68, lon: 21.09 }, { name: 'Zalaegerszeg', lat: 46.84, lon: 16.84 }, { name: 'Sopron', lat: 47.68, lon: 16.59 }, { name: 'Eger', lat: 47.90, lon: 20.37 }, { name: 'Nagykanizsa', lat: 46.45, lon: 16.99 }, { name: 'Dunaújváros', lat: 46.96, lon: 18.93 }, { name: 'Hódmezővásárhely', lat: 46.43, lon: 20.32 }, { name: 'Salgótarján', lat: 48.09, lon: 19.79 }, { name: 'Ózd', lat: 48.22, lon: 20.29 }, { name: 'Cegléd', lat: 47.17, lon: 19.79 }, { name: 'Baja', lat: 46.18, lon: 18.95 }, { name: 'Vác', lat: 47.77, lon: 19.13 }, { name: 'Szekszárd', lat: 46.35, lon: 18.70 }, { name: 'Pápa', lat: 47.33, lon: 17.46 }, { name: 'Gyöngyös', lat: 47.78, lon: 19.92 }, { name: 'Kazincbarcika', lat: 48.25, lon: 20.63 }, { name: 'Gödöllő', lat: 47.59, lon: 19.35 }, { name: 'Hajdúböszörmény', lat: 47.67, lon: 21.51 }, { name: 'Siófok', lat: 46.90, lon: 18.05 }, { name: 'Mosonmagyaróvár', lat: 47.88, lon: 17.27 }, { name: 'Esztergom', lat: 47.78, lon: 18.74 }, { name: 'Kiskunfélegyháza', lat: 46.71, lon: 19.85 }, { name: 'Gyula', lat: 46.64, lon: 21.28 }, { name: 'Ajka', lat: 47.10, lon: 17.56 }, { name: 'Orosháza', lat: 46.56, lon: 20.66 }, { name: 'Szentes', lat: 46.65, lon: 20.26 }, { name: 'Kiskunhalas', lat: 46.43, lon: 19.48 }, { name: 'Jászberény', lat: 47.50, lon: 19.91 }, { name: 'Sátoraljaújhely', lat: 48.39, lon: 21.66 }, { name: 'Komló', lat: 46.19, lon: 18.26 }, { name: 'Makó', lat: 46.21, lon: 20.47 }, { name: 'Nagykőrös', lat: 47.03, lon: 19.78 }, { name: 'Karcag', lat: 47.31, lon: 20.92 }, { name: 'Törökszentmiklós', lat: 47.18, lon: 20.31 }, { name: 'Hatvan', lat: 47.66, lon: 19.68 }, { name: 'Keszthely', lat: 46.76, lon: 17.24 }, { name: 'Hajdúszoboszló', lat: 47.45, lon: 21.39 }, { name: 'Komárom', lat: 47.74, lon: 18.12 }, { name: 'Békés', lat: 46.77, lon: 21.13 }, { name: 'Paks', lat: 46.62, lon: 18.85 }, { name: 'Csongrád', lat: 46.71, lon: 20.14 }, { name: 'Mohács', lat: 45.99, lon: 18.68 }, { name: 'Kalocsa', lat: 46.52, lon: 18.98 }, { name: 'Mezőtúr', lat: 47.00, lon: 20.61 }, { name: 'Tiszaújváros', lat: 47.92, lon: 21.04 }, { name: 'Berettyóújfalu', lat: 47.21, lon: 21.55 }, { name: 'Tata', lat: 47.64, lon: 18.32 }, { name: 'Szentendre', lat: 47.66, lon: 19.07 }, { name: 'Balatonfüred', lat: 46.95, lon: 17.89 }, { name: 'Visegrád', lat: 47.79, lon: 18.97 }, { name: 'Tokaj', lat: 48.12, lon: 21.41 }, { name: 'Sárvár', lat: 47.25, lon: 16.93 }, { name: 'Villány', lat: 45.87, lon: 18.45 } ];
-        const FOREIGN_CITIES = [ { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 }, { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Peking', lat: 39.90, lon: 116.40 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Bécs', lat: 48.20, lon: 16.37 }, { name: 'Pozsony', lat: 48.14, lon: 17.10 }, { name: 'Prága', lat: 50.07, lon: 14.43 }, { name: 'Madrid', lat: 40.41, lon: -3.70 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 }, { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Zágráb', lat: 45.81, lon: 15.98 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Johannesburg', lat: -26.20, lon: 28.04 }, { name: 'Szentpétervár', lat: 59.93, lon: 30.33 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 }, { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Genf', lat: 46.20, lon: 6.14 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Szao Paulo', lat: -23.55, lon: -46.63 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Bogotá', lat: 4.71, lon: -74.07 }, { name: 'Santiago', lat: -33.44, lon: -70.66 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 }, { name: 'Lagos', lat: 6.52, lon: 3.37 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Ho Si Minh-város', lat: 10.82, lon: 106.62 }, { name: 'Kuala Lumpur', lat: 3.13, lon: 101.68 }, { name: 'Abu-Dzabi', lat: 24.45, lon: 54.37 }, { name: 'Doha', lat: 25.28, lon: 51.53 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Montreal', lat: 45.50, lon: -73.56 }, { name: 'Wellington', lat: -41.28, lon: 174.77 }, { name: 'Kijev', lat: 50.45, lon: 30.52 }, { name: 'Belgrád', lat: 44.78, lon: 20.44 }, { name: 'Bukarest', lat: 44.42, lon: 26.10 }, { name: 'Ljubljana', lat: 46.05, lon: 14.50 }, { name: 'Szarajevó', lat: 43.85, lon: 18.41 }, { name: 'Szófia', lat: 42.69, lon: 23.32 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Ankara', lat: 39.93, lon: 32.85 }, { name: 'San Francisco', lat: 37.77, lon: -122.41 }, { name: 'Seattle', lat: 47.60, lon: -122.33 }, { name: 'Boston', lat: 42.36, lon: -71.05 }, { name: 'Edinburgh', lat: 55.95, lon: -3.18 }, { name: 'Jeruzsálem', lat: 31.76, lon: 35.21 } ];
         
         const CATEGORY_KEYWORDS = { belföld: ['belföld', 'magyar', 'budapest', 'kormány', 'parlament', 'rendőrség', 'tüntetés', 'forint', 'belügy', 'oktatás'], külföld: ['külföld', 'ukrajna', 'oroszország', 'brüsszel', 'háború', 'európa', 'amerika', 'kína', 'gáza', 'izrael', 'NATO'], gazdaság: ['gazdaság', 'forint', 'euró', 'infláció', 'tőzsde', 'mnb', 'költségvetés', 'adó', 'piac', 'portfolio'], sport: ['sport', 'foci', 'nb1', 'bajnokok ligája', 'forma-1', 'olimpia', 'kézilabda', 'vízilabda', ' FTC', 'válogatott', 'meccs', 'nemzeti sport'], tech: ['tech', 'tudomány', 'mobil', 'apple', 'google', 'mesterséges intelligencia', 'űrkutatás', 'innováció', 'AI', 'elon musk'], 'kékfény': ['kékfény', 'rendőrség', 'baleset', 'bűncselekmény', 'tűz', 'katasztrófa', 'ítélet', 'nyomozás'] };
         const QUOTES = [
@@ -1012,21 +732,18 @@
             { text: "A siker a lelkesedés elvesztése nélküli haladás kudarcról kudarcra.", author: "Winston Churchill" }, { text: "A tett minden tudás virága és gyümölcse.", author: "James Allen" }, { text: "Aki mindent megért, az mindent megbocsát.", author: "Buddha" },
             { text: "A türelem keserű, de a gyümölcse édes.", author: "Jean-Jacques Rousseau" }, { text: "A világ egy könyv, és aki nem utazik, az csak egy lapot olvas el belőle.", author: "Szent Ágoston" }
         ];
-        const ICON_CALENDAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>`;
-        const ICON_NEWS = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>`;
-        const ICON_ANNOUNCEMENT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
         const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "01-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"09-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
         
         const THEMATIC_BLOCKS = [
-            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [] },
-            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [] },
-            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [] },
-            { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [] },
-            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [] },
-            { start: 18,   name: 'Esti gyors',           type: 'fresh',                    timeWindowHours: 2, categories: [] },
-            { start: 20,   name: 'Este a TKP NEWS-al',   type: 'fresh',                    timeWindowHours: 2, categories: [] },
-            { start: 22,   name: 'Késő este a TKP NEWS-al', type: 'fresh',                 timeWindowHours: 4, refreshMinutes: 20, categories: [] },
-            { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [] }
+            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [], desc: "Az elmúlt nap legfontosabb hírei." },
+            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Indítsd a napot a legfrissebbekkel!" },
+            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Aktuális információk, munka mellé." },
+            { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Ebédidő, hírek friss tálalásban." },
+            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Mi történt eddig a nap folyamán?" },
+            { start: 18,   name: 'Esti gyors',           type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "A nap legfontosabb eseményei." },
+            { start: 20,   name: 'Este a TKP NEWS-al',   type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Lazítás mellé a nagyvilág hírei." },
+            { start: 22,   name: 'Késő este a TKP NEWS-al', type: 'fresh',                 timeWindowHours: 4, refreshMinutes: 20, categories: [], desc: "Éjszakai baglyoknak frissítve." },
+            { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [], desc: "Viszontlátásra holnap reggel!" }
         ];
 
         const NYIREGYHAZA_COORDS = { lat: 47.95, lon: 21.71 };
@@ -1053,9 +770,6 @@
         const feedsRef = ref(database, 'feeds');
         const announcementsRef = ref(database, 'announcements');
 
-        HUNGARIAN_CITIES.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
-        FOREIGN_CITIES.sort((a, b) => a.name.localeCompare(b.name, 'hu'));
-
         const tracks = { a: document.getElementById('ticker-a'), b: document.getElementById('ticker-b') };
         const tickerWrap = document.getElementById('ticker-wrap');
         const filterControls = document.getElementById('filter-controls');
@@ -1077,7 +791,6 @@
         const animationWrapper = document.getElementById('animation-wrapper');
         const manualRefreshTriggerEl = document.getElementById('manual-refresh-trigger');
         const nextBlockIndicatorEl = document.getElementById('next-block-indicator');
-        const scheduleWidgetEl = document.getElementById('schedule-widget');
         const progressBar = document.getElementById('progress-bar');
         const introAnimationContainer = document.getElementById('intro-animation-container');
         const countdownOverlayEl = document.getElementById('countdown-overlay');
@@ -1099,9 +812,10 @@
         const FLIP_INTERVAL_ANNOUNCEMENT = 15000;
 
         let weatherDisplayInterval = null, weatherFetchInterval = null;
-        let domesticWeatherCache = [], foreignWeatherDataCache = [];
-        let domesticWeatherIndex = 0, foreignWeatherIndex = 0;
-        let isDisplayingDomestic = true;
+        let pwsDataStore = [];
+        let foreignDataStore = [];
+        let weatherPlaylist = [];
+        let weatherIndex = 0;
         const WEATHER_DISPLAY_INTERVAL_DURATION = 8000;
         
         let textGlitchTimeout = null;
@@ -1123,7 +837,7 @@
         async function fetchWithProxyFallback(url) {
             for (const proxy of CORS_PROXIES) {
                 try {
-                    const response = await fetch(proxy + url, { signal: AbortSignal.timeout(15000) });
+                    const response = await fetch(proxy + url, { signal: AbortSignal.timeout(10000) });
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -1162,68 +876,6 @@
             return null;
         };
 
-        const getOpenMeteoIcon = (code, isDay) => {
-            const iconDay = {
-                0: `<svg viewBox="0 0 64 64"><path d="M32 15.3c-1.1 0-2-.9-2-2v-5c0-1.1.9-2 2-2s2 .9 2 2v5c0 1.1-.9 2-2 2zM15.3 34H10c-1.1 0-2-.9-2-2s.9-2 2-2h5.3c1.1 0 2 .9 2 2s-.9 2-2 2zM19.4 20.8c-.5 0-1-.2-1.4-.6l-3.8-3.8c-.8-.8-.8-2 0-2.8s2-.8 2.8 0l3.8 3.8c.8.8.8 2 0 2.8-.4.4-.9.6-1.4.6z" fill="#f5e66a"/><path d="M32,47.7A15.7,15.7,0,1,1,47.7,32,15.7,15.7,0,0,1,32,47.7Z" fill="#f5e66a"/><path d="M32 55.7c-1.1 0-2-.9-2-2v-5c0-1.1.9-2 2-2s2 .9 2 2v5c0 1.1-.9 2-2 2zM54 34h-5.3c-1.1 0-2-.9-2-2s.9-2 2-2H54c1.1 0 2 .9 2 2s-.9 2-2 2zM44.6 46c-.5 0-1-.2-1.4-.6l-3.8-3.8c-.8-.8-.8-2 0-2.8s2-.8 2.8 0l3.8 3.8c.8.8.8 2 0 2.8-.4.4-.9.6-1.4.6zM13.8 51.6c-.5 0-1-.2-1.4-.6-.8-.8-.8-2 0-2.8l3.8-3.8c.8-.8 2-.8 2.8 0s.8 2 0 2.8l-3.8 3.8c-.4.4-.9.6-1.4.6zM49.2 25.6c-.5 0-1-.2-1.4-.6l-3.8-3.8c-.8-.8-.8-2 0-2.8s2-.8 2.8 0l3.8 3.8c.8.8.8 2 0 2.8-.4.4-.9.6-1.4.6z" fill="#f5e66a"/></svg>`, 
-                1: `<svg viewBox="0 0 64 64"><path d="M19.6,49.2a15.2,15.2,0,0,1-1.7-30.2,15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H20.4a15,15,0,0,1-.8,0Z" fill="#b0c3d5"/><path d="M32 15.3c-1.1 0-2-.9-2-2v-5c0-1.1.9-2 2-2s2 .9 2 2v5c0 1.1-.9 2-2 2zM15.3 34H10c-1.1 0-2-.9-2-2s.9-2 2-2h5.3c1.1 0 2 .9 2 2s-.9 2-2 2zM19.4 20.8c-.5 0-1-.2-1.4-.6l-3.8-3.8c-.8-.8-.8-2 0-2.8s2-.8 2.8 0l3.8 3.8c.8.8.8 2 0 2.8-.4.4-.9.6-1.4.6z" fill="#f5e66a"/><ellipse cx="32" cy="32" rx="15.7" ry="15.7" fill="#f5e66a"/></svg>`, 
-                2: `<svg viewBox="0 0 64 64"><path d="M49.2,34.1a15.7,15.7,0,0,0-13-15.3,15.2,15.2,0,0,0-28.1,7.1,12.1,12.1,0,0,0,3,23.8H48a12,12,0,0,0,1.2-23.9Z" fill="#b0c3d5"/><path d="M49.2,34.1a15.7,15.7,0,0,0-13-15.3,15.2,15.2,0,0,0-28.1,7.1,12.1,12.1,0,0,0,3,23.8H48a12,12,0,0,0,1.2-23.9Z" fill="#b0c3d5"/><path d="M29.6,49.2a15.2,15.2,0,0,1-1.7-30.2,15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H30.4a15,15,0,0,1-.8,0Z" fill="#889eb2"/><path d="M32 15.3c-1.1 0-2-.9-2-2v-5c0-1.1.9-2 2-2s2 .9 2 2v5c0 1.1-.9 2-2 2zM15.3 34H10c-1.1 0-2-.9-2-2s.9-2 2-2h5.3c1.1 0 2 .9 2 2s-.9 2-2 2zM19.4 20.8c-.5 0-1-.2-1.4-.6l-3.8-3.8c-.8-.8-.8-2 0-2.8s2-.8 2.8 0l3.8 3.8c.8.8.8 2 0 2.8-.4.4-.9.6-1.4.6z" fill="#f5e66a"/><ellipse cx="32" cy="32" rx="15.7" ry="15.7" fill="#f5e66a"/></svg>`, 
-                3: `<svg viewBox="0 0 64 64"><path d="M49.2,34.1a15.7,15.7,0,0,0-13-15.3,15.2,15.2,0,0,0-28.1,7.1,12.1,12.1,0,0,0,3,23.8H48a12,12,0,0,0,1.2-23.9Z" fill="#b0c3d5"/><path d="M29.6,49.2A15.2,15.2,0,0,1,14.4,21a15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H30.4a15,15,0,0,1-.8,0Z" fill="#889eb2"/></svg>`, 
-                45: `<svg viewBox="0 0 64 64"><path d="M19.6,49.2a15.2,15.2,0,0,1-1.7-30.2,15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H20.4a15,15,0,0,1-.8,0Z" fill="#b0c3d5"/><path d="M54,42.7H10a2,2,0,0,1,0-4H54a2,2,0,0,1,0,4Z" fill="#889eb2"/><path d="M54,52.7H10a2,2,0,0,1,0-4H54a2,2,0,0,1,0,4Z" fill="#b0c3d5"/></svg>`, 
-                51: `<svg viewBox="0 0 64 64"><path d="M19.6,49.2a15.2,15.2,0,0,1-1.7-30.2,15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H20.4a15,15,0,0,1-.8,0Z" fill="#b0c3d5"/><path d="M32,56.7a2.5,2.5,0,0,1-1.8-4.2l5-5a2.5,2.5,0,0,1,3.5,3.5l-5,5A2.5,2.5,0,0,1,32,56.7Z" fill="#69a5d1"/><path d="M42,56.7a2.5,2.5,0,0,1-1.8-4.2l5-5a2.5,2.5,0,1,1,3.5,3.5l-5,5A2.5,2.5,0,0,1,42,56.7Z" fill="#69a5d1"/></svg>`, 
-                61: `<svg viewBox="0 0 64 64"><path d="M19.6,49.2a15.2,15.2,0,0,1-1.7-30.2,15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H20.4a15,15,0,0,1-.8,0Z" fill="#b0c3d5"/><path d="M32,58.7a3.5,3.5,0,0,1-2.5-6l7-7a3.5,3.5,0,0,1,4.9,4.9l-7,7A3.5,3.5,0,0,1,32,58.7Z" fill="#3681b8"/><path d="M22,58.7a3.5,3.5,0,0,1-2.5-6l7-7a3.5,3.5,0,1,1,4.9,4.9l-7,7A3.5,3.5,0,0,1,22,58.7Z" fill="#3681b8"/><path d="M42,58.7a3.5,3.5,0,0,1-2.5-6l7-7a3.5,3.5,0,1,1,4.9,4.9l-7,7A3.5,3.5,0,0,1,42,58.7Z" fill="#3681b8"/></svg>`, 
-                71: `<svg viewBox="0 0 64 64"><path d="M19.6,49.2a15.2,15.2,0,0,1-1.7-30.2,15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H20.4a15,15,0,0,1-.8,0Z" fill="#b0c3d5"/><path d="M32.5,57.2a2,2,0,0,1-1.4-.6L27.4,53a2,2,0,0,1,2.8-2.8l2.3,2.3,2.3-2.3a2,2,0,0,1,2.8,2.8l-3.7,3.7A2,2,0,0,1,32.5,57.2Z" fill="#fff"/><path d="M42.5,57.2a2,2,0,0,1-1.4-.6L37.4,53a2,2,0,1,1,2.8-2.8l2.3,2.3,2.3-2.3a2,2,0,0,1,2.8,2.8l-3.7,3.7A2,2,0,0,1,42.5,57.2Z" fill="#fff"/><path d="M22.5,57.2a2,2,0,0,1-1.4-.6L17.4,53a2,2,0,1,1,2.8-2.8l2.3,2.3,2.3-2.3a2,2,0,0,1,2.8,2.8l-3.7,3.7A2,2,0,0,1,22.5,57.2Z" fill="#fff"/></svg>`, 
-                95: `<svg viewBox="0 0 64 64"><path d="M19.6,49.2a15.2,15.2,0,0,1-1.7-30.2,15.7,15.7,0,0,1,25.4-5.1,12.1,12.1,0,0,1,12,12.4,12,12,0,0,1-12,12H20.4a15,15,0,0,1-.8,0Z" fill="#b0c3d5"/><path d="M32,58.7a3.5,3.5,0,0,1-2.5-6l7-7a3.5,3.5,0,0,1,4.9,4.9l-7,7A3.5,3.5,0,0,1,32,58.7Z" fill="#3681b8"/><path d="M22,58.7a3.5,3.5,0,0,1-2.5-6l7-7a3.5,3.5,0,1,1,4.9,4.9l-7,7A3.5,3.5,0,0,1,22,58.7Z" fill="#3681b8"/><path d="M42,58.7a3.5,3.5,0,0,1-2.5-6l7-7a3.5,3.5,0,1,1,4.9,4.9l-7,7A3.5,3.5,0,0,1,42,58.7Z" fill="#3681b8"/><path d="M35.7,51.2,28.2,55a1,1,0,0,1-1.3-.8l-1-4.2a1,1,0,0,1,.6-1.1l7.5-3.7a1,1,0,0,1,1.3.8l1,4.2A1,1,0,0,1,35.7,51.2Z" fill="#f5e66a"/></svg>`, 
-            };
-            const iconNight = {
-                0: `<svg viewBox="0 0 64 64"><path d="M33.2,49.2A15.7,15.7,0,0,1,17.5,33.5a15.5,15.5,0,0,1,9-14.5,2.5,2.5,0,0,1,3,3.9,10.5,10.5,0,0,0,6.7,18,2.5,2.5,0,0,1,2.5,4.5,15.7,15.7,0,0,1-5.5,1.8Z" fill="#b0c3d5"/></svg>`, 
-                1: `<svg viewBox="0 0 64 64"><path d="M48,49.2H20.4a12.1,12.1,0,0,1-1.8-24,15.2,15.2,0,0,1,30.3,1.7,12,12,0,0,1,8.3,10.8A12.1,12.1,0,0,1,48,49.2Z" fill="#b0c3d5"/><path d="M33.2,49.2A15.7,15.7,0,0,1,17.5,33.5a15.5,15.5,0,0,1,9-14.5,2.5,2.5,0,0,1,3,3.9,10.5,10.5,0,0,0,6.7,18,2.5,2.5,0,0,1,2.5,4.5,15.7,15.7,0,0,1-5.5,1.8Z" fill="#889eb2"/></svg>`, 
-            };
-
-            if (!isDay && iconNight.hasOwnProperty(code)) return iconNight[code];
-            if (iconDay.hasOwnProperty(code)) return iconDay[code];
-            if (code > 95) return iconDay[95];
-            if (code >= 80) return iconDay[61];
-            if (code >= 71) return iconDay[71];
-            if (code >= 61) return iconDay[61];
-            if (code >= 51) return iconDay[51];
-            if (code >= 45) return iconDay[45];
-            return iconDay[3];
-        };
-        
-        const getOpenMeteoDescription = (code) => {
-            const descriptions = {
-                0: "Derült", 1: "Túlnyomóan derült", 2: "Részben felhős", 3: "Borult",
-                45: "Köd", 48: "Zúzmarás köd",
-                51: "Szitálás", 53: "Szitálás", 55: "Szitálás",
-                56: "Ónos szitálás", 57: "Ónos szitálás",
-                61: "Eső", 63: "Eső", 65: "Jelentős eső",
-                66: "Ónos eső", 67: "Ónos eső",
-                71: "Havazás", 73: "Havazás", 75: "Jelentős havazás", 77: "Hódara",
-                80: "Zápor", 81: "Zápor", 82: "Heves zápor",
-                85: "Hózápor", 86: "Hózápor",
-                95: "Zivatar", 96: "Zivatar jégesővel", 99: "Zivatar jégesővel"
-            };
-            return descriptions[code] || "Ismeretlen";
-        };
-
-        const getSeason = (date) => {
-            const month = date.getMonth();
-            if (month >= 2 && month <= 4) return 'spring';
-            if (month >= 5 && month <= 7) return 'summer';
-            if (month >= 8 && month <= 10) return 'autumn';
-            return 'winter';
-        };
-
-        const getWeatherCategory = (code) => {
-            if (code <= 1) return 'clear';
-            if (code <= 3) return 'cloudy';
-            if (code >= 45 && code <= 48) return 'fog';
-            if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return 'rain';
-            if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) return 'snow';
-            if (code >= 95) return 'thunderstorm';
-            return 'cloudy';
-        };
-
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -1232,93 +884,358 @@
             return array;
         }
 
-        async function fetchAllWeatherData() {
-            const fetchList = async (list) => {
-                const promises = list.map(async (city) => {
+        function getRainDescription(rate) {
+            if (rate <= 0) return null;
+            if (rate < 0.2) return "Pár csepp";
+            if (rate < 2.5) return "Gyenge eső";
+            if (rate < 7.6) return "Mérsékelt eső";
+            if (rate < 50) return "Heves eső";
+            return "Felhőszakadás";
+        }
+
+        function getPrecipitationText(rate, temp) {
+            if (rate <= 0) return null;
+            const isSnow = temp <= 1.5; 
+            if (rate < 0.2) return isSnow ? "Hószállingózás" : "Pár csepp";
+            if (rate < 2.5) return isSnow ? "Havazás / Olvadás" : "Gyenge eső";
+            if (rate < 7.6) return isSnow ? "Mérsékelt havazás" : "Mérsékelt eső";
+            return isSnow ? "Erős havazás" : "Felhőszakadás";
+        }
+
+        function getWindDirection(deg) {
+            if (deg === undefined || deg === null) return "";
+            const directions = ["Északi", "Északkeleti", "Keleti", "Délkeleti", "Déli", "Délnyugati", "Nyugati", "Északnyugati"];
+            const index = Math.round(((deg %= 360) < 0 ? deg + 360 : deg) / 45) % 8;
+            return directions[index];
+        }
+
+        // --- ÚJ: PWS Advanced RealFeel Calculation ---
+        // Ez a függvény kombinálja a hivatalos képleteket a PWS extra adataival
+        function calculateComplexRealFeel(temp, humidity, windSpeed, solarRad) {
+            // 1. Tél: Hivatalos Wind Chill (ha 10 fok alatt van)
+            if (temp <= 10) {
+                // Wind Chill képlet (ha van szél)
+                if (windSpeed >= 4.8) {
+                    return 13.12 + 0.6215 * temp - 11.37 * Math.pow(windSpeed, 0.16) + 0.3965 * temp * Math.pow(windSpeed, 0.16);
+                }
+                // Ha süt a nap télen, az javít a hőérzeten (+2 fokig)
+                if (solarRad > 0) {
+                    return temp + (solarRad / 400);
+                }
+                return temp;
+            }
+
+            // 2. Nyár: Hivatalos Heat Index (ha 27 fok felett van)
+            if (temp >= 27) {
+                // Egyszerűsített Heat Index, ha magas a pára
+                const c1 = -8.78469475556;
+                const c2 = 1.61139411;
+                const c3 = 2.33854883889;
+                const c4 = -0.14611605;
+                const c5 = -0.012308094;
+                const c6 = -0.0164248277778;
+                const c7 = 0.002211732;
+                const c8 = 0.00072546;
+                const c9 = -0.000003582;
+                const HI = c1 + (c2 * temp) + (c3 * humidity) + (c4 * temp * humidity) + (c5 * temp * temp) + (c6 * humidity * humidity) + (c7 * temp * temp * humidity) + (c8 * temp * humidity * humidity) + (c9 * temp * temp * humidity * humidity);
+                
+                // Ha süt a nap nyáron, az ront a hőérzeten (napon melegebb van)
+                if (solarRad > 0) {
+                    return HI + (solarRad / 200); // Max kb +3-4 fok a napon
+                }
+                return HI;
+            }
+
+            // 3. Átmeneti idő (10 - 27 fok között) - Saját "Komfort" Képlet
+            // Itt a szél hűt, a nap fűt, a pára kevésbé számít.
+            
+            // Napsugárzás hatása (fűtés)
+            let solarEffect = 0;
+            if (solarRad > 0) {
+                solarEffect = solarRad / 220; // Pl. 800 W/m2 -> +3.6 fok
+            }
+
+            // Szél hatása (hűtés)
+            let windEffect = 0;
+            if (windSpeed > 0) {
+                windEffect = (Math.pow(windSpeed, 0.5)); // Nem lineáris, a kis szél is hűt már
+            }
+
+            return temp + solarEffect - (windEffect * 0.5);
+        }
+
+        function buildPlaylist() {
+            if (pwsDataStore.length === 0 && foreignDataStore.length === 0) return [];
+            const round1 = shuffleArray([...pwsDataStore]);
+            const round2 = shuffleArray([...pwsDataStore]);
+            const foreign = shuffleArray([...foreignDataStore]);
+            return [...round1, ...round2, ...foreign];
+        }
+
+        async function fetchWeatherData() {
+            let newPwsData = [];
+            let newForeignData = [];
+
+            if (WUNDERGROUND_API_KEY && PWS_MAP) {
+                const pwsKeys = Object.keys(PWS_MAP);
+                const pwsPromises = pwsKeys.map(async (stationId) => {
                     try {
-                        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,is_day,weather_code,wind_speed_10m&timezone=auto`;
+                        const url = `https://api.weather.com/v2/pws/observations/current?stationId=${stationId}&format=json&units=m&apiKey=${WUNDERGROUND_API_KEY}&numericPrecision=decimal`;
+                        const response = await fetchWithProxyFallback(url);
+                        const data = await response.json();
+                        if (!data.observations || data.observations.length === 0) return null;
+                        const obs = data.observations[0];
+                        return {
+                            type: 'PWS',
+                            name: PWS_MAP[stationId], 
+                            id: obs.stationID,
+                            time: obs.obsTimeLocal.split(' ')[1].substring(0,5),
+                            temp: obs.metric.temp,
+                            humidity: obs.humidity,
+                            windSpeed: obs.metric.windSpeed,
+                            windGust: obs.metric.windGust,
+                            windDir: obs.winddir,
+                            pressure: obs.metric.pressure,
+                            precipRate: obs.metric.precipRate,
+                            precipTotal: obs.metric.precipTotal,
+                            uv: obs.uv,
+                            solarRad: obs.solarRadiation
+                        };
+                    } catch (error) { return null; }
+                });
+                const pwsResults = await Promise.all(pwsPromises);
+                newPwsData = pwsResults.filter(r => r !== null);
+            }
+
+            if (FOREIGN_CITIES && FOREIGN_CITIES.length > 0) {
+                const foreignPromises = FOREIGN_CITIES.map(async (city) => {
+                    try {
+                        const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current=temperature_2m,relative_humidity_2m,is_day,weather_code,wind_speed_10m,surface_pressure&timezone=auto`;
                         const response = await fetch(url);
                         if (!response.ok) return null;
                         const data = await response.json();
-                        
                         const current = data.current;
+                        const localTime = new Date(); 
+                        const timeStr = localTime.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit', timeZone: data.timezone });
                         return {
+                            type: 'OM',
                             name: city.name,
-                            temp: Math.round(current.temperature_2m),
-                            is_day: current.is_day === 1,
+                            time: timeStr,
+                            temp: current.temperature_2m,
+                            humidity: current.relative_humidity_2m,
+                            windSpeed: current.wind_speed_10m,
+                            pressure: current.surface_pressure,
                             code: current.weather_code,
-                            humidity: Math.round(current.relative_humidity_2m),
-                            windSpeed: Math.round(current.wind_speed_10m),
-                            lat: city.lat, lon: city.lon
+                            is_day: current.is_day
                         };
-                    } catch (error) { console.error(`Időjárás API hiba (${city.name}):`, error); return null; }
+                    } catch (e) { return null; }
                 });
-                return (await Promise.all(promises)).filter(r => r !== null);
-            };
-            [domesticWeatherCache, foreignWeatherDataCache] = await Promise.all([ fetchList(HUNGARIAN_CITIES), fetchList(FOREIGN_CITIES) ]);
+                const foreignResults = await Promise.all(foreignPromises);
+                newForeignData = foreignResults.filter(r => r !== null);
+            }
+
+            pwsDataStore = newPwsData;
+            foreignDataStore = newForeignData;
+            
+            if (weatherPlaylist.length === 0) {
+                weatherPlaylist = buildPlaylist();
+            } else {
+                weatherPlaylist = weatherPlaylist.map(item => {
+                    if (item.type === 'PWS') {
+                        const fresh = pwsDataStore.find(p => p.id === item.id);
+                        return fresh || item;
+                    } else {
+                        const fresh = foreignDataStore.find(f => f.name === item.name);
+                        return fresh || item;
+                    }
+                });
+            }
+
+            if (document.visibilityState === 'visible') {
+                const currentWidget = document.querySelector('.weather-widget');
+                if (currentWidget) {
+                    const currentLocationEl = currentWidget.querySelector('.weather-location');
+                    const currentLocationName = currentLocationEl ? currentLocationEl.textContent : '';
+                    
+                    let freshData = pwsDataStore.find(p => p.name === currentLocationName) || 
+                                    foreignDataStore.find(f => f.name === currentLocationName);
+                    
+                    if (freshData) {
+                        updateCurrentWidgetValues(freshData);
+                    }
+                }
+            }
         }
         
-        function displayWeather() {
-            let currentCity;
+        function updateCurrentWidgetValues(data) {
+            const w = document.querySelector('.weather-widget');
+            if (!w) return;
 
-            if (isDisplayingDomestic) {
-                if (domesticWeatherCache.length === 0) return;
-                currentCity = domesticWeatherCache[domesticWeatherIndex];
-                domesticWeatherIndex = (domesticWeatherIndex + 1) % domesticWeatherCache.length;
-                if (domesticWeatherIndex === 0) isDisplayingDomestic = false;
+            const updateText = (selector, text) => {
+                const el = w.querySelector(selector);
+                if (el) el.textContent = text;
+            };
+
+            if (data.type === 'PWS') {
+                const temp = typeof data.temp === 'number' ? data.temp.toFixed(1) : '--';
+                const tempEl = w.querySelector('.pws-temp');
+                if (tempEl && tempEl.firstChild) tempEl.firstChild.textContent = temp;
+
+                const pressure = typeof data.pressure === 'number' ? data.pressure.toFixed(1) : '--';
+                const precipRate = typeof data.precipRate === 'number' ? data.precipRate : 0;
+                const precipTotal = typeof data.precipTotal === 'number' ? data.precipTotal.toFixed(1) : '0';
+                const windS = typeof data.windSpeed === 'number' ? data.windSpeed.toFixed(1) : '0';
+                
+                let precipText = getPrecipitationText(precipRate, data.temp);
+                let windDirText = getWindDirection(data.windDir);
+
+                const items = w.querySelectorAll('.pws-item');
+                if (items.length >= 4) {
+                    items[0].querySelector('.pws-value').textContent = `${data.humidity}%`;
+                    items[0].querySelector('.pws-sub-value').textContent = `${pressure} hPa`;
+                    
+                    items[1].querySelector('.pws-value').textContent = `${windS} km/h`;
+                    items[1].querySelector('.pws-sub-value').textContent = windDirText;
+
+                    items[2].querySelector('.pws-value').textContent = `${precipTotal} mm`;
+                    
+                    if (precipText) {
+                        items[3].querySelector('.pws-label').textContent = "Csapadék most";
+                        items[3].querySelector('.pws-value').textContent = precipText;
+                        items[3].querySelector('.pws-value').style = "font-size: 0.7rem; color: #4fc3f7;";
+                        items[3].querySelector('.pws-sub-value').textContent = "";
+                    } else {
+                        items[3].querySelector('.pws-label').textContent = "Valós hőérzet";
+                        
+                        // ÚJ SZÁMÍTÁS HASZNÁLATA
+                        let feelsLike = calculateComplexRealFeel(data.temp, data.humidity, data.windSpeed, data.solarRad);
+                        
+                        items[3].querySelector('.pws-value').textContent = `${feelsLike.toFixed(1)}°C`;
+                        items[3].querySelector('.pws-value').style = "font-size: 0.7rem; color: #eee;";
+                        items[3].querySelector('.pws-sub-value').textContent = "";
+                    }
+                }
+                updateText('.weather-time', data.time);
+
             } else {
-                if (foreignWeatherDataCache.length === 0) return;
-                currentCity = foreignWeatherDataCache[foreignWeatherIndex];
-                foreignWeatherIndex = (foreignWeatherIndex + 1) % foreignWeatherDataCache.length;
-                if (foreignWeatherIndex === 0) isDisplayingDomestic = true;
+                const temp = Math.round(data.temp);
+                const tempEl = w.querySelector('.pws-temp');
+                if (tempEl && tempEl.firstChild) tempEl.firstChild.textContent = temp;
+                
+                const items = w.querySelectorAll('.pws-item');
+                if (items.length >= 3) {
+                    items[0].querySelector('.pws-value').textContent = `${data.humidity}%`;
+                    items[1].querySelector('.pws-value').textContent = `${Math.round(data.windSpeed)} km/h`;
+                    items[2].querySelector('.pws-value').textContent = `${Math.round(data.pressure)} hPa`;
+                }
+                updateText('.weather-time', data.time);
             }
-            if (!currentCity) return;
-            
-            const localTime = new Date();
-            const localTimeStr = localTime.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
-            const sunTimes = SunCalc.getTimes(localTime, currentCity.lat, currentCity.lon);
-            const sunriseStr = sunTimes.sunrise.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
-            const sunsetStr = sunTimes.sunset.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
-            
-            const season = getSeason(new Date());
-            const dayOrNight = currentCity.is_day ? 'day' : 'night';
-            const category = getWeatherCategory(currentCity.code);
-            
-            worldWeatherContainer.className = `weather-bg-${category} ${dayOrNight} ${season}`;
+        }
 
-            const widgetHtml = `
-                <div class="weather-widget">
-                    <div class="weather-header">
-                        <div class="weather-location" title="${currentCity.name}">${currentCity.name}</div>
-                        <div class="weather-time">${localTimeStr}</div>
+        function displayWeather() {
+            if (weatherIndex >= weatherPlaylist.length) {
+                weatherPlaylist = buildPlaylist();
+                weatherIndex = 0;
+            }
+
+            if (weatherPlaylist.length === 0) {
+                 worldWeatherContainer.innerHTML = `<div class="placeholder">Adatok frissítése...</div>`;
+                 return;
+            }
+
+            const currentData = weatherPlaylist[weatherIndex];
+            weatherIndex++;
+
+            let widgetHtml = '';
+
+            if (currentData.type === 'PWS') {
+                const temp = typeof currentData.temp === 'number' ? currentData.temp.toFixed(1) : '--';
+                const pressure = typeof currentData.pressure === 'number' ? currentData.pressure.toFixed(1) : '--';
+                const precipRate = typeof currentData.precipRate === 'number' ? currentData.precipRate : 0;
+                const precipTotal = typeof currentData.precipTotal === 'number' ? currentData.precipTotal.toFixed(1) : '0';
+                const windS = typeof currentData.windSpeed === 'number' ? currentData.windSpeed.toFixed(1) : '0';
+                
+                let windDirText = getWindDirection(currentData.windDir);
+                let precipText = getPrecipitationText(precipRate, currentData.temp);
+                
+                let topLabel = "Valós hőérzet";
+                let topValue = "";
+                let topValueStyle = "font-size: 0.7rem; color: #eee;";
+                let topSubValue = "";
+
+                if (precipText) {
+                    topLabel = "Csapadék most";
+                    topValue = precipText;
+                    topValueStyle = "font-size: 0.7rem; color: #4fc3f7;";
+                } else {
+                    // ÚJ SZÁMÍTÁS HASZNÁLATA
+                    let feelsLike = calculateComplexRealFeel(currentData.temp, currentData.humidity, currentData.windSpeed, currentData.solarRad);
+                    topValue = `${feelsLike.toFixed(1)}°C`;
+                }
+
+                widgetHtml = `
+                    <div class="weather-widget">
+                        <div class="weather-header">
+                            <div class="weather-location" title="${currentData.id}">${currentData.name}</div>
+                            <div class="weather-time">${currentData.time}</div>
+                        </div>
+                        
+                        <div class="pws-main-data">
+                             <div class="pws-temp">${temp}<span class="pws-unit">°C</span></div>
+                        </div>
+
+                        <div class="pws-grid">
+                            <div class="pws-item" title="Légkör">
+                                <div class="pws-label">Pára / Nyomás</div>
+                                <div class="pws-value">${currentData.humidity}%</div>
+                                <div class="pws-sub-value">${pressure} hPa</div>
+                            </div>
+                            <div class="pws-item" title="Szél">
+                                <div class="pws-label">Szél</div>
+                                <div class="pws-value">${windS} km/h</div>
+                                <div class="pws-sub-value" style="font-size: 0.6rem;">${windDirText}</div>
+                            </div>
+                             <div class="pws-item" title="Csapadék">
+                                <div class="pws-label">Eddig ma:</div>
+                                <div class="pws-value" style="${precipTotal > 0 ? 'color:#4fc3f7' : ''}">${precipTotal} mm</div>
+                            </div>
+                            <div class="pws-item" title="Extra">
+                                 <div class="pws-label">${topLabel}</div>
+                                <div class="pws-value" style="${topValueStyle}">${topValue}</div>
+                                <div class="pws-sub-value">${topSubValue}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="weather-main-content">
-                        <div class="weather-main-icon">${getOpenMeteoIcon(currentCity.code, currentCity.is_day)}</div>
-                        <div class="weather-temp">${currentCity.temp}°</div>
+                    <div id="weather-attribution">Forrás: PWS Network</div>`;
+            } else {
+                const temp = Math.round(currentData.temp);
+                
+                widgetHtml = `
+                    <div class="weather-widget">
+                        <div class="weather-header">
+                            <div class="weather-location">${currentData.name}</div>
+                            <div class="weather-time">${currentData.time}</div>
+                        </div>
+                        <div class="pws-main-data">
+                             <div class="pws-temp">${temp}<span class="pws-unit">°C</span></div>
+                        </div>
+                        <div class="pws-grid">
+                             <div class="pws-item">
+                                <div class="pws-label">Pára</div>
+                                <div class="pws-value">${currentData.humidity}%</div>
+                            </div>
+                            <div class="pws-item">
+                                <div class="pws-label">Szél</div>
+                                <div class="pws-value">${Math.round(currentData.windSpeed)} km/h</div>
+                            </div>
+                             <div class="pws-item">
+                                <div class="pws-label">Nyomás</div>
+                                <div class="pws-value">${Math.round(currentData.pressure)} hPa</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="weather-description">${getOpenMeteoDescription(currentCity.code)}</div>
-                    <div class="weather-details">
-                        <span class="weather-detail-item" title="Szél">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
-                            ${currentCity.windSpeed} km/h
-                        </span>
-                        <span class="weather-detail-item" title="Páratartalom">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-                            ${currentCity.humidity}%
-                        </span>
-                        <span class="weather-detail-item" title="Napkelte">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg>
-                            ${sunriseStr}
-                        </span>
-                        <span class="weather-detail-item" title="Napnyugta">
-                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="16 5 12 9 8 5"/></svg>
-                            ${sunsetStr}
-                        </span>
-                    </div>
-                </div>
-                <div id="weather-attribution">
-                    <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
-                </div>`;
+                    <div id="weather-attribution">Forrás: Open-Meteo</div>`;
+            }
             
             worldWeatherContainer.innerHTML = widgetHtml;
         }
@@ -1400,7 +1317,10 @@
                 scheduleHTML += `
                     <div class="schedule-item-v2">
                         <span class="schedule-time">${startTime}</span>
-                        <span class="schedule-title-main">${block.name}</span>
+                        <div class="schedule-info">
+                            <span class="schedule-title-main">${block.name}</span>
+                            <span class="schedule-desc">${block.desc}</span>
+                        </div>
                     </div>`;
             }
             return scheduleHTML;
@@ -1789,24 +1709,13 @@
             triggerTextGlitch(); 
         }
 
-        const getDayOfYear = (date) => {
-            const start = new Date(date.getFullYear(), 0, 0);
-            const diff = date - start;
-            const oneDay = 1000 * 60 * 60 * 24;
-            return Math.floor(diff / oneDay);
-        };
-        const getDaysLeftInYear = (date) => {
-            const end = new Date(date.getFullYear(), 11, 31);
-            const diff = end - date;
-            const oneDay = 1000 * 60 * 60 * 24;
-            return Math.ceil(diff / oneDay);
-        };
-
         async function fetchAndDisplayContent(isManualTrigger = false) {
-            if (Object.keys(rssFeeds).length === 0 || !currentThematicBlock) {
-                console.log("Várakozás a feedekre vagy a blokk információra...");
-                return;
+            // FIX: Ha az első betöltésnél még nincs feed, de a Firebase már elindult, várjunk kicsit
+            if (Object.keys(rssFeeds).length === 0) {
+                 console.log("Várakozás feedekre...");
+                 // Nem return-ölünk azonnal, hanem próbálkozunk
             }
+            if (!currentThematicBlock) return;
             
             if (currentThematicBlock.type === 'goodbye') {
                 const standbyTrackKey = activeTrackKey === 'a' ? 'b' : 'a';
@@ -1874,7 +1783,10 @@
 
             if (!allNewsItems) {
                 console.log("Hírek letöltése a hálózatról...");
-                 const newsPromises = Object.entries(rssFeeds).map(async ([key, url]) => {
+                 // Ha üres a feed lista, ne próbálkozzon, de ne is akadjon el
+                 const feedList = Object.keys(rssFeeds).length > 0 ? rssFeeds : {};
+
+                 const newsPromises = Object.entries(feedList).map(async ([key, url]) => {
                     try {
                         const res = await fetchWithProxyFallback(url);
                         
@@ -1887,7 +1799,7 @@
                         
                         return { success: true, data: [...data.querySelectorAll("item")].map(item => { const fullDescriptionHtml = item.querySelector("description")?.textContent || ''; return { title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, description: stripHtml(fullDescriptionHtml), source: getSourceName(url), imageUrl: extractImageUrl(item, fullDescriptionHtml) }; }) };
                     } catch (error) {
-                        console.warn(`Hiba a forrás letöltésekor (minden proxy-t kipróbálva): ${url} - Ok: ${error.message}`);
+                        console.warn(`Hiba a forrás letöltésekor: ${url}`);
                         return { success: false, url, reason: error.message };
                     }
                 });
@@ -1908,17 +1820,11 @@
             clearTimeout(loadingTimeout); 
             
             if (!allNewsItems || allNewsItems.length === 0) {
-                console.warn("Nincsenek megjeleníthető hírek, újrapróbálkozás 15 másodperc múlva...");
-                if (!isContentLoaded) showRefreshState(false);
-                else manualRefreshTriggerEl.style.display = 'none';
+                console.warn("Nincsenek megjeleníthető hírek, újrapróbálkozás 5 másodperc múlva...");
+                // Ne vegyük le a loading képernyőt ha ez az első futás
+                if (isContentLoaded) manualRefreshTriggerEl.style.display = 'none';
 
-                const standbyTrackKey = activeTrackKey === 'a' ? 'b' : 'a';
-                const standbyContent = tracks[standbyTrackKey].querySelector('.ticker-content');
-                standbyContent.innerHTML = `<div class="ticker-item visible" style="text-align: center; align-items: center;">Hírek betöltése sikertelen. Újrapróbálkozás...</div>`;
-                tracks[standbyTrackKey].classList.add('visible');
-                tracks[activeTrackKey].classList.remove('visible');
-                activeTrackKey = standbyTrackKey;
-                newsFetchRetryTimeout = setTimeout(() => triggerUpdate(true), 15000);
+                newsFetchRetryTimeout = setTimeout(() => triggerUpdate(true), 5000);
                 return;
             }
             
@@ -2194,11 +2100,15 @@
         function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); clearTimeout(scheduleWidgetTimeout); }
         
         async function startAllTimers() { 
-            triggerUpdate();
+            // FIX: Kényszerítjük a hírek azonnali betöltését, nem várjuk meg a timeout-ot
+            sessionStorage.removeItem('newsCache'); // cache ürítése a biztos frissítéshez induláskor
+            triggerUpdate(true);
+            
             if (!weatherFetchInterval) { 
-                await fetchAllWeatherData();
+                await fetchWeatherData();
                 if (document.visibilityState === 'visible') displayWeather();
-                weatherFetchInterval = setInterval(fetchAllWeatherData, 15 * 60 * 1000);
+                // 30 másodperces frissítés a PWS adatokhoz
+                weatherFetchInterval = setInterval(fetchWeatherData, 30000);
             }
             if (!weatherDisplayInterval) {
                  weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
@@ -2215,10 +2125,11 @@
                     setTimeout(() => {
                         introAnimationContainer.style.display = 'none';
                         document.body.classList.add('intro-finished');
-                        if (document.visibilityState === 'visible') { 
-                            startAllTimers();
-                            triggerEyeBlink();
-                        }
+                        
+                        // FIX: Biztosítjuk, hogy az intro után mindenképpen elinduljon
+                        startAllTimers();
+                        triggerEyeBlink();
+                        
                     }, 5200);
 
                 }, 2000);
@@ -2241,6 +2152,8 @@
                             displayWeather();
                             weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
                         }
+                         // Ha visszatérünk az oldalra, frissítsünk rá a hírekre is
+                         checkForNewNews();
                     }
                 } else {
                     stopAllTimers();
@@ -2273,11 +2186,15 @@
         });
 
         filterControls.addEventListener('click', (e) => setFilter(e.target));
+        // FIX: Firebase adatváltozáskor is azonnali trigger
         onValue(announcementsRef, (snapshot) => { customAnnouncements = snapshot.val() ? Object.values(snapshot.val()) : []; sessionStorage.removeItem('newsCache'); triggerUpdate(true); });
         onValue(feedsRef, (snapshot) => { 
             rssFeeds = snapshot.val() || {};
             sessionStorage.removeItem('newsCache');
-            triggerUpdate(true);
+            // Ha már betöltött az oldal (intro kész), frissítünk, egyébként a startAllTimers elintézi
+            if(bodyEl.classList.contains('intro-finished')) {
+                triggerUpdate(true);
+            }
         });
 
     </script>
