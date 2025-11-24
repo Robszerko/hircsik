@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V10 (Napindító)</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V11 (Compact Schedule)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -361,7 +361,7 @@
         #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-main)); border-radius: 0 2px 2px 0; }
         #progress-bar.animate { animation-name: fill-progress; animation-timing-function: linear; animation-fill-mode: forwards; }
         
-        /* === STABILIZÁLT LAYOUT ÉS MŰSORAJÁNLÓ === */
+        /* === STABILIZÁLT LAYOUT ÉS MŰSORAJÁNLÓ (COMPACT) === */
         
         #world-weather-container { 
             flex-shrink: 0; 
@@ -387,7 +387,7 @@
             background-color: rgba(10, 20, 30, 0.5); 
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
             border-left: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 10px 15px; 
+            padding: 5px 10px; /* Tömörítve */
             overflow: hidden; 
             box-sizing: border-box;
         }
@@ -398,19 +398,22 @@
         
         @keyframes pulse-glow { 0%, 100% { opacity: 0.9; transform: scale(1); text-shadow: 0 0 5px rgba(255,255,255,0.5); } 50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold); } }
         
-        .schedule-header { font-family: var(--font-display); font-size: 1.0rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .schedule-header svg { width: 18px; height: 18px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
+        /* Kisebb header */
+        .schedule-header { font-family: var(--font-display); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .schedule-header svg { width: 16px; height: 16px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
         
-        .schedule-list { display: flex; flex-direction: column; gap: 4px; width: 100%; }
+        /* Tömörített lista */
+        .schedule-list { display: flex; flex-direction: column; gap: 2px; width: 100%; }
         
-        .schedule-item-v2 { display: flex; align-items: center; gap: 10px; width: 100%; padding: 3px 6px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; }
+        /* Tömörített elemek */
+        .schedule-item-v2 { display: flex; align-items: center; gap: 6px; width: 100%; padding: 2px 4px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; min-height: 32px; }
         .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.01); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
         
-        .schedule-time { font-family: var(--font-mono); font-weight: 700; font-size: 0.85rem; color: #f0f2f5; flex-shrink: 0; }
+        .schedule-time { font-family: var(--font-mono); font-weight: 700; font-size: 0.8rem; color: #f0f2f5; flex-shrink: 0; }
         
-        .schedule-info { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; border-left: 2px solid var(--accent-gold); padding-left: 8px; justify-content: center; }
-        .schedule-title-main { font-size: 0.9rem; font-weight: 500; color: #f0f2f5; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
-        .schedule-desc { font-size: 0.7rem; color: #aaa; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; line-height: 1.1; }
+        .schedule-info { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; border-left: 2px solid var(--accent-gold); padding-left: 6px; justify-content: center; }
+        .schedule-title-main { font-size: 0.85rem; font-weight: 500; color: #f0f2f5; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; }
+        .schedule-desc { font-size: 0.65rem; color: #aaa; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; line-height: 1.0; }
 
         #schedule-credits .credits-main-text { font-family: var(--font-body); font-size: 1rem; font-weight: 500; text-align: center; color: #FFFFFF; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8); line-height: 1.6; margin-bottom: 20px; }
         #schedule-credits .credits-brand { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; color: var(--accent-gold); vertical-align: middle; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
@@ -424,7 +427,6 @@
         /* PWS Grid frissített stílusok */
         .weather-header { text-align: center; margin-bottom: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; flex-shrink: 0; }
         .weather-location { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; }
-        /* JAVÍTOTT SZÍN: Világos szürke a láthatóságért */
         .weather-time { font-size: 0.65rem; font-weight: 500; opacity: 0.9; color: #ddd; }
         .pws-main-data { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 1px 0; flex-shrink: 0; }
         .pws-temp { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
