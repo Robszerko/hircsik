@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V10</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V10 (Napindító)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -588,10 +588,7 @@
                     </div>
                 </div>
                 <div class="ticker-wrap" id="ticker-wrap">
-                    <div id="countdown-overlay">
-                        <div id="countdown-clock"></div>
-                        <div id="countdown-message">Nyugodalmas jó éjszakát!</div>
-                    </div>
+                    <div id="countdown-overlay"><div id="countdown-clock"></div></div>
                     <div id="block-title-layer"></div>
                     <div id="breaking-title-layer"></div>
                     <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
@@ -783,7 +780,8 @@
         
         const THEMATIC_BLOCKS = [
             { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [], desc: "Csendes percek, amíg a város alszik – itt a tegnap legjava." },
-            { start: 6,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Jó reggelt! Kávé mellé tálaljuk az éjszaka híreit." },
+            { start: 6,    name: 'Napindító',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Éjszakai események és a reggel első hírei egy csokorban." },
+            { start: 7,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Jó reggelt! Kávé mellé tálaljuk a legfrissebbeket." },
             { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Lendületben a nap – tarts velünk munka közben is!" },
             { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Ebédidő? Kapcsolódj ki egy kis friss információval!" },
             { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Délutáni körkép: lássuk, merre tart a világ ma." },
@@ -940,7 +938,6 @@
             return "Felhőszakadás";
         }
 
-        // Hó/Eső megkülönböztetés és szöveges leírás
         function getPrecipitationText(rate, temp) {
             if (rate <= 0) return null;
             const isSnow = temp <= 1.5; 
@@ -957,25 +954,17 @@
             return directions[index];
         }
 
-        // --- ÚJ: PWS Advanced RealFeel Calculation ---
-        // Ez a függvény kombinálja a hivatalos képleteket a PWS extra adataival
         function calculateComplexRealFeel(temp, humidity, windSpeed, solarRad) {
-            // 1. Tél: Hivatalos Wind Chill (ha 10 fok alatt van)
             if (temp <= 10) {
-                // Wind Chill képlet (ha van szél)
                 if (windSpeed >= 4.8) {
                     return 13.12 + 0.6215 * temp - 11.37 * Math.pow(windSpeed, 0.16) + 0.3965 * temp * Math.pow(windSpeed, 0.16);
                 }
-                // Ha süt a nap télen, az javít a hőérzeten (+2 fokig)
                 if (solarRad > 0) {
                     return temp + (solarRad / 400);
                 }
                 return temp;
             }
-
-            // 2. Nyár: Hivatalos Heat Index (ha 27 fok felett van)
             if (temp >= 27) {
-                // Egyszerűsített Heat Index, ha magas a pára
                 const c1 = -8.78469475556;
                 const c2 = 1.61139411;
                 const c3 = 2.33854883889;
@@ -986,29 +975,19 @@
                 const c8 = 0.00072546;
                 const c9 = -0.000003582;
                 const HI = c1 + (c2 * temp) + (c3 * humidity) + (c4 * temp * humidity) + (c5 * temp * temp) + (c6 * humidity * humidity) + (c7 * temp * temp * humidity) + (c8 * temp * humidity * humidity) + (c9 * temp * temp * humidity * humidity);
-                
-                // Ha süt a nap nyáron, az ront a hőérzeten (napon melegebb van)
                 if (solarRad > 0) {
-                    return HI + (solarRad / 200); // Max kb +3-4 fok a napon
+                    return HI + (solarRad / 200);
                 }
                 return HI;
             }
-
-            // 3. Átmeneti idő (10 - 27 fok között) - Saját "Komfort" Képlet
-            // Itt a szél hűt, a nap fűt, a pára kevésbé számít.
-            
-            // Napsugárzás hatása (fűtés)
             let solarEffect = 0;
             if (solarRad > 0) {
-                solarEffect = solarRad / 220; // Pl. 800 W/m2 -> +3.6 fok
+                solarEffect = solarRad / 220;
             }
-
-            // Szél hatása (hűtés)
             let windEffect = 0;
             if (windSpeed > 0) {
-                windEffect = (Math.pow(windSpeed, 0.5)); // Nem lineáris, a kis szél is hűt már
+                windEffect = (Math.pow(windSpeed, 0.5));
             }
-
             return temp + solarEffect - (windEffect * 0.5);
         }
 
@@ -1542,14 +1521,17 @@
                 }
             }
             
-            // Műsorajánló logika
-            const isSpecialTime = (hours === "00" && minutes === "01");
-            const isRegularTime = (parseInt(minutes) % 20 === 0) && !(hours === "00" && minutes === "00");
-
-            if ((isSpecialTime || isRegularTime) && seconds < 10 && minutes !== lastScheduleMinute) {
+            if ((minutes % 20 === 0) && seconds < 10 && minutes !== lastScheduleMinute) {
                 lastScheduleMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
-                    displayScheduleWidgetSequence();
+                     // FIX: Az éjféli műsorajánlót kivételesen 00:01-re tesszük
+                     if (hours === "00" && minutes === "00") {
+                         // Ne fusson le, mert épp az átállás van
+                     } else if (hours === "00" && minutes === "01") {
+                         displayScheduleWidgetSequence(); // Kivételes futtatás
+                     } else {
+                         displayScheduleWidgetSequence();
+                     }
                 }
             }
 
@@ -1783,8 +1765,10 @@
         }
 
         async function fetchAndDisplayContent(isManualTrigger = false) {
+            // FIX: Ha az első betöltésnél még nincs feed, de a Firebase már elindult, várjunk kicsit
             if (Object.keys(rssFeeds).length === 0) {
                  console.log("Várakozás feedekre...");
+                 // Nem return-ölünk azonnal, hanem próbálkozunk
             }
             if (!currentThematicBlock) return;
             
@@ -1854,6 +1838,7 @@
 
             if (!allNewsItems) {
                 console.log("Hírek letöltése a hálózatról...");
+                 // Ha üres a feed lista, ne próbálkozzon, de ne is akadjon el
                  const feedList = Object.keys(rssFeeds).length > 0 ? rssFeeds : {};
 
                  const newsPromises = Object.entries(feedList).map(async ([key, url]) => {
@@ -1891,6 +1876,7 @@
             
             if (!allNewsItems || allNewsItems.length === 0) {
                 console.warn("Nincsenek megjeleníthető hírek, újrapróbálkozás 5 másodperc múlva...");
+                // Ne vegyük le a loading képernyőt ha ez az első futás
                 if (isContentLoaded) manualRefreshTriggerEl.style.display = 'none';
 
                 newsFetchRetryTimeout = setTimeout(() => triggerUpdate(true), 5000);
@@ -1920,11 +1906,14 @@
             const timeLimit = new Date();
             if (activeFilter !== 'all') {
                 timeLimit.setHours(0, 0, 0, 0);
+            } else if (currentThematicBlock.name === 'Napindító') {
+                // FIX: Napindító: Mai 00:00-tól mostanáig
+                timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.type === 'fresh') {
                 const hours = currentThematicBlock.timeWindowHours || 2;
                 timeLimit.setHours(timeLimit.getHours() - hours);
             } else if (currentThematicBlock.type === 'summary_yesterday') {
-                // ÉJFÉLI JAVÍTÁS: Ha éjszakai műszak van, akkor az egész tegnapi napot vesszük
+                // Éjszakai műszak: Teljes tegnapi nap
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
                 yesterday.setHours(0, 0, 0, 0);
