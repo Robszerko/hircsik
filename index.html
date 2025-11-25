@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V12 (Breaking Mode)</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V13</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -284,7 +284,6 @@
             text-transform: capitalize;
         }
 
-        /* ÚJ: MOST ÉRKEZETT vízjel stílus */
         .watermark-breaking {
             top: 6px;
             right: 8px;
@@ -414,14 +413,11 @@
         
         @keyframes pulse-glow { 0%, 100% { opacity: 0.9; transform: scale(1); text-shadow: 0 0 5px rgba(255,255,255,0.5); } 50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold); } }
         
-        /* Kisebb header */
         .schedule-header { font-family: var(--font-display); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
         .schedule-header svg { width: 16px; height: 16px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
         
-        /* Tömörített lista */
         .schedule-list { display: flex; flex-direction: column; gap: 2px; width: 100%; }
         
-        /* Tömörített elemek */
         .schedule-item-v2 { display: flex; align-items: center; gap: 6px; width: 100%; padding: 2px 4px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; min-height: 32px; }
         .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.01); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
         
@@ -437,6 +433,66 @@
         #schedule-credits .credits-brand .ticker-logo use { stroke: var(--accent-gold) !important; fill: var(--accent-gold) !important; }
         #schedule-credits .credits-footer { font-size: 0.75rem; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); opacity: 0.8; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         
+        /* INFO WIDGET STYLES (xx:25 and xx:50) */
+        #info-widget {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72, #2a5298); /* Weather theme blue */
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #info-widget::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: rotate-bg 20s linear infinite;
+        }
+        @keyframes rotate-bg { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .info-content-wrapper { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        
+        .info-header {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .info-header .ticker-logo { width: 20px; height: 20px; fill: #fff; }
+        
+        .info-body {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: #fff;
+            line-height: 1.4;
+            max-width: 90%;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+        
+        .info-footer {
+            margin-top: 5px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.7);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 5px;
+            width: 80%;
+        }
+
         #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 1; transition: background-color 2s ease-in-out; }
         .weather-widget { padding: 2px 4px; animation: widget-fade-in 0.8s ease-in-out; display: flex; flex-direction: column; text-align: center; position: relative; z-index: 2; width: 100%; height: 100%; justify-content: flex-start; overflow: hidden; }
         
@@ -755,22 +811,61 @@
             "IZD2": "Ózd"
         };
 
-        // Külföldi városlista (Open-Meteo) - Bővített 50 db
+        // Külföldi városlista (Open-Meteo)
         const FOREIGN_CITIES = [ 
-            { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Peking', lat: 39.90, lon: 116.40 },
-            { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 },
-            { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bécs', lat: 48.20, lon: 16.37 },
-            { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 },
-            { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Madrid', lat: 40.41, lon: -3.70 },
-            { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 },
-            { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 },
-            { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 },
-            { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Prága', lat: 50.07, lon: 14.43 },
-            { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'São Paulo', lat: -23.55, lon: -46.63 }, { name: 'Kijev', lat: 50.45, lon: 30.52 },
-            { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 },
-            { name: 'Hongkong', lat: 22.31, lon: 114.16 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Santiago', lat: -33.44, lon: -70.66 },
-            { name: 'Casablanca', lat: 33.57, lon: -7.58 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Las Vegas', lat: 36.16, lon: -115.13 },
-            { name: 'Miami', lat: 25.76, lon: -80.19 }, { name: 'München', lat: 48.13, lon: 11.58 }
+            { name: 'London', lat: 51.50, lon: -0.12 }, 
+            { name: 'New York', lat: 40.71, lon: -74.00 }, 
+            { name: 'Tokió', lat: 35.68, lon: 139.69 }, 
+            { name: 'Peking', lat: 39.90, lon: 116.40 },
+            { name: 'Moszkva', lat: 55.75, lon: 37.61 },
+            { name: 'Sydney', lat: -33.86, lon: 151.20 }, 
+            { name: 'Párizs', lat: 48.85, lon: 2.35 }, 
+            { name: 'Berlin', lat: 52.52, lon: 13.40 }, 
+            { name: 'Róma', lat: 41.90, lon: 12.49 }, 
+            { name: 'Dubai', lat: 25.20, lon: 55.27 }, 
+            { name: 'Isztambul', lat: 41.00, lon: 28.97 }, 
+            { name: 'Bécs', lat: 48.20, lon: 16.37 },
+            { name: 'Los Angeles', lat: 34.05, lon: -118.24 },
+            { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 },
+            { name: 'Kairó', lat: 30.04, lon: 31.23 },
+            { name: 'Fokváros', lat: -33.92, lon: 18.42 },
+            { name: 'Oslo', lat: 59.91, lon: 10.75 },
+            { name: 'Szingapúr', lat: 1.35, lon: 103.81 },
+            { name: 'Buenos Aires', lat: -34.60, lon: -58.38 },
+            { name: 'Madrid', lat: 40.41, lon: -3.70 },
+            { name: 'Amszterdam', lat: 52.36, lon: 4.89 },
+            { name: 'Toronto', lat: 43.65, lon: -79.38 },
+            { name: 'Helsinki', lat: 60.16, lon: 24.93 },
+            { name: 'Lisszabon', lat: 38.72, lon: -9.13 },
+            { name: 'Athén', lat: 37.98, lon: 23.72 },
+            { name: 'Dublin', lat: 53.34, lon: -6.26 },
+            { name: 'Újdelhi', lat: 28.61, lon: 77.20 },
+            { name: 'Bangkok', lat: 13.75, lon: 100.50 },
+            { name: 'Szöul', lat: 37.56, lon: 126.97 },
+            { name: 'Jakarta', lat: -6.20, lon: 106.84 },
+            { name: 'Lima', lat: -12.04, lon: -77.04 },
+            { name: 'Nairobi', lat: -1.29, lon: 36.82 },
+            { name: 'Stockholm', lat: 59.32, lon: 18.06 },
+            { name: 'Varsó', lat: 52.22, lon: 21.01 },
+            { name: 'Prága', lat: 50.07, lon: 14.43 },
+            { name: 'Mexikóváros', lat: 19.43, lon: -99.13 },
+            { name: 'Mumbai', lat: 19.07, lon: 72.87 },
+            { name: 'São Paulo', lat: -23.55, lon: -46.63 },
+            { name: 'Kijev', lat: 50.45, lon: 30.52 },
+            { name: 'Brüsszel', lat: 50.85, lon: 4.35 },
+            { name: 'Koppenhága', lat: 55.67, lon: 12.56 },
+            { name: 'Reykjavík', lat: 64.14, lon: -21.94 },
+            { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 },
+            { name: 'Hongkong', lat: 22.31, lon: 114.16 },
+            { name: 'Sanghaj', lat: 31.23, lon: 121.47 },
+            { name: 'Vancouver', lat: 49.28, lon: -123.12 },
+            { name: 'Santiago', lat: -33.44, lon: -70.66 },
+            { name: 'Casablanca', lat: 33.57, lon: -7.58 },
+            { name: 'Manila', lat: 14.59, lon: 120.98 },
+            { name: 'Chicago', lat: 41.87, lon: -87.62 },
+            { name: 'Las Vegas', lat: 36.16, lon: -115.13 },
+            { name: 'Miami', lat: 25.76, lon: -80.19 },
+            { name: 'München', lat: 48.13, lon: 11.58 }
         ];
 
         const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
@@ -881,7 +976,7 @@
         // BREAKING NEWS GLOBALS
         let breakingNewsQueue = [];
         let isShowingBreaking = false;
-        let lastRegularItemIndex = 0; // Hogy visszataláljunk
+        let lastRegularItemIndex = 0; 
 
         let weatherDisplayInterval = null, weatherFetchInterval = null;
         let pwsDataStore = [];
@@ -893,6 +988,7 @@
         let textGlitchTimeout = null;
         let lastUpdateMinute = -1;
         let lastScheduleMinute = -1;
+        let lastInfoMinute = -1;
         let scheduleWidgetTimeout = null;
         
         let fetchStartTime = 0;
@@ -913,10 +1009,8 @@
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    // console.log(`Sikeres letöltés a(z) ${proxy} proxy-n keresztül: ${url}`);
                     return response;
                 } catch (error) {
-                    // console.warn(`Proxy hiba (${proxy}): ${error.message}. Próbálkozás a következővel...`);
                 }
             }
             throw new Error(`Minden proxy sikertelen volt a forrás letöltésekor: ${url}`);
@@ -1291,6 +1385,52 @@
             worldWeatherContainer.innerHTML = widgetHtml;
         }
 
+        function displayInfoWidgetSequence() {
+            if (weatherDisplayInterval) {
+                clearInterval(weatherDisplayInterval);
+                weatherDisplayInterval = null;
+            }
+            
+            clearTimeout(scheduleWidgetTimeout);
+
+            const fullHtml = `
+                <div id="info-widget">
+                     <div class="info-content-wrapper">
+                         <div class="info-header">
+                             <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
+                             <span>TKP NEWS</span>
+                             <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
+                         </div>
+                         <div class="info-body">
+                             A <span style="color:var(--accent-gold); font-weight:700;">TKP NEWS</span> felületén garantáltan a legfrissebb időjárási adatokkal találkozol. Valós idejű mérések, közvetlenül a mérőállomásokról.
+                         </div>
+                         <div class="info-footer">
+                             Készítette: Robi | © Copyright by: Robi
+                         </div>
+                     </div>
+                </div>`;
+            
+            worldWeatherContainer.innerHTML = fullHtml;
+
+            // --- Animation Sequence ---
+            requestAnimationFrame(() => {
+                worldWeatherContainer.classList.add('schedule-expanded');
+            });
+
+            scheduleWidgetTimeout = setTimeout(() => {
+                worldWeatherContainer.classList.remove('schedule-expanded');
+                
+                scheduleWidgetTimeout = setTimeout(() => {
+                    worldWeatherContainer.innerHTML = '<div class="placeholder"></div>';
+                    if (!weatherDisplayInterval) {
+                        displayWeather();
+                        weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
+                    }
+                }, 1000);
+
+            }, 15000); // 15 sec
+        }
+
         function updateDynamicSkyAndTheme() {
             const now = new Date();
             const times = SunCalc.getTimes(now, NYIREGYHAZA_COORDS.lat, NYIREGYHAZA_COORDS.lon);
@@ -1548,17 +1688,22 @@
                 }
             }
             
-            if ((minutes % 20 === 0) && seconds < 10 && minutes !== lastScheduleMinute) {
+            // INFO WIDGET LOGIC (New)
+            if ((parseInt(minutes) === 25 || parseInt(minutes) === 50) && seconds < 10 && minutes !== lastInfoMinute) {
+                lastInfoMinute = minutes;
+                 if (document.visibilityState === 'visible' && !isCountdownActive) {
+                    displayInfoWidgetSequence();
+                }
+            }
+
+            // SCHEDULE LOGIC
+            const isSpecialTime = (hours === "00" && minutes === "01");
+            const isRegularTime = (parseInt(minutes) % 20 === 0) && !(hours === "00" && minutes === "00");
+
+            if ((isSpecialTime || isRegularTime) && seconds < 10 && minutes !== lastScheduleMinute) {
                 lastScheduleMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
-                     // FIX: Az éjféli műsorajánlót kivételesen 00:01-re tesszük
-                     if (hours === "00" && minutes === "00") {
-                         // Ne fusson le, mert épp az átállás van
-                     } else if (hours === "00" && minutes === "01") {
-                         displayScheduleWidgetSequence(); // Kivételes futtatás
-                     } else {
-                         displayScheduleWidgetSequence();
-                     }
+                    displayScheduleWidgetSequence();
                 }
             }
 
@@ -1566,8 +1711,6 @@
                 console.log(`Tematikus blokk váltás: ${current.name}`);
                 currentThematicBlock = current;
                 
-                // ÉJFÉLI JAVÍTÁS: Ha átlépünk "summary_yesterday" módba (00:00),
-                // akkor kényszerítjük az adatbázis frissítését és a "tegnapi" szűrő alkalmazását.
                 if (current.type === 'summary_yesterday') {
                     sessionStorage.removeItem('newsCache');
                     triggerUpdate(true);
@@ -1647,55 +1790,6 @@
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
         function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
         
-        function showBreakingItem(item) {
-            isShowingBreaking = true;
-            pauseFlipCycle();
-            
-            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
-            items.forEach(el => el.classList.remove('visible'));
-            
-            // BREAKING UI
-            const breakingHtml = `
-                <a href="${item.link}" class="ticker-item breaking-highlight visible" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
-                     <div class="item-watermark watermark-breaking">MOST ÉRKEZETT</div>
-                     <div class="ticker-item-content-wrapper">
-                        <div class="ticker-item-header">
-                            <span class="meta">[<span class="source">${item.source}</span> | ${formatTime(new Date())}]</span>
-                        </div>
-                        <span class="ticker-item-title">${item.title}</span>
-                        <span class="ticker-item-description">${getSmartDescription(item.description)}</span>
-                    </div>
-                </a>`;
-            
-            // Ideiglenes tárolóba vagy a track-be direkt
-            // Mivel a struktúra fix, a legegyszerűbb ha a "ticker-content"-et cseréljük, de az macerás visszacsinálni.
-            // Jobb megoldás: létrehozunk egy "breaking-layer"-t, de a jelenlegi kódban a legegyszerűbb:
-            // A track-en belül appendelünk egyet, aztán töröljük.
-            
-            const container = tracks[activeTrackKey].querySelector('.ticker-content');
-            const originalContent = container.innerHTML;
-            container.innerHTML = breakingHtml;
-            
-            progressBar.classList.remove('animate');
-            void progressBar.offsetWidth;
-            progressBar.style.animationDuration = '20s';
-            progressBar.classList.add('animate');
-            
-            flipRemainingTime = 20000;
-            flipStartTime = Date.now();
-            
-            flipTimeoutId = setTimeout(() => {
-                // Restore
-                container.innerHTML = originalContent;
-                // Re-init listeners/elements because HTML was replaced
-                const restoredItems = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
-                restoredItems.forEach(el => el.classList.remove('visible'));
-                
-                // Check queue again
-                cycleItems(); 
-            }, 20000);
-        }
-
         function showItemAtIndex(index, isManual = false) {
             if (isInfoMessageActive || isCountdownActive) return;
             pauseFlipCycle();
@@ -1705,8 +1799,6 @@
             items.forEach(item => item.classList.remove('visible'));
             
             currentItemIndex = (index + items.length) % items.length;
-            lastRegularItemIndex = currentItemIndex; // Save position
-            
             const currentItem = items[currentItemIndex];
             
             if(currentItem) {
@@ -1731,15 +1823,8 @@
                     if (breakingIndicatorEl) breakingIndicatorEl.style.display = 'none';
                     if (watermarkEl) {
                         watermarkEl.style.display = 'block';
-                        // STROBE EFFECT ON RETURN
-                        if (isShowingBreaking) {
-                            isShowingBreaking = false; // Reset flag
-                            watermarkEl.classList.add('strobe-in');
-                            watermarkEl.addEventListener('animationend', () => {
-                                watermarkEl.classList.remove('strobe-in');
-                            }, { once: true });
-                        } else if (wasPreviousItemBreaking) {
-                             watermarkEl.style.visibility = 'hidden';
+                        if (wasPreviousItemBreaking) {
+                            watermarkEl.style.visibility = 'hidden';
                             setTimeout(() => {
                                 watermarkEl.style.visibility = 'visible';
                                 watermarkEl.classList.add('strobe-in');
@@ -1780,36 +1865,20 @@
         function cycleItems() { 
             if (isInfoMessageActive || isCountdownActive) return;
             
-            // 1. Check Breaking Queue
-            if (breakingNewsQueue.length > 0) {
-                const nextBreaking = breakingNewsQueue.shift();
-                showBreakingItem(nextBreaking);
-                return;
-            }
+            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+            if (activeFilter !== 'all' && currentItemIndex >= items.length - 1) {
+                const totalAvailable = fullFilteredNewsList.length;
+                const preliminaryItemsCount = (currentFilterPage === 1) ? preliminaryItems.length : 0;
+                const currentlyLoaded = (items.length - preliminaryItemsCount) + (currentFilterPage - 1) * FILTER_CHUNK_SIZE;
 
-            // 2. Normal Cycle
-            if (isShowingBreaking) {
-                // Just returned from breaking news
-                showItemAtIndex(lastRegularItemIndex); // Show the one we paused at, or next one? Let's show same to be sure user didn't miss reading.
-                // Actually better: show current, and let timer run.
-                // But wait, showItemAtIndex sets timer.
-                // Let's just let showItemAtIndex handle the strobe.
-            } else {
-                const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
-                if (activeFilter !== 'all' && currentItemIndex >= items.length - 1) {
-                    const totalAvailable = fullFilteredNewsList.length;
-                    const preliminaryItemsCount = (currentFilterPage === 1) ? preliminaryItems.length : 0;
-                    const currentlyLoaded = (items.length - preliminaryItemsCount) + (currentFilterPage - 1) * FILTER_CHUNK_SIZE;
-
-                    if (currentlyLoaded < totalAvailable) {
-                        console.log("Hírek végére ért, következő adag betöltése...");
-                        currentFilterPage++;
-                        triggerUpdate(true, true);
-                        return;
-                    }
+                if (currentlyLoaded < totalAvailable) {
+                    console.log("Hírek végére ért, következő adag betöltése...");
+                    currentFilterPage++;
+                    triggerUpdate(true, true);
+                    return;
                 }
-                showItemAtIndex(currentItemIndex + 1); 
             }
+            showItemAtIndex(currentItemIndex + 1); 
         }
         
         function startFlipCycle(startAtFirst = true) {
@@ -1903,15 +1972,13 @@
             if (!isContentLoaded) {
                 showRefreshState(true, isManualTrigger ? 'animation' : 'text');
             } else if (!isCountdownActive) {
-                // manualRefreshTriggerEl.innerHTML = 'Frissítem a híreket<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>'; // REMOVED
+                manualRefreshTriggerEl.innerHTML = 'Frissítem a híreket<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
                 manualRefreshTriggerEl.style.cursor = 'default';
-                // manualRefreshTriggerEl.style.display = 'block'; // REMOVED
+                manualRefreshTriggerEl.style.display = 'block';
             }
             
             stopNewsCheckCycle();
             accumulatedNewNewsCount = 0;
-            // Breaking queue clear on full refresh? Maybe yes, to avoid duplicates or old news
-            breakingNewsQueue = []; 
 
             loadingTimeout = setTimeout(() => {
                 if (!isContentLoaded) showRefreshState(false);
@@ -2168,6 +2235,8 @@
                 const newsPromises = Object.values(rssFeeds).map(url => fetchWithProxyFallback(url).then(res => res.text()));
                 const results = await Promise.allSettled(newsPromises);
                 
+                let newLinksInThisCheck = new Set();
+                
                 for (const result of results) {
                     if (result.status === 'fulfilled') {
                         try {
@@ -2179,32 +2248,20 @@
                                 const pubDate = new Date(item.querySelector("pubDate")?.textContent);
                                 if (pubDate.getTime() > lastNewsCheckTimestamp) {
                                     const link = item.querySelector("link")?.textContent;
-                                    // Csak akkor adjuk hozzá, ha még nincs a rendszerben
                                     if (link && !currentNewsLinks.has(link)) {
-                                        currentNewsLinks.add(link);
-                                        
-                                        // 1. Parse ITEM immediately
-                                        const fullDescriptionHtml = item.querySelector("description")?.textContent || '';
-                                        const newItem = {
-                                            title: item.querySelector("title")?.textContent || '',
-                                            link: link,
-                                            pubDate: pubDate,
-                                            description: stripHtml(fullDescriptionHtml),
-                                            source: 'BREAKING', // Forrást egyszerűsíthetjük vagy lekérhetjük url-ből
-                                            imageUrl: extractImageUrl(item, fullDescriptionHtml)
-                                        };
-                                        
-                                        // Get correct source name if possible (from url map logic ideally, but basic here)
-                                        // We can't easily map back to keys here, so we use generic logic
-                                        try { newItem.source = new URL(link).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch(e){}
-
-                                        // 2. Add to Breaking Queue
-                                        breakingNewsQueue.push(newItem);
+                                        newLinksInThisCheck.add(link);
                                     }
                                 }
                             });
                         } catch (e) { /* Hiba esetén ugorja a forrást */ }
                     }
+                }
+
+                if (newLinksInThisCheck.size > 0) {
+                    accumulatedNewNewsCount += newLinksInThisCheck.size;
+                    newLinksInThisCheck.forEach(link => currentNewsLinks.add(link)); 
+                    manualRefreshTriggerEl.innerHTML = `${accumulatedNewNewsCount} új hír érhető el. Frissítés`;
+                    manualRefreshTriggerEl.style.display = 'block';
                 }
                 
                 lastNewsCheckTimestamp = checkStartTime;
@@ -2320,12 +2377,8 @@
                         updateDynamicSkyAndTheme();
                         resumeFlipCycle();
                         startAllAnimatedEffects();
-                        if (!weatherDisplayInterval) {
-                            displayWeather();
-                            weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
-                        }
-                         // Ha visszatérünk az oldalra, frissítsünk rá a hírekre is
-                         checkForNewNews();
+                        // Restart timers on visibility change
+                        startAllTimers();
                     }
                 } else {
                     stopAllTimers();
