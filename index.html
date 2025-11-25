@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V11 (Compact Schedule)</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V12 (Breaking Mode)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -284,6 +284,22 @@
             text-transform: capitalize;
         }
 
+        /* ÚJ: MOST ÉRKEZETT vízjel stílus */
+        .watermark-breaking {
+            top: 6px;
+            right: 8px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            background-color: #D32F2F;
+            opacity: 1;
+            color: #fff;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            animation: blink 0.8s infinite alternate;
+        }
+
         .watermark-punched {
             top: 6px;
             right: 8px;
@@ -426,7 +442,7 @@
         
         /* PWS Grid frissített stílusok */
         .weather-header { text-align: center; margin-bottom: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; flex-shrink: 0; }
-        .weather-location { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; }
+        .weather-location { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; }
         .weather-time { font-size: 0.65rem; font-weight: 500; opacity: 0.9; color: #ddd; }
         .pws-main-data { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 1px 0; flex-shrink: 0; }
         .pws-temp { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
@@ -442,6 +458,11 @@
         .pws-value { font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; width: 100%; text-align: center; color: #eee; margin: 1px 0; }
         .pws-sub-value { font-size: 0.55rem; color: #ccc; text-align: center; width: 100%; }
         
+        /* STATUS DOT */
+        .status-dot { height: 6px; width: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 4px currentColor; }
+        .status-dot.green { background-color: #00e676; color: #00e676; }
+        .status-dot.red { background-color: #ff1744; color: #ff1744; }
+
         @keyframes fill-progress { from { width: 0%; } to { width: 100%; } }
         @keyframes strobe-in { 0%, 25%, 50%, 75% { opacity: 0; transform: scale(1.05); } 12%, 37%, 62%, 87%, 100% { opacity: 1; transform: scale(1); } }
         .strobe-in { animation: strobe-in 2s ease-in-out forwards; }
@@ -590,7 +611,10 @@
                     </div>
                 </div>
                 <div class="ticker-wrap" id="ticker-wrap">
-                    <div id="countdown-overlay"><div id="countdown-clock"></div></div>
+                    <div id="countdown-overlay">
+                        <div id="countdown-clock"></div>
+                        <div id="countdown-message">Nyugodalmas jó éjszakát!</div>
+                    </div>
                     <div id="block-title-layer"></div>
                     <div id="breaking-title-layer"></div>
                     <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
@@ -711,46 +735,42 @@
             "IPUSZT3": "Pusztadobos",
             "ITISZA93": "Tiszaújváros",
             "IEGER76": "Eger",
-            "IHAJDD7": "Hajdúdorog"
+            "IHAJDD7": "Hajdúdorog",
+            "IGYULA12": "Gyula",
+            "IMAGYA4": "Magyarcsanád",
+            "IHDMEZ21": "Hódmezővásárhely",
+            "ISZEGE23": "Szeged-Rókus",
+            "ICSENG9": "Csengele",
+            "INAGYN1": "Nagynyárád",
+            "IKIRLY1": "Királyegyháza",
+            "ITAMSI1": "Tamási",
+            "IZALAE45": "Zalaegerszeg",
+            "IFARKA7": "Farkasgyepű",
+            "INYRAC1": "Nyíracsád",
+            "ISZAMO11": "Szamosújlak",
+            "IGVAVE1": "Gávavencsellő",
+            "IEDELN2": "Edelény",
+            "INYRI1": "Nyíri",
+            "IBTTS1": "Büttös",
+            "IZD2": "Ózd"
         };
 
-        // Külföldi városlista (Open-Meteo)
+        // Külföldi városlista (Open-Meteo) - Bővített 50 db
         const FOREIGN_CITIES = [ 
-            { name: 'London', lat: 51.50, lon: -0.12 }, 
-            { name: 'New York', lat: 40.71, lon: -74.00 }, 
-            { name: 'Tokió', lat: 35.68, lon: 139.69 }, 
-            { name: 'Peking', lat: 39.90, lon: 116.40 },
-            { name: 'Moszkva', lat: 55.75, lon: 37.61 },
-            { name: 'Sydney', lat: -33.86, lon: 151.20 }, 
-            { name: 'Párizs', lat: 48.85, lon: 2.35 }, 
-            { name: 'Berlin', lat: 52.52, lon: 13.40 }, 
-            { name: 'Róma', lat: 41.90, lon: 12.49 }, 
-            { name: 'Dubai', lat: 25.20, lon: 55.27 }, 
-            { name: 'Isztambul', lat: 41.00, lon: 28.97 }, 
-            { name: 'Bécs', lat: 48.20, lon: 16.37 },
-            { name: 'Los Angeles', lat: 34.05, lon: -118.24 },
-            { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 },
-            { name: 'Kairó', lat: 30.04, lon: 31.23 },
-            { name: 'Fokváros', lat: -33.92, lon: 18.42 },
-            { name: 'Oslo', lat: 59.91, lon: 10.75 },
-            { name: 'Szingapúr', lat: 1.35, lon: 103.81 },
-            { name: 'Buenos Aires', lat: -34.60, lon: -58.38 },
-            { name: 'Madrid', lat: 40.41, lon: -3.70 },
-            { name: 'Amszterdam', lat: 52.36, lon: 4.89 },
-            { name: 'Toronto', lat: 43.65, lon: -79.38 },
-            { name: 'Helsinki', lat: 60.16, lon: 24.93 },
-            { name: 'Lisszabon', lat: 38.72, lon: -9.13 },
-            { name: 'Athén', lat: 37.98, lon: 23.72 },
-            { name: 'Dublin', lat: 53.34, lon: -6.26 },
-            { name: 'Újdelhi', lat: 28.61, lon: 77.20 },
-            { name: 'Bangkok', lat: 13.75, lon: 100.50 },
-            { name: 'Szöul', lat: 37.56, lon: 126.97 },
-            { name: 'Jakarta', lat: -6.20, lon: 106.84 },
-            { name: 'Lima', lat: -12.04, lon: -77.04 },
-            { name: 'Nairobi', lat: -1.29, lon: 36.82 },
-            { name: 'Stockholm', lat: 59.32, lon: 18.06 },
-            { name: 'Varsó', lat: 52.22, lon: 21.01 },
-            { name: 'Prága', lat: 50.07, lon: 14.43 }
+            { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Peking', lat: 39.90, lon: 116.40 },
+            { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 },
+            { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bécs', lat: 48.20, lon: 16.37 },
+            { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 },
+            { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Madrid', lat: 40.41, lon: -3.70 },
+            { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 },
+            { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 },
+            { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 },
+            { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Prága', lat: 50.07, lon: 14.43 },
+            { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'São Paulo', lat: -23.55, lon: -46.63 }, { name: 'Kijev', lat: 50.45, lon: 30.52 },
+            { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 },
+            { name: 'Hongkong', lat: 22.31, lon: 114.16 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Santiago', lat: -33.44, lon: -70.66 },
+            { name: 'Casablanca', lat: 33.57, lon: -7.58 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Las Vegas', lat: 36.16, lon: -115.13 },
+            { name: 'Miami', lat: 25.76, lon: -80.19 }, { name: 'München', lat: 48.13, lon: 11.58 }
         ];
 
         const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
@@ -858,6 +878,11 @@
         const FLIP_INTERVAL_INFO = 10000;
         const FLIP_INTERVAL_ANNOUNCEMENT = 15000;
 
+        // BREAKING NEWS GLOBALS
+        let breakingNewsQueue = [];
+        let isShowingBreaking = false;
+        let lastRegularItemIndex = 0; // Hogy visszataláljunk
+
         let weatherDisplayInterval = null, weatherFetchInterval = null;
         let pwsDataStore = [];
         let foreignDataStore = [];
@@ -888,10 +913,10 @@
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    console.log(`Sikeres letöltés a(z) ${proxy} proxy-n keresztül: ${url}`);
+                    // console.log(`Sikeres letöltés a(z) ${proxy} proxy-n keresztül: ${url}`);
                     return response;
                 } catch (error) {
-                    console.warn(`Proxy hiba (${proxy}): ${error.message}. Próbálkozás a következővel...`);
+                    // console.warn(`Proxy hiba (${proxy}): ${error.message}. Próbálkozás a következővel...`);
                 }
             }
             throw new Error(`Minden proxy sikertelen volt a forrás letöltésekor: ${url}`);
@@ -1204,7 +1229,7 @@
                 widgetHtml = `
                     <div class="weather-widget">
                         <div class="weather-header">
-                            <div class="weather-location" title="${currentData.id}">${currentData.name}</div>
+                            <div class="weather-location" title="${currentData.id}"><span class="status-dot green"></span>${currentData.name}</div>
                             <div class="weather-time">${currentData.time}</div>
                         </div>
                         
@@ -1622,6 +1647,55 @@
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
         function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
         
+        function showBreakingItem(item) {
+            isShowingBreaking = true;
+            pauseFlipCycle();
+            
+            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+            items.forEach(el => el.classList.remove('visible'));
+            
+            // BREAKING UI
+            const breakingHtml = `
+                <a href="${item.link}" class="ticker-item breaking-highlight visible" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
+                     <div class="item-watermark watermark-breaking">MOST ÉRKEZETT</div>
+                     <div class="ticker-item-content-wrapper">
+                        <div class="ticker-item-header">
+                            <span class="meta">[<span class="source">${item.source}</span> | ${formatTime(new Date())}]</span>
+                        </div>
+                        <span class="ticker-item-title">${item.title}</span>
+                        <span class="ticker-item-description">${getSmartDescription(item.description)}</span>
+                    </div>
+                </a>`;
+            
+            // Ideiglenes tárolóba vagy a track-be direkt
+            // Mivel a struktúra fix, a legegyszerűbb ha a "ticker-content"-et cseréljük, de az macerás visszacsinálni.
+            // Jobb megoldás: létrehozunk egy "breaking-layer"-t, de a jelenlegi kódban a legegyszerűbb:
+            // A track-en belül appendelünk egyet, aztán töröljük.
+            
+            const container = tracks[activeTrackKey].querySelector('.ticker-content');
+            const originalContent = container.innerHTML;
+            container.innerHTML = breakingHtml;
+            
+            progressBar.classList.remove('animate');
+            void progressBar.offsetWidth;
+            progressBar.style.animationDuration = '20s';
+            progressBar.classList.add('animate');
+            
+            flipRemainingTime = 20000;
+            flipStartTime = Date.now();
+            
+            flipTimeoutId = setTimeout(() => {
+                // Restore
+                container.innerHTML = originalContent;
+                // Re-init listeners/elements because HTML was replaced
+                const restoredItems = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+                restoredItems.forEach(el => el.classList.remove('visible'));
+                
+                // Check queue again
+                cycleItems(); 
+            }, 20000);
+        }
+
         function showItemAtIndex(index, isManual = false) {
             if (isInfoMessageActive || isCountdownActive) return;
             pauseFlipCycle();
@@ -1631,6 +1705,8 @@
             items.forEach(item => item.classList.remove('visible'));
             
             currentItemIndex = (index + items.length) % items.length;
+            lastRegularItemIndex = currentItemIndex; // Save position
+            
             const currentItem = items[currentItemIndex];
             
             if(currentItem) {
@@ -1655,8 +1731,15 @@
                     if (breakingIndicatorEl) breakingIndicatorEl.style.display = 'none';
                     if (watermarkEl) {
                         watermarkEl.style.display = 'block';
-                        if (wasPreviousItemBreaking) {
-                            watermarkEl.style.visibility = 'hidden';
+                        // STROBE EFFECT ON RETURN
+                        if (isShowingBreaking) {
+                            isShowingBreaking = false; // Reset flag
+                            watermarkEl.classList.add('strobe-in');
+                            watermarkEl.addEventListener('animationend', () => {
+                                watermarkEl.classList.remove('strobe-in');
+                            }, { once: true });
+                        } else if (wasPreviousItemBreaking) {
+                             watermarkEl.style.visibility = 'hidden';
                             setTimeout(() => {
                                 watermarkEl.style.visibility = 'visible';
                                 watermarkEl.classList.add('strobe-in');
@@ -1697,20 +1780,36 @@
         function cycleItems() { 
             if (isInfoMessageActive || isCountdownActive) return;
             
-            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
-            if (activeFilter !== 'all' && currentItemIndex >= items.length - 1) {
-                const totalAvailable = fullFilteredNewsList.length;
-                const preliminaryItemsCount = (currentFilterPage === 1) ? preliminaryItems.length : 0;
-                const currentlyLoaded = (items.length - preliminaryItemsCount) + (currentFilterPage - 1) * FILTER_CHUNK_SIZE;
-
-                if (currentlyLoaded < totalAvailable) {
-                    console.log("Hírek végére ért, következő adag betöltése...");
-                    currentFilterPage++;
-                    triggerUpdate(true, true);
-                    return;
-                }
+            // 1. Check Breaking Queue
+            if (breakingNewsQueue.length > 0) {
+                const nextBreaking = breakingNewsQueue.shift();
+                showBreakingItem(nextBreaking);
+                return;
             }
-            showItemAtIndex(currentItemIndex + 1); 
+
+            // 2. Normal Cycle
+            if (isShowingBreaking) {
+                // Just returned from breaking news
+                showItemAtIndex(lastRegularItemIndex); // Show the one we paused at, or next one? Let's show same to be sure user didn't miss reading.
+                // Actually better: show current, and let timer run.
+                // But wait, showItemAtIndex sets timer.
+                // Let's just let showItemAtIndex handle the strobe.
+            } else {
+                const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+                if (activeFilter !== 'all' && currentItemIndex >= items.length - 1) {
+                    const totalAvailable = fullFilteredNewsList.length;
+                    const preliminaryItemsCount = (currentFilterPage === 1) ? preliminaryItems.length : 0;
+                    const currentlyLoaded = (items.length - preliminaryItemsCount) + (currentFilterPage - 1) * FILTER_CHUNK_SIZE;
+
+                    if (currentlyLoaded < totalAvailable) {
+                        console.log("Hírek végére ért, következő adag betöltése...");
+                        currentFilterPage++;
+                        triggerUpdate(true, true);
+                        return;
+                    }
+                }
+                showItemAtIndex(currentItemIndex + 1); 
+            }
         }
         
         function startFlipCycle(startAtFirst = true) {
@@ -1804,13 +1903,15 @@
             if (!isContentLoaded) {
                 showRefreshState(true, isManualTrigger ? 'animation' : 'text');
             } else if (!isCountdownActive) {
-                manualRefreshTriggerEl.innerHTML = 'Frissítem a híreket<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
+                // manualRefreshTriggerEl.innerHTML = 'Frissítem a híreket<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>'; // REMOVED
                 manualRefreshTriggerEl.style.cursor = 'default';
-                manualRefreshTriggerEl.style.display = 'block';
+                // manualRefreshTriggerEl.style.display = 'block'; // REMOVED
             }
             
             stopNewsCheckCycle();
             accumulatedNewNewsCount = 0;
+            // Breaking queue clear on full refresh? Maybe yes, to avoid duplicates or old news
+            breakingNewsQueue = []; 
 
             loadingTimeout = setTimeout(() => {
                 if (!isContentLoaded) showRefreshState(false);
@@ -2067,8 +2168,6 @@
                 const newsPromises = Object.values(rssFeeds).map(url => fetchWithProxyFallback(url).then(res => res.text()));
                 const results = await Promise.allSettled(newsPromises);
                 
-                let newLinksInThisCheck = new Set();
-                
                 for (const result of results) {
                     if (result.status === 'fulfilled') {
                         try {
@@ -2080,20 +2179,32 @@
                                 const pubDate = new Date(item.querySelector("pubDate")?.textContent);
                                 if (pubDate.getTime() > lastNewsCheckTimestamp) {
                                     const link = item.querySelector("link")?.textContent;
+                                    // Csak akkor adjuk hozzá, ha még nincs a rendszerben
                                     if (link && !currentNewsLinks.has(link)) {
-                                        newLinksInThisCheck.add(link);
+                                        currentNewsLinks.add(link);
+                                        
+                                        // 1. Parse ITEM immediately
+                                        const fullDescriptionHtml = item.querySelector("description")?.textContent || '';
+                                        const newItem = {
+                                            title: item.querySelector("title")?.textContent || '',
+                                            link: link,
+                                            pubDate: pubDate,
+                                            description: stripHtml(fullDescriptionHtml),
+                                            source: 'BREAKING', // Forrást egyszerűsíthetjük vagy lekérhetjük url-ből
+                                            imageUrl: extractImageUrl(item, fullDescriptionHtml)
+                                        };
+                                        
+                                        // Get correct source name if possible (from url map logic ideally, but basic here)
+                                        // We can't easily map back to keys here, so we use generic logic
+                                        try { newItem.source = new URL(link).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch(e){}
+
+                                        // 2. Add to Breaking Queue
+                                        breakingNewsQueue.push(newItem);
                                     }
                                 }
                             });
                         } catch (e) { /* Hiba esetén ugorja a forrást */ }
                     }
-                }
-
-                if (newLinksInThisCheck.size > 0) {
-                    accumulatedNewNewsCount += newLinksInThisCheck.size;
-                    newLinksInThisCheck.forEach(link => currentNewsLinks.add(link)); 
-                    manualRefreshTriggerEl.innerHTML = `${accumulatedNewNewsCount} új hír érhető el. Frissítés`;
-                    manualRefreshTriggerEl.style.display = 'block';
                 }
                 
                 lastNewsCheckTimestamp = checkStartTime;
