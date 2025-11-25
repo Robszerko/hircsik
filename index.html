@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V13</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V14</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -413,11 +413,14 @@
         
         @keyframes pulse-glow { 0%, 100% { opacity: 0.9; transform: scale(1); text-shadow: 0 0 5px rgba(255,255,255,0.5); } 50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold); } }
         
+        /* Kisebb header */
         .schedule-header { font-family: var(--font-display); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
         .schedule-header svg { width: 16px; height: 16px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
         
+        /* Tömörített lista */
         .schedule-list { display: flex; flex-direction: column; gap: 2px; width: 100%; }
         
+        /* Tömörített elemek */
         .schedule-item-v2 { display: flex; align-items: center; gap: 6px; width: 100%; padding: 2px 4px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; min-height: 32px; }
         .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.01); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
         
@@ -1001,6 +1004,7 @@
         let accumulatedNewNewsCount = 0;
         let wasPreviousItemBreaking = false;
         let isCountdownActive = false;
+        let isTabReturn = false; // NEW FLAG for tab return handling
         
         async function fetchWithProxyFallback(url) {
             for (const proxy of CORS_PROXIES) {
@@ -1412,7 +1416,6 @@
             
             worldWeatherContainer.innerHTML = fullHtml;
 
-            // --- Animation Sequence ---
             requestAnimationFrame(() => {
                 worldWeatherContainer.classList.add('schedule-expanded');
             });
@@ -1428,7 +1431,7 @@
                     }
                 }, 1000);
 
-            }, 15000); // 15 sec
+            }, 15000); 
         }
 
         function updateDynamicSkyAndTheme() {
@@ -1688,7 +1691,6 @@
                 }
             }
             
-            // INFO WIDGET LOGIC (New)
             if ((parseInt(minutes) === 25 || parseInt(minutes) === 50) && seconds < 10 && minutes !== lastInfoMinute) {
                 lastInfoMinute = minutes;
                  if (document.visibilityState === 'visible' && !isCountdownActive) {
@@ -1696,7 +1698,6 @@
                 }
             }
 
-            // SCHEDULE LOGIC
             const isSpecialTime = (hours === "00" && minutes === "01");
             const isRegularTime = (parseInt(minutes) % 20 === 0) && !(hours === "00" && minutes === "00");
 
@@ -1730,7 +1731,6 @@
             nextStartTime.setHours(Math.floor(next.start), Math.round((next.start % 1) * 60), 0, 0);
             if (next.start < current.start) nextStartTime.setDate(nextStartTime.getDate() + 1);
             
-            // --- NIGHT SHIFT LOGIC START ---
             const secondsSinceMidnight = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
             const limitSeconds = 5 * 3600 + 45 * 60; // 05:45:00
             let customNightMessage = false;
@@ -1742,7 +1742,6 @@
                      customNightMessage = true;
                  }
             }
-            // --- NIGHT SHIFT LOGIC END ---
 
             if (!customNightMessage) {
                 const timeToNext = nextStartTime - now;
@@ -1790,6 +1789,68 @@
         function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
         function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
         
+        function showBreakingItem(item) {
+            isShowingBreaking = true;
+            pauseFlipCycle();
+            
+            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+            items.forEach(el => el.classList.remove('visible'));
+            
+            const breakingHtml = `
+                <a href="${item.link}" class="ticker-item breaking-highlight visible" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
+                     <div class="item-watermark watermark-breaking">MOST ÉRKEZETT</div>
+                     <div class="ticker-item-content-wrapper">
+                        <div class="ticker-item-header">
+                            <span class="meta">[<span class="source">${item.source}</span> | ${formatTime(new Date())}]</span>
+                        </div>
+                        <span class="ticker-item-title">${item.title}</span>
+                        <span class="ticker-item-description">${getSmartDescription(item.description)}</span>
+                    </div>
+                </a>`;
+            
+            const container = tracks[activeTrackKey].querySelector('.ticker-content');
+            const originalContent = container.innerHTML;
+            container.innerHTML = breakingHtml;
+            
+            // Handle image mode if any
+            if (item.imageUrl) {
+                 fetchWithProxyFallback(item.imageUrl)
+                    .then(response => response.blob())
+                    .then(blob => { labelImage.src = URL.createObjectURL(blob); tickerLabel.classList.add('image-mode-active'); })
+                    .catch(() => {});
+            } else {
+                tickerLabel.classList.remove('image-mode-active');
+            }
+
+            progressBar.classList.remove('animate');
+            void progressBar.offsetWidth;
+            progressBar.style.animationDuration = '20s';
+            progressBar.classList.add('animate');
+            
+            flipRemainingTime = 20000;
+            flipStartTime = Date.now();
+            
+            flipTimeoutId = setTimeout(() => {
+                // Restore original content structure for next cycle
+                // We need to completely refresh the view because we overwrote innerHTML
+                // Easiest way is to re-render current item index
+                isShowingBreaking = false;
+                
+                // Reset to normal
+                container.innerHTML = originalContent; // Restore structure
+                
+                // Re-fetch to be safe or just rely on cycleItems which will rebuild if needed
+                // Actually, cycleItems() calls showItemAtIndex() which rebuilds visibility classes
+                // BUT we lost the DOM nodes for the list items when we overwrote innerHTML.
+                // So we must re-render the list from masterNewsList.
+                // Force a re-render of the current track content:
+                
+                // Quick fix: re-trigger update without fetch, just display
+                fetchAndDisplayContent(false); 
+                
+            }, 20000);
+        }
+
         function showItemAtIndex(index, isManual = false) {
             if (isInfoMessageActive || isCountdownActive) return;
             pauseFlipCycle();
@@ -1799,6 +1860,8 @@
             items.forEach(item => item.classList.remove('visible'));
             
             currentItemIndex = (index + items.length) % items.length;
+            lastRegularItemIndex = currentItemIndex; 
+            
             const currentItem = items[currentItemIndex];
             
             if(currentItem) {
@@ -1823,8 +1886,9 @@
                     if (breakingIndicatorEl) breakingIndicatorEl.style.display = 'none';
                     if (watermarkEl) {
                         watermarkEl.style.display = 'block';
-                        if (wasPreviousItemBreaking) {
-                            watermarkEl.style.visibility = 'hidden';
+                        // STROBE EFFECT ON RETURN FROM BREAKING (Handled by re-render now, but good to keep logic)
+                         if (wasPreviousItemBreaking) {
+                             watermarkEl.style.visibility = 'hidden';
                             setTimeout(() => {
                                 watermarkEl.style.visibility = 'visible';
                                 watermarkEl.classList.add('strobe-in');
@@ -1865,6 +1929,13 @@
         function cycleItems() { 
             if (isInfoMessageActive || isCountdownActive) return;
             
+            // 1. Check Breaking Queue
+            if (breakingNewsQueue.length > 0) {
+                const nextBreaking = breakingNewsQueue.shift();
+                showBreakingItem(nextBreaking);
+                return;
+            }
+
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
             if (activeFilter !== 'all' && currentItemIndex >= items.length - 1) {
                 const totalAvailable = fullFilteredNewsList.length;
@@ -1935,10 +2006,8 @@
         }
 
         async function fetchAndDisplayContent(isManualTrigger = false) {
-            // FIX: Ha az első betöltésnél még nincs feed, de a Firebase már elindult, várjunk kicsit
             if (Object.keys(rssFeeds).length === 0) {
                  console.log("Várakozás feedekre...");
-                 // Nem return-ölünk azonnal, hanem próbálkozunk
             }
             if (!currentThematicBlock) return;
             
@@ -1972,9 +2041,7 @@
             if (!isContentLoaded) {
                 showRefreshState(true, isManualTrigger ? 'animation' : 'text');
             } else if (!isCountdownActive) {
-                manualRefreshTriggerEl.innerHTML = 'Frissítem a híreket<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
                 manualRefreshTriggerEl.style.cursor = 'default';
-                manualRefreshTriggerEl.style.display = 'block';
             }
             
             stopNewsCheckCycle();
@@ -2001,41 +2068,26 @@
             let allNewsItems;
             
             const cachedData = JSON.parse(sessionStorage.getItem(CACHE_KEY));
-            if (!isManualTrigger && cachedData && (Date.now() - cachedData.timestamp < CACHE_EXPIRATION_MS)) {
+            // FIX: If manual trigger or tab return, ignore cache expiration (but use cache if valid and just refreshing view)
+            // If isTabReturn, we want FRESH data, so we bypass cache check usually done by clearing it before calling this function.
+            if (!isManualTrigger && !isTabReturn && cachedData && (Date.now() - cachedData.timestamp < CACHE_EXPIRATION_MS)) {
                 allNewsItems = cachedData.news;
-                console.log("Hírek betöltve a gyorsítótárból.");
             }
 
             if (!allNewsItems) {
-                console.log("Hírek letöltése a hálózatról...");
-                 // Ha üres a feed lista, ne próbálkozzon, de ne is akadjon el
                  const feedList = Object.keys(rssFeeds).length > 0 ? rssFeeds : {};
-
                  const newsPromises = Object.entries(feedList).map(async ([key, url]) => {
                     try {
                         const res = await fetchWithProxyFallback(url);
-                        
-                        const str = url.includes('ma.hu') 
-                            ? new TextDecoder('iso-8859-2').decode(await res.arrayBuffer())
-                            : await res.text();
-                        
+                        const str = url.includes('ma.hu') ? new TextDecoder('iso-8859-2').decode(await res.arrayBuffer()) : await res.text();
                         const data = new window.DOMParser().parseFromString(str, "text/xml");
                         if (data.querySelector("parsererror")) throw new Error("XML parsing error");
-                        
                         return { success: true, data: [...data.querySelectorAll("item")].map(item => { const fullDescriptionHtml = item.querySelector("description")?.textContent || ''; return { title: item.querySelector("title")?.textContent || '', link: item.querySelector("link")?.textContent || '#', pubDate: item.querySelector("pubDate")?.textContent || null, description: stripHtml(fullDescriptionHtml), source: getSourceName(url), imageUrl: extractImageUrl(item, fullDescriptionHtml) }; }) };
-                    } catch (error) {
-                        console.warn(`Hiba a forrás letöltésekor: ${url}`);
-                        return { success: false, url, reason: error.message };
-                    }
+                    } catch (error) { return { success: false, url, reason: error.message }; }
                 });
                 
                 const fetchResults = await Promise.all(newsPromises);
-
-                allNewsItems = tagNewsItems(
-                    fetchResults
-                        .filter(result => result.success)
-                        .flatMap(result => result.data)
-                );
+                allNewsItems = tagNewsItems(fetchResults.filter(result => result.success).flatMap(result => result.data));
 
                 if (allNewsItems.length > 0) {
                     sessionStorage.setItem(CACHE_KEY, JSON.stringify({ news: allNewsItems, timestamp: Date.now() }));
@@ -2045,10 +2097,7 @@
             clearTimeout(loadingTimeout); 
             
             if (!allNewsItems || allNewsItems.length === 0) {
-                console.warn("Nincsenek megjeleníthető hírek, újrapróbálkozás 5 másodperc múlva...");
-                // Ne vegyük le a loading képernyőt ha ez az első futás
                 if (isContentLoaded) manualRefreshTriggerEl.style.display = 'none';
-
                 newsFetchRetryTimeout = setTimeout(() => triggerUpdate(true), 5000);
                 return;
             }
@@ -2057,14 +2106,8 @@
             allNewsItems.forEach(item => { if(item.link) currentNewsLinks.add(item.link); });
 
             const today = new Date();
-            const nameDayKey = `${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-            const names = CALENDAR_DATA.nameDays[nameDayKey] || [];
-            if (names.length > 0) {
-                namedayEl.textContent = `${names.join(', ')} névnapja van`;
-                namedayEl.style.display = 'block';
-            } else {
-                namedayEl.style.display = 'none';
-            }
+            const names = CALENDAR_DATA.nameDays[`${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`] || [];
+            if (names.length > 0) { namedayEl.textContent = `${names.join(', ')} névnapja van`; namedayEl.style.display = 'block'; } else { namedayEl.style.display = 'none'; }
 
             bodyEl.classList.remove('night-mode-active');
             updateFilterButtons(allNewsItems);
@@ -2077,13 +2120,11 @@
             if (activeFilter !== 'all') {
                 timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.name === 'Napindító') {
-                // FIX: Napindító: Mai 00:00-tól mostanáig
                 timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.type === 'fresh') {
                 const hours = currentThematicBlock.timeWindowHours || 2;
                 timeLimit.setHours(timeLimit.getHours() - hours);
             } else if (currentThematicBlock.type === 'summary_yesterday') {
-                // Éjszakai műszak: Teljes tegnapi nap
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
                 yesterday.setHours(0, 0, 0, 0);
@@ -2102,10 +2143,7 @@
                 return itemDate >= timeLimit;
             });
 
-            if (activeFilter !== 'all') {
-                filteredNews = filterNews(filteredNews, activeFilter);
-            }
-            
+            if (activeFilter !== 'all') filteredNews = filterNews(filteredNews, activeFilter);
             fullFilteredNewsList = filteredNews.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
             if (activeFilter !== 'all') {
@@ -2116,7 +2154,8 @@
                 newsToDisplay = fullFilteredNewsList;
             }
 
-            if ((activeFilter === 'all' || (isManualTrigger && currentFilterPage === 1)) && !isManualTrigger) {
+            // FIX: TAB RETURN: Skip intro items if returning
+            if ((activeFilter === 'all' || (isManualTrigger && currentFilterPage === 1)) && !isManualTrigger && !isTabReturn) {
                 const dayOfMonth = today.getDate();
                 const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
                 const year = today.getFullYear();
@@ -2126,7 +2165,6 @@
                 const sunriseStr = formatTime(sunTimes.sunrise);
                 const sunsetStr = formatTime(sunTimes.sunset);
                 const nameDayText = names.length > 0 ? `<div class="ci-nameday">${names.join(', ')}</div>` : '';
-                
                 const watermarkHtml = `<div class="item-watermark">${currentThematicBlock.name}</div>`;
                 
                 const calendarHtml = `
@@ -2171,7 +2209,6 @@
                 const time = item.pubDate ? formatTime(new Date(item.pubDate)) : '';
                 const faviconImg = item.link ? `<img src="${getFaviconUrl(item.link)}" class="favicon-img" alt="">` : '';
                 const isBreaking = BREAKING_KEYWORDS.some(k => item.title.toLowerCase().includes(k));
-                
                 const watermarkText = (activeFilter !== 'all') ? activeFilter : currentThematicBlock.name;
                 const watermarkHtml = `<div class="item-watermark watermark-punched">${watermarkText}</div>`;
                 const breakingIndicatorHtml = `<div class="item-breaking-indicator">Rendkívüli hír</div>`;
@@ -2212,11 +2249,14 @@
                         tracks[standbyTrackKey].classList.add('visible');
                         tracks[activeTrackKey].classList.remove('visible');
                         activeTrackKey = standbyTrackKey;
-                        startFlipCycle(true);
+                        // FIX: If tab return, start at 0 (newest), otherwise continue or start at 0
+                        startFlipCycle(isTabReturn ? true : true); 
+                        // Note: startFlipCycle(true) starts at index 0. 
                     });
                 }
                 lastNewsCheckTimestamp = Date.now();
                 startNewsCheckCycle();
+                isTabReturn = false; // Reset flag
             }, remainingTime);
         };
 
@@ -2225,6 +2265,7 @@
                 return;
             }
 
+            // Use a dedicated timestamp for checking updates
             const checkStartTime = Date.now();
             if (lastNewsCheckTimestamp === 0) {
                 lastNewsCheckTimestamp = checkStartTime;
@@ -2234,8 +2275,6 @@
             try {
                 const newsPromises = Object.values(rssFeeds).map(url => fetchWithProxyFallback(url).then(res => res.text()));
                 const results = await Promise.allSettled(newsPromises);
-                
-                let newLinksInThisCheck = new Set();
                 
                 for (const result of results) {
                     if (result.status === 'fulfilled') {
@@ -2249,19 +2288,31 @@
                                 if (pubDate.getTime() > lastNewsCheckTimestamp) {
                                     const link = item.querySelector("link")?.textContent;
                                     if (link && !currentNewsLinks.has(link)) {
-                                        newLinksInThisCheck.add(link);
+                                        currentNewsLinks.add(link);
+                                        
+                                        const fullDescriptionHtml = item.querySelector("description")?.textContent || '';
+                                        const newItem = {
+                                            title: item.querySelector("title")?.textContent || '',
+                                            link: link,
+                                            pubDate: pubDate,
+                                            description: stripHtml(fullDescriptionHtml),
+                                            source: 'BREAKING',
+                                            imageUrl: extractImageUrl(item, fullDescriptionHtml)
+                                        };
+                                        try { newItem.source = new URL(link).hostname.replace('www.', '').split('.')[0].toUpperCase(); } catch(e){}
+
+                                        breakingNewsQueue.push(newItem);
+
+                                        // FIX: Interrupt immediately
+                                        if (!isShowingBreaking) {
+                                            clearTimeout(flipTimeoutId); // Kill current timer
+                                            cycleItems(); // Run cycle which will pick up the queue
+                                        }
                                     }
                                 }
                             });
-                        } catch (e) { /* Hiba esetén ugorja a forrást */ }
+                        } catch (e) { }
                     }
-                }
-
-                if (newLinksInThisCheck.size > 0) {
-                    accumulatedNewNewsCount += newLinksInThisCheck.size;
-                    newLinksInThisCheck.forEach(link => currentNewsLinks.add(link)); 
-                    manualRefreshTriggerEl.innerHTML = `${accumulatedNewNewsCount} új hír érhető el. Frissítés`;
-                    manualRefreshTriggerEl.style.display = 'block';
                 }
                 
                 lastNewsCheckTimestamp = checkStartTime;
@@ -2274,6 +2325,7 @@
         function startNewsCheckCycle() {
             stopNewsCheckCycle();
             if (currentThematicBlock && currentThematicBlock.type === 'fresh') {
+                // Check every 2 minutes
                 setTimeout(checkForNewNews, 2 * 60 * 1000);
                 newsCheckInterval = setInterval(checkForNewNews, 2 * 60 * 1000);
             }
@@ -2329,14 +2381,12 @@
         function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); clearTimeout(scheduleWidgetTimeout); }
         
         async function startAllTimers() { 
-            // FIX: Kényszerítjük a hírek azonnali betöltését, nem várjuk meg a timeout-ot
-            sessionStorage.removeItem('newsCache'); // cache ürítése a biztos frissítéshez induláskor
+            sessionStorage.removeItem('newsCache'); 
             triggerUpdate(true);
             
             if (!weatherFetchInterval) { 
                 await fetchWeatherData();
                 if (document.visibilityState === 'visible') displayWeather();
-                // 30 másodperces frissítés a PWS adatokhoz
                 weatherFetchInterval = setInterval(fetchWeatherData, 30000);
             }
             if (!weatherDisplayInterval) {
@@ -2355,7 +2405,6 @@
                         introAnimationContainer.style.display = 'none';
                         document.body.classList.add('intro-finished');
                         
-                        // FIX: Biztosítjuk, hogy az intro után mindenképpen elinduljon
                         startAllTimers();
                         triggerEyeBlink();
                         
@@ -2373,13 +2422,20 @@
             
             document.addEventListener('visibilitychange', () => { 
                 if (document.visibilityState === 'visible') {
-                    if (bodyEl.classList.contains('intro-finished')) {
-                        updateDynamicSkyAndTheme();
-                        resumeFlipCycle();
-                        startAllAnimatedEffects();
-                        // Restart timers on visibility change
-                        startAllTimers();
-                    }
+                    // FIX: Tab return logic
+                    isTabReturn = true;
+                    updateDynamicSkyAndTheme();
+                    resumeFlipCycle();
+                    startAllAnimatedEffects();
+                    
+                    // Force immediate weather update
+                    fetchWeatherData();
+                    // Force immediate news update
+                    sessionStorage.removeItem('newsCache');
+                    triggerUpdate(true);
+                    
+                    // Ensure check cycle is active
+                    startNewsCheckCycle();
                 } else {
                     stopAllTimers();
                 }
