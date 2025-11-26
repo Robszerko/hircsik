@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V34 (Direct Weather)</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V35 (High Contrast Timer)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -674,14 +674,14 @@
         #refresh-overlay.refresh-animation-active #animated-brand-name { visibility: visible; animation: brand-name-reveal 0.8s ease-out 0.8s forwards; }
         #refresh-overlay.refresh-animation-active .eyelid-anim { transform-origin: center; animation: animated-eyelid-blink 0.2s linear 0.2s 1; }
 
-        /* TIMER OVERLAY (UPDATED: Circle in bottom right) */
+        /* TIMER OVERLAY (UPDATED: Fixed visibility) */
         .item-timer {
             position: absolute;
             bottom: 10px;
             right: 10px;
             width: 24px;
             height: 24px;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.75); /* Darker solid bg */
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -689,11 +689,13 @@
             font-family: var(--font-mono);
             font-size: 0.7rem;
             font-weight: 700;
-            color: var(--text-secondary);
-            opacity: 0.9; /* Increased visibility */
-            z-index: 20; /* Sticky on top */
+            color: #FFFFFF; /* Force White Text always */
+            opacity: 0.9; 
+            z-index: 20; 
             pointer-events: none;
             text-shadow: none;
+            border: 1px solid rgba(255,255,255,0.2); /* Slight border for contrast on white */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
     </style>
 </head>
@@ -1106,21 +1108,13 @@
         
         async function fetchWithProxyFallback(url) {
             for (const proxy of CORS_PROXIES) {
-                // FIX: REPLACED AbortSignal.timeout for older browser compatibility
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000);
-                
                 try {
-                    const response = await fetch(proxy + url, { signal: controller.signal });
-                    clearTimeout(timeoutId);
-                    
+                    const response = await fetch(proxy + url, { signal: AbortSignal.timeout(3000) });
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response;
                 } catch (error) {
-                    clearTimeout(timeoutId);
-                    // Continue to next proxy
                 }
             }
             throw new Error(`Minden proxy sikertelen volt a forrás letöltésekor: ${url}`);
@@ -2286,11 +2280,6 @@
         }
 
         async function fetchAndDisplayContent(isManualTrigger = false) {
-            // FIX: Ha az első betöltésnél még nincs feed, de a Firebase már elindult, várjunk kicsit
-            if (Object.keys(rssFeeds).length === 0) {
-                 console.log("Várakozás feedekre...");
-                 // Nem return-ölünk azonnal, hanem próbálkozunk
-            }
             if (!currentThematicBlock) return;
             
             if (currentThematicBlock.type === 'goodbye') {
@@ -2336,20 +2325,21 @@
             
             stopNewsCheckCycle();
             accumulatedNewNewsCount = 0;
-            // Breaking queue clear on full refresh? Maybe yes, to avoid duplicates or old news
             breakingNewsQueue = []; 
 
             loadingTimeout = setTimeout(() => {
+                // EMERGENCY TIMEOUT: Force loading screen off
+                console.error("News fetch timed out. Forcing UI.");
                 if (!isContentLoaded) showRefreshState(false);
                 else manualRefreshTriggerEl.style.display = 'none';
                 
                 const standbyTrackKey = activeTrackKey === 'a' ? 'b' : 'a';
                 const standbyContent = tracks[standbyTrackKey].querySelector('.ticker-content');
-                standbyContent.innerHTML = `<div class="ticker-item visible" style="text-align: center; align-items: center;">A hírek betöltése a vártnál tovább tart. Kérjük, várjon...</div>`;
+                // Add fallback content if empty
+                standbyContent.innerHTML = `<div class="ticker-item visible" style="text-align: center; align-items: center;">Az adatok betöltése lassabb a vártnál. Kérjük várjon...</div>`;
                 tracks[standbyTrackKey].classList.add('visible');
                 tracks[activeTrackKey].classList.remove('visible');
-                console.error("News fetch timed out.");
-            }, 35000);
+            }, 12000); // Reduced to 12s for quicker fallback
             
             clearTimeout(newsFetchRetryTimeout);
             if(!isCountdownActive) pauseFlipCycle();
@@ -2360,8 +2350,6 @@
             let allNewsItems;
             
             const cachedData = JSON.parse(sessionStorage.getItem(CACHE_KEY));
-            // FIX: If manual trigger or tab return, ignore cache expiration (but use cache if valid and just refreshing view)
-            // If isTabReturn, we want FRESH data, so we bypass cache check usually done by clearing it before calling this function.
             if (!isManualTrigger && !isTabReturn && cachedData && (Date.now() - cachedData.timestamp < CACHE_EXPIRATION_MS)) {
                 allNewsItems = cachedData.news;
             }
@@ -2389,7 +2377,6 @@
                     } catch (error) { return { success: false, url, reason: error.message }; }
                 });
                 
-                // CHANGE: Promise.all -> Promise.allSettled to handle partial failures
                 const fetchResults = await Promise.allSettled(newsPromises);
                 
                 allNewsItems = tagNewsItems(
