@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V14</title>
+    <title>Dinamikus Napszak Hírszalag - Ultimate PWS V34 (Direct Weather)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Oswald:wght@400;500&family=Playfair+Display:ital,wght@1,400&family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -195,7 +195,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            z-index: 20;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.5s ease, visibility 0s 0.5s, background 2s ease-in-out;
@@ -221,6 +221,24 @@
             color: var(--accent-gold);
             margin-top: 10px;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* BREAKING NEWS LAYER */
+        #breaking-news-layer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--item-bg-color);
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease-in-out, visibility 0.4s;
+        }
+        #breaking-news-layer.visible {
+            opacity: 1;
+            visibility: visible;
         }
 
         .ticker-track { 
@@ -372,70 +390,12 @@
         .goodbye-item p { color: var(--text-secondary); max-width: 85%; font-size: 0.95rem; }
         .goodbye-item h2, .goodbye-item p { text-shadow: none; }
         
-        #progress-bar-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background-color: rgba(0,0,0,0.2); z-index: 6; }
-        #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-gold), var(--accent-main)); border-radius: 0 2px 2px 0; }
-        #progress-bar.animate { animation-name: fill-progress; animation-timing-function: linear; animation-fill-mode: forwards; }
-        
-        /* === STABILIZÁLT LAYOUT ÉS MŰSORAJÁNLÓ (COMPACT) === */
-        
-        #world-weather-container { 
-            flex-shrink: 0; 
-            width: 210px; 
-            border-left: 1px solid var(--border-color); 
-            padding: 0; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            background: linear-gradient(145deg, #1e2025, #2c3038);
-            transition: border-color 2s ease-in-out, width 1s ease-in-out; 
-            position: relative; 
-            overflow: hidden;
-            height: 100%; 
-            min-height: 125px;
-            max-height: 160px;
-        }
-        
-        #world-weather-container.schedule-expanded { width: 450px; }
-        
-        #schedule-widget { 
-            display: grid; place-items: center; width: 100%; height: 100%; 
-            background-color: rgba(10, 20, 30, 0.5); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
-            border-left: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 5px 10px; /* Tömörítve */
-            overflow: hidden; 
-            box-sizing: border-box;
-        }
+        /* SINGLE BLOCK PROMO STYLES */
+        .promo-content { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 5px; width: 100%; }
+        .promo-time { font-family: var(--font-display); font-size: 2rem; font-weight: 500; color: #fff; line-height: 1; text-shadow: 0 2px 5px rgba(0,0,0,0.8); letter-spacing: 1px; }
+        .promo-title { font-family: var(--font-display); font-size: 1.2rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 1px 3px rgba(0,0,0,0.7); margin-bottom: 5px; }
+        .promo-desc { font-family: var(--font-body); font-size: 0.9rem; color: #ddd; line-height: 1.4; max-width: 90%; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
 
-        .schedule-card { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s 0.5s; }
-        .schedule-card.visible { opacity: 1; visibility: visible; transition: opacity 0.5s ease-in-out, visibility 0s; }
-        #schedule-intro .schedule-header { font-size: 1.8rem; animation: pulse-glow 2s ease-in-out infinite; }
-        
-        @keyframes pulse-glow { 0%, 100% { opacity: 0.9; transform: scale(1); text-shadow: 0 0 5px rgba(255,255,255,0.5); } 50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold); } }
-        
-        /* Kisebb header */
-        .schedule-header { font-family: var(--font-display); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .schedule-header svg { width: 16px; height: 16px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
-        
-        /* Tömörített lista */
-        .schedule-list { display: flex; flex-direction: column; gap: 2px; width: 100%; }
-        
-        /* Tömörített elemek */
-        .schedule-item-v2 { display: flex; align-items: center; gap: 6px; width: 100%; padding: 2px 4px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; min-height: 32px; }
-        .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.01); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
-        
-        .schedule-time { font-family: var(--font-mono); font-weight: 700; font-size: 0.8rem; color: #f0f2f5; flex-shrink: 0; }
-        
-        .schedule-info { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; border-left: 2px solid var(--accent-gold); padding-left: 6px; justify-content: center; }
-        .schedule-title-main { font-size: 0.85rem; font-weight: 500; color: #f0f2f5; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; }
-        .schedule-desc { font-size: 0.65rem; color: #aaa; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; line-height: 1.0; }
-
-        #schedule-credits .credits-main-text { font-family: var(--font-body); font-size: 1rem; font-weight: 500; text-align: center; color: #FFFFFF; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8); line-height: 1.6; margin-bottom: 20px; }
-        #schedule-credits .credits-brand { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; color: var(--accent-gold); vertical-align: middle; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
-        #schedule-credits .credits-brand .ticker-logo { width: 20px; height: 20px; }
-        #schedule-credits .credits-brand .ticker-logo use { stroke: var(--accent-gold) !important; fill: var(--accent-gold) !important; }
-        #schedule-credits .credits-footer { font-size: 0.75rem; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); opacity: 0.8; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        
         /* INFO WIDGET STYLES (xx:25 and xx:50) */
         #info-widget {
             display: flex;
@@ -496,9 +456,131 @@
             width: 80%;
         }
 
-        #world-weather-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.3); z-index: 1; transition: background-color 2s ease-in-out; }
-        .weather-widget { padding: 2px 4px; animation: widget-fade-in 0.8s ease-in-out; display: flex; flex-direction: column; text-align: center; position: relative; z-index: 2; width: 100%; height: 100%; justify-content: flex-start; overflow: hidden; }
+        #world-weather-container { 
+            flex-shrink: 0; 
+            width: 260px; 
+            border-left: 1px solid var(--border-color); 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            background: linear-gradient(145deg, #1e2025, #2c3038);
+            transition: width 1.2s cubic-bezier(0.65, 0, 0.35, 1), border-color 2s ease-in-out; 
+            position: relative; 
+            overflow: hidden;
+            height: 100%; 
+            min-height: 125px;
+            max-height: 160px;
+        }
         
+        #world-weather-container.schedule-expanded { width: 440px; }
+        
+        #schedule-widget { 
+            display: grid; place-items: center; width: 100%; height: 100%; 
+            background-color: rgba(10, 20, 30, 0.5); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            border-left: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 5px 10px; 
+            overflow: hidden; 
+            box-sizing: border-box;
+        }
+
+        .schedule-card { grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%; height: 100%; opacity: 0; visibility: hidden; transition: opacity 0.5s ease-in-out, visibility 0s 0.5s; }
+        .schedule-card.visible { opacity: 1; visibility: visible; transition: opacity 0.5s ease-in-out, visibility 0s; }
+        #schedule-intro .schedule-header { font-size: 1.8rem; animation: pulse-glow 2s ease-in-out infinite; }
+        
+        @keyframes pulse-glow { 0%, 100% { opacity: 0.9; transform: scale(1); text-shadow: 0 0 5px rgba(255,255,255,0.5); } 50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 8px #fff, 0 0 15px var(--accent-gold); } }
+        
+        /* Kisebb header */
+        .schedule-header { font-family: var(--font-display); font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .schedule-header svg { width: 16px; height: 16px; fill: var(--accent-gold); filter: drop-shadow(0 0 3px var(--accent-gold)); }
+        
+        /* Tömörített lista */
+        .schedule-list { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+        
+        /* Tömörített elemek */
+        .schedule-item-v2 { display: flex; align-items: center; gap: 6px; width: 100%; padding: 2px 4px; border-radius: 4px; border: 1px solid transparent; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; min-height: 32px; }
+        .schedule-item-v2.highlight-gold { border-color: var(--accent-gold); transform: scale(1.01); box-shadow: 0 0 10px rgba(184, 134, 11, 0.5); }
+        
+        .schedule-time { font-family: var(--font-mono); font-weight: 700; font-size: 0.8rem; color: #f0f2f5; flex-shrink: 0; }
+        
+        .schedule-info { display: flex; flex-direction: column; overflow: hidden; flex-grow: 1; border-left: 2px solid var(--accent-gold); padding-left: 6px; justify-content: center; }
+        .schedule-title-main { font-size: 0.85rem; font-weight: 500; color: #f0f2f5; text-shadow: 0 1px 2px rgba(0,0,0,0.7); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1; }
+        .schedule-desc { font-size: 0.65rem; color: #aaa; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; line-height: 1.0; }
+
+        #schedule-credits .credits-main-text { font-family: var(--font-body); font-size: 1rem; font-weight: 500; text-align: center; color: #FFFFFF; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8); line-height: 1.6; margin-bottom: 20px; }
+        #schedule-credits .credits-brand { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-weight: 500; font-size: 1.1rem; color: var(--accent-gold); vertical-align: middle; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
+        #schedule-credits .credits-brand .ticker-logo { width: 20px; height: 20px; }
+        #schedule-credits .credits-brand .ticker-logo use { stroke: var(--accent-gold) !important; fill: var(--accent-gold) !important; }
+        #schedule-credits .credits-footer { font-size: 0.75rem; color: #FFFFFF; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8); opacity: 0.8; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        
+        /* WEATHER LOADING STATE */
+        .weather-loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            gap: 12px;
+            animation: fade-in-up 0.8s ease-out;
+            padding: 10px;
+        }
+        
+        .loading-icons-row {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-icons-row svg {
+            width: 22px;
+            height: 22px;
+            stroke: #fff;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        /* Specific Icon Colors */
+        .icon-gold { stroke: var(--accent-gold) !important; }
+        .icon-fill-gold { fill: var(--accent-gold) !important; stroke: var(--accent-gold) !important; stroke-width: 0 !important; }
+
+        .loading-text {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #eee;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            animation: pulse 1.5s infinite ease-in-out;
+            text-align: center;
+            margin: 5px 0;
+        }
+        
+        /* WEATHER CONTENT SLOT (FIXED) */
+        #weather-content-slot {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            transition: opacity 0.5s ease; /* Smooth fade in/out */
+        }
+        
+        .weather-widget {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Fills vertical space */
+            padding: 2px 4px;
+            box-sizing: border-box;
+        }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* PWS Grid frissített stílusok */
         .weather-header { text-align: center; margin-bottom: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2px; flex-shrink: 0; }
         .weather-location { font-size: 0.9rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; color: var(--accent-gold) !important; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -578,7 +660,7 @@
         
         #refresh-overlay { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: absolute; top: 0; left: 0; z-index: 15; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; gap: 10px; }
         #refresh-overlay.visible { opacity: 1; visibility: visible; }
-        .refresh-text { font-size: 0.8rem; font-family: var(--font-body); color: var(--accent-main); font-weight: 500; }
+        .refresh-text { font-size: 0.8rem; font-family: var(--font-body); color: var(--accent-main); font-weight: 500; margin-top: 45px; }
         #animation-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
         #animated-logo-container { position: relative; display: flex; align-items: center; justify-content: center; width: 200px; height: 40px; }
         #animated-logo-container .ticker-logo { width: 28px; height: 28px; position: absolute; }
@@ -591,6 +673,28 @@
         #refresh-overlay.refresh-animation-active #animated-eye-logo-2 { animation: eye-move-out-2 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.5s forwards; }
         #refresh-overlay.refresh-animation-active #animated-brand-name { visibility: visible; animation: brand-name-reveal 0.8s ease-out 0.8s forwards; }
         #refresh-overlay.refresh-animation-active .eyelid-anim { transform-origin: center; animation: animated-eyelid-blink 0.2s linear 0.2s 1; }
+
+        /* TIMER OVERLAY (UPDATED: Circle in bottom right) */
+        .item-timer {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            opacity: 0.9; /* Increased visibility */
+            z-index: 20; /* Sticky on top */
+            pointer-events: none;
+            text-shadow: none;
+        }
     </style>
 </head>
 <body data-theme-key="night">
@@ -676,9 +780,12 @@
                     </div>
                     <div id="block-title-layer"></div>
                     <div id="breaking-title-layer"></div>
+                    <div id="breaking-news-layer"></div> 
                     <div id="ticker-a" class="ticker-track visible"><div class="ticker-content"></div></div>
                     <div id="ticker-b" class="ticker-track"><div class="ticker-content"></div></div>
-                    <div id="progress-bar-container"><div id="progress-bar"></div></div>
+                    <div id="progress-bar-container">
+                        <div id="progress-bar"></div>
+                    </div>
                 </div>
             </div>
             <div class="ticker-controls">
@@ -700,8 +807,33 @@
         </div>
         
         <div id="world-weather-container">
-             <div class="placeholder">Időjárás adatok...</div>
+             <div id="weather-loading" class="weather-loading-state">
+                <div class="loading-icons-row">
+                    <!-- Sun (Gold) -->
+                    <svg viewBox="0 0 24 24" class="icon-gold"><circle cx="12" cy="12" r="5" stroke-width="2" fill="none"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+                    <!-- Moon -->
+                    <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <!-- Cloud -->
+                    <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+                    <!-- Fog -->
+                    <svg viewBox="0 0 24 24"><path d="M4 15h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>
+                </div>
+                
+                <div class="loading-text">Betöltöm a legfrissebb adatokat...</div>
+                
+                <div class="loading-icons-row">
+                     <!-- Rain -->
+                    <svg viewBox="0 0 24 24"><path d="M16 13v8"/><path d="M8 13v8"/><path d="M12 15v8"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>
+                     <!-- Snow -->
+                    <svg viewBox="0 0 24 24"><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/></svg>
+                     <!-- Bolt (Gold Fill) -->
+                    <svg viewBox="0 0 24 24" class="icon-fill-gold"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                     <!-- Wind -->
+                    <svg viewBox="0 0 24 24"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                </div>
+             </div>
              <div id="schedule-widget"></div>
+             <div id="weather-content-slot"></div>
         </div>
     </section>
 
@@ -816,66 +948,27 @@
 
         // Külföldi városlista (Open-Meteo)
         const FOREIGN_CITIES = [ 
-            { name: 'London', lat: 51.50, lon: -0.12 }, 
-            { name: 'New York', lat: 40.71, lon: -74.00 }, 
-            { name: 'Tokió', lat: 35.68, lon: 139.69 }, 
-            { name: 'Peking', lat: 39.90, lon: 116.40 },
-            { name: 'Moszkva', lat: 55.75, lon: 37.61 },
-            { name: 'Sydney', lat: -33.86, lon: 151.20 }, 
-            { name: 'Párizs', lat: 48.85, lon: 2.35 }, 
-            { name: 'Berlin', lat: 52.52, lon: 13.40 }, 
-            { name: 'Róma', lat: 41.90, lon: 12.49 }, 
-            { name: 'Dubai', lat: 25.20, lon: 55.27 }, 
-            { name: 'Isztambul', lat: 41.00, lon: 28.97 }, 
-            { name: 'Bécs', lat: 48.20, lon: 16.37 },
-            { name: 'Los Angeles', lat: 34.05, lon: -118.24 },
-            { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 },
-            { name: 'Kairó', lat: 30.04, lon: 31.23 },
-            { name: 'Fokváros', lat: -33.92, lon: 18.42 },
-            { name: 'Oslo', lat: 59.91, lon: 10.75 },
-            { name: 'Szingapúr', lat: 1.35, lon: 103.81 },
-            { name: 'Buenos Aires', lat: -34.60, lon: -58.38 },
-            { name: 'Madrid', lat: 40.41, lon: -3.70 },
-            { name: 'Amszterdam', lat: 52.36, lon: 4.89 },
-            { name: 'Toronto', lat: 43.65, lon: -79.38 },
-            { name: 'Helsinki', lat: 60.16, lon: 24.93 },
-            { name: 'Lisszabon', lat: 38.72, lon: -9.13 },
-            { name: 'Athén', lat: 37.98, lon: 23.72 },
-            { name: 'Dublin', lat: 53.34, lon: -6.26 },
-            { name: 'Újdelhi', lat: 28.61, lon: 77.20 },
-            { name: 'Bangkok', lat: 13.75, lon: 100.50 },
-            { name: 'Szöul', lat: 37.56, lon: 126.97 },
-            { name: 'Jakarta', lat: -6.20, lon: 106.84 },
-            { name: 'Lima', lat: -12.04, lon: -77.04 },
-            { name: 'Nairobi', lat: -1.29, lon: 36.82 },
-            { name: 'Stockholm', lat: 59.32, lon: 18.06 },
-            { name: 'Varsó', lat: 52.22, lon: 21.01 },
-            { name: 'Prága', lat: 50.07, lon: 14.43 },
-            { name: 'Mexikóváros', lat: 19.43, lon: -99.13 },
-            { name: 'Mumbai', lat: 19.07, lon: 72.87 },
-            { name: 'São Paulo', lat: -23.55, lon: -46.63 },
-            { name: 'Kijev', lat: 50.45, lon: 30.52 },
-            { name: 'Brüsszel', lat: 50.85, lon: 4.35 },
-            { name: 'Koppenhága', lat: 55.67, lon: 12.56 },
-            { name: 'Reykjavík', lat: 64.14, lon: -21.94 },
-            { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 },
-            { name: 'Hongkong', lat: 22.31, lon: 114.16 },
-            { name: 'Sanghaj', lat: 31.23, lon: 121.47 },
-            { name: 'Vancouver', lat: 49.28, lon: -123.12 },
-            { name: 'Santiago', lat: -33.44, lon: -70.66 },
-            { name: 'Casablanca', lat: 33.57, lon: -7.58 },
-            { name: 'Manila', lat: 14.59, lon: 120.98 },
-            { name: 'Chicago', lat: 41.87, lon: -87.62 },
-            { name: 'Las Vegas', lat: 36.16, lon: -115.13 },
-            { name: 'Miami', lat: 25.76, lon: -80.19 },
-            { name: 'München', lat: 48.13, lon: 11.58 }
+            { name: 'London', lat: 51.50, lon: -0.12 }, { name: 'New York', lat: 40.71, lon: -74.00 }, { name: 'Tokió', lat: 35.68, lon: 139.69 }, { name: 'Peking', lat: 39.90, lon: 116.40 },
+            { name: 'Moszkva', lat: 55.75, lon: 37.61 }, { name: 'Sydney', lat: -33.86, lon: 151.20 }, { name: 'Párizs', lat: 48.85, lon: 2.35 }, { name: 'Berlin', lat: 52.52, lon: 13.40 },
+            { name: 'Róma', lat: 41.90, lon: 12.49 }, { name: 'Dubai', lat: 25.20, lon: 55.27 }, { name: 'Isztambul', lat: 41.00, lon: 28.97 }, { name: 'Bécs', lat: 48.20, lon: 16.37 },
+            { name: 'Los Angeles', lat: 34.05, lon: -118.24 }, { name: 'Rio de Janeiro', lat: -22.90, lon: -43.17 }, { name: 'Kairó', lat: 30.04, lon: 31.23 }, { name: 'Fokváros', lat: -33.92, lon: 18.42 },
+            { name: 'Oslo', lat: 59.91, lon: 10.75 }, { name: 'Szingapúr', lat: 1.35, lon: 103.81 }, { name: 'Buenos Aires', lat: -34.60, lon: -58.38 }, { name: 'Madrid', lat: 40.41, lon: -3.70 },
+            { name: 'Amszterdam', lat: 52.36, lon: 4.89 }, { name: 'Toronto', lat: 43.65, lon: -79.38 }, { name: 'Helsinki', lat: 60.16, lon: 24.93 }, { name: 'Lisszabon', lat: 38.72, lon: -9.13 },
+            { name: 'Athén', lat: 37.98, lon: 23.72 }, { name: 'Dublin', lat: 53.34, lon: -6.26 }, { name: 'Újdelhi', lat: 28.61, lon: 77.20 }, { name: 'Bangkok', lat: 13.75, lon: 100.50 },
+            { name: 'Szöul', lat: 37.56, lon: 126.97 }, { name: 'Jakarta', lat: -6.20, lon: 106.84 }, { name: 'Lima', lat: -12.04, lon: -77.04 }, { name: 'Nairobi', lat: -1.29, lon: 36.82 },
+            { name: 'Stockholm', lat: 59.32, lon: 18.06 }, { name: 'Varsó', lat: 52.22, lon: 21.01 }, { name: 'Prága', lat: 50.07, lon: 14.43 },
+            { name: 'Mexikóváros', lat: 19.43, lon: -99.13 }, { name: 'Mumbai', lat: 19.07, lon: 72.87 }, { name: 'São Paulo', lat: -23.55, lon: -46.63 }, { name: 'Kijev', lat: 50.45, lon: 30.52 },
+            { name: 'Brüsszel', lat: 50.85, lon: 4.35 }, { name: 'Koppenhága', lat: 55.67, lon: 12.56 }, { name: 'Reykjavík', lat: 64.14, lon: -21.94 }, { name: 'Tel-Aviv', lat: 32.08, lon: 34.78 },
+            { name: 'Hongkong', lat: 22.31, lon: 114.16 }, { name: 'Sanghaj', lat: 31.23, lon: 121.47 }, { name: 'Vancouver', lat: 49.28, lon: -123.12 }, { name: 'Santiago', lat: -33.44, lon: -70.66 },
+            { name: 'Casablanca', lat: 33.57, lon: -7.58 }, { name: 'Manila', lat: 14.59, lon: 120.98 }, { name: 'Chicago', lat: 41.87, lon: -87.62 }, { name: 'Las Vegas', lat: 36.16, lon: -115.13 },
+            { name: 'Miami', lat: 25.76, lon: -80.19 }, { name: 'München', lat: 48.13, lon: 11.58 }
         ];
 
         const firebaseConfig = { apiKey: "AIzaSyDgBgiNSxjgWP_jmaoHpf0Qejo8_OO4sPg", authDomain: "robi-oldala.firebaseapp.com", databaseURL: "https://robi-oldala-default-rtdb.europe-west1.firebasedatabase.app", projectId: "robi-oldala", storageBucket: "robi-oldala.appspot.com", messagingSenderId: "300815778397", appId: "1:300815778397:web:ec609be55cc8afd193c3b4" };
         
         const CORS_PROXIES = [
+            "https://api.allorigins.win/raw?url=",
             "https://cors.eu.org/",
-            "https://cors-proxy.fringe.zone/",
             "https://thingproxy.freeboard.io/fetch/"
         ];
         
@@ -899,16 +992,16 @@
         const CALENDAR_DATA = { honapok: ["január", "február", "március", "április", "május", "június", "július", "augusztus", "szeptember", "október", "november", "december"], napok: ["vasárnap", "hétfő", "kedd", "szerda", "csütörtök", "péntek", "szombat"], nameDays: { "01-01": ["Fruzsina"], "01-02": ["Ábel"], "01-03": ["Benjámin", "Genovéva"], "01-04": ["Leóna", "Titusz"], "01-05": ["Simon"],"01-06": ["Boldizsár"], "01-07": ["Attila", "Ramóna"], "01-08": ["Gyöngyvér"], "01-09": ["Marcell"], "01-10": ["Melánia"],"01-11": ["Ágota"], "01-12": ["Ernő"], "01-13": ["Veronika"], "01-14": ["Bódog"], "01-15": ["Lóránd", "Lóránt"],"01-16": ["Gusztáv"], "01-17": ["Antal", "Antónia"], "01-18": ["Piroska"], "01-19": ["Márió", "Sára"], "01-20": ["Fábián", "Sebestyén"],"01-21": ["Ágnes"], "01-22": ["Artúr", "Vince"], "01-23": ["Rajmund", "Zelma"], "01-24": ["Timót"], "01-25": ["Pál"],"01-26": ["Paula", "Vanda"], "01-27": ["Angelika"], "01-28": ["Karola", "Károly"], "01-29": ["Adél"], "01-30": ["Martina"], "01-31": ["Gerda", "Marcella"],"02-01": ["Ignác"], "02-02": ["Aida", "Karolina"], "02-03": ["Balázs"], "02-04": ["Csenge", "Ráhel"], "02-05": ["Ágota", "Ingrid"],"02-06": ["Dóra", "Dorottya"], "02-07": ["Rómeó", "Tódor"], "02-08": ["Aranka"], "02-09": ["Abigél", "Alex"], "02-10": ["Elvira"],"02-11": ["Bertold", "Marietta"], "02-12": ["Lídia", "Lívia"], "02-13": ["Ella", "Linda"], "02-14": ["Bálint", "Valentin"],"02-15": ["Georgina", "Kolos"], "02-16": ["Julianna", "Lilla"], "02-17": ["Donát"], "02-18": ["Bernadett"], "02-19": ["Zsuzsanna"],"02-20": ["Aladár", "Álmos"], "02-21": ["Eleonóra"], "02-22": ["Gerzson"], "02-23": ["Alfréd"], "02-24": ["Mátyás"],"02-25": ["Géza"], "02-26": ["Edina"], "02-27": ["Ákos", "Bátor"], "02-28": ["Elemér"], "02-29": ["Szökőnap"],"03-01": ["Albin"], "03-02": ["Lujza"], "03-03": ["Kornélia"], "03-04": ["Kázmér"], "03-05": ["Adorján", "Adrián"],"03-06": ["Inez", "Leonóra"], "03-07": ["Tamás"], "03-08": ["Zoltán"], "03-09": ["Fanni", "Franciska"], "03-10": ["Ildikó"],"03-11": ["Szilárd"], "03-12": ["Gergely"], "03-13": ["Ajtony", "Krisztián"], "03-14": ["Matild"], "03-15": ["Kristóf"],"03-16": ["Henrietta"], "03-17": ["Gertrúd", "Patrik"], "03-18": ["Ede", "Sándor"], "03-19": ["Bánk", "József"], "03-20": ["Klaudia"],"03-21": ["Benedek"], "03-22": ["Beáta", "Izolda"], "03-23": ["Emőke"], "03-24": ["Gábor", "Karina"], "03-25": ["Irén", "Írisz"],"03-26": ["Emánuel"], "03-27": ["Hajnalka"], "03-28": ["Gedeon", "Johanna"], "03-29": ["Auguszta"], "03-30": ["Zalán"], "03-31": ["Árpád"],"04-01": ["Hugó"], "04-02": ["Áron"], "04-03": ["Buda", "Richárd"], "04-04": ["Izidor"], "04-05": ["Vince"], "04-06": ["Bíborka", "Vilmos"],"04-07": ["Herman"], "04-08": ["Dénes"], "04-09": ["Erhard"], "04-10": ["Zsolt"], "04-11": ["Leó", "Szaniszló"], "04-12": ["Gyula"],"04-13": ["Ida"], "04-14": ["Tibor"], "04-15": ["Anasztázia", "Tas"], "04-16": ["Csongor"], "04-17": ["Rudolf"],"04-18": ["Andrea", "Ilma"], "04-19": ["Emma"], "04-20": ["Tivadar"], "04-21": ["Konrád"], "04-22": ["Csilla", "Noémi"],"04-23": ["Béla"], "04-24": ["György"], "04-25": ["Márk"], "04-26": ["Ervin"], "04-27": ["Zita"], "04-28": ["Valéria"],"04-29": ["Péter"], "04-30": ["Katalin", "Kitti"],"05-01": ["Fülöp", "Jakab"], "05-02": ["Zsigmond"], "05-03": ["Irma", "Tímea"], "05-04": ["Flórián", "Mónika"], "05-05": ["Adrián", "Györgyi"],"05-06": ["Frida", "Ivett"], "05-07": ["Gizella"], "05-08": ["Mihály"], "05-09": ["Gergely"], "05-10": ["Ármin", "Pálma"],"05-11": ["Ferenc"], "05-12": ["Pongrác"], "05-13": ["Imola", "Szervác"], "05-14": ["Bonifác"], "05-15": ["Szonja", "Zsófia"],"05-16": ["Botond", "Mózes"], "05-17": ["Paszkál"], "05-18": ["Alexandra", "Erik"], "05-19": ["Ivó", "Milán"], "05-20": ["Bernát", "Felícia"],"05-21": ["Konstantin"], "05-22": ["Júlia", "Rita"], "05-23": ["Dezső"], "05-24": ["Eliza", "Eszter"], "05-25": ["Orbán"],"05-26": ["Evelin", "Fülöp"], "05-27": ["Hella"], "05-28": ["Csanád", "Emil"], "05-29": ["Magdolna"], "05-30": ["Janka", "Zsanett"], "05-31": ["Angéla"],"06-01": ["Tünde"], "06-02": ["Anita", "Kármen"], "06-03": ["Klotild"], "06-04": ["Bulcsú"], "06-05": ["Fatime"], "06-06": ["Cintia", "Norbert"],"06-07": ["Róbert"], "06-08": ["Medárd"], "06-09": ["Félix"], "06-10": ["Gréta", "Margit"], "06-11": ["Barnabás"], "06-12": ["Villő"],"06-13": ["Anett", "Antal"], "06-14": ["Vazul"], "06-15": ["Jolán", "Vid"], "06-16": ["Jusztin"], "06-17": ["Alida", "Laura"],"06-18": ["Arnold", "Levente"], "06-19": ["Gyárfás"], "06-20": ["Rafael"], "06-21": ["Alajos", "Leila"], "06-22": ["Paulina"],"06-23": ["Zoltán"], "06-24": ["Iván"], "06-25": ["Vilmos"], "06-26": ["János", "Pál"], "06-27": ["László"], "06-28": ["Irén", "Levente"],"06-29": ["Péter", "Pál"], "06-30": ["Pál"],"07-01": ["Annamária", "Tihamér"], "07-02": ["Ottó"], "07-03": ["Kornél", "Soma"], "07-04": ["Ulrik"], "07-05": ["Emese", "Sarolta"],"07-06": ["Csaba"], "07-07": ["Apollónia"], "07-08": ["Ellák"], "07-09": ["Lukrécia"], "07-10": ["Amália"], "07-11": ["Lili", "Nóra"],"07-12": ["Dalma", "Izabella"], "07-13": ["Jenő"], "07-14": ["Örs", "Stella"], "07-15": ["Henrik", "Roland"], "07-16": ["Valter"],"07-17": ["Elek", "Endre"], "07-18": ["Frigyes"], "07-19": ["Emília"], "07-20": ["Illés"], "07-21": ["Dániel", "Daniella"],"07-22": ["Magdolna"], "07-23": ["Lenke"], "07-24": ["Kincső", "Kinga"], "07-25": ["Jakab", "Kristóf"], "07-26": ["Anikó", "Anna"],"07-27": ["Liliána", "Olga"], "07-28": ["Szabolcs"], "07-29": ["Flóra", "Márta"], "07-30": ["Judit", "Xénia"], "07-31": ["Oszkár"],"08-01": ["Boglárka"], "08-02": ["Lehel"], "08-03": ["Hermina"], "08-04": ["Dominika", "Dominik", "Domonkos"], "08-05": ["Krisztina"],"08-06": ["Berta", "Bettina"], "08-07": ["Ibolya"], "08-08": ["László"], "08-09": ["Emőd"], "08-10": ["Lőrinc"],"08-11": ["Tiborc", "Zsuzsanna"], "08-12": ["Klára"], "08-13": ["Ipoly"], "08-14": ["Marcell"], "08-15": ["Mária"],"08-16": ["Ábrahám"], "08-17": ["Jácint"], "08-18": ["Ilona"], "08-19": ["Huba"], "08-20": ["István"],"08-21": ["Hajna", "Sámuel"], "08-22": ["Menyhért", "Mirjam"], "08-23": ["Bence"], "08-24": ["Bertalan"], "08-25": ["Lajos", "Patrícia"],"08-26": ["Izsó"], "08-27": ["Gáspár"], "08-28": ["Ágoston"], "08-29": ["Beatrix", "Erna"], "08-30": ["Rózsa"], "08-31": ["Bella", "Erika"],"09-01": ["Egon", "Egyed"], "09-02": ["Dorina", "Rebeka"], "09-03": ["Hilda"], "09-04": ["Rozália"], "09-05": ["Lőrinc", "Viktor"],"09-06": ["Zakariás"], "09-07": ["Regina"], "09-08": ["Adrienn", "Mária"], "09-09": ["Ádám"], "09-10": ["Hunor", "Nikolett"],"09-11": ["Teodóra"], "09-12": ["Mária"], "09-13": ["Kornél"], "09-14": ["Roxána", "Szeréna"], "09-15": ["Enikő", "Melitta"],"09-16": ["Edit"], "09-17": ["Zsófia"], "09-18": ["Diána"], "09-19": ["Vilhelmina"], "09-20": ["Friderika"], "09-21": ["Máté", "Mirella"],"09-22": ["Móric"], "09-23": ["Tekla"], "09-24": ["Gellért", "Mercédesz"], "09-25": ["Eufrozina", "Kende"], "09-26": ["Jusztina", "Pál"],"09-27": ["Adalbert"], "09-28": ["Vencel"], "09-29": ["Mihály"], "09-30": ["Jeromos"],"10-01": ["Malvin"], "01-02": ["Petra"], "10-03": ["Helga"], "10-04": ["Ferenc"], "10-05": ["Aurél"], "10-06": ["Brúnó", "Renáta"],"10-07": ["Amália"], "10-08": ["Koppány"], "10-09": ["Dénes"], "10-10": ["Gedeon"], "10-11": ["Brigitta"], "10-12": ["Miksa"],"10-13": ["Ede", "Kálmán"], "10-14": ["Helén"], "10-15": ["Teréz"], "10-16": ["Gál"], "10-17": ["Hedvig"], "10-18": ["Lukács"],"09-19": ["Nándor"], "10-20": ["Vendel"], "10-21": ["Orsolya"], "10-22": ["Előd"], "10-23": ["Gyöngyi"], "10-24": ["Salamon"],"10-25": ["Bianka", "Blanka"], "10-26": ["Dömötör"], "10-27": ["Szabina"], "10-28": ["Simon", "Szimonetta"], "10-29": ["Nárcisz"],"10-30": ["Alfonz"], "10-31": ["Farkas"],"11-01": ["Marianna"], "11-02": ["Achilles"], "11-03": ["Győző"], "11-04": ["Károly"], "11-05": ["Imre"], "11-06": ["Lénárd"],"11-07": ["Rezső"], "11-08": ["Zsombor"], "11-09": ["Tivadar"], "11-10": ["Réka"], "11-11": ["Márton"], "11-12": ["Jónás", "Renátó"],"11-13": ["Szilvia"], "11-14": ["Aliz"], "11-15": ["Albert", "Lipót"], "11-16": ["Ödön"], "11-17": ["Gergely", "Hortenzia"],"11-18": ["Jenő"], "11-19": ["Erzsébet", "Elizabet"], "11-20": ["Jolán"], "11-21": ["Olivér"], "11-22": ["Cecília"],"11-23": ["Kelemen", "Klementina"], "11-24": ["Emma"], "11-25": ["Katalin"], "11-26": ["Virág"], "11-27": ["Virgil"],"11-28": ["Stefánia"], "11-29": ["Taksony"], "11-30": ["Andor", "András"],"12-01": ["Elza"], "12-02": ["Melinda", "Vivien"], "12-03": ["Ferenc", "Olívia"], "12-04": ["Barbara", "Borbála"], "12-05": ["Vilma"],"12-06": ["Miklós"], "12-07": ["Ambrus"], "12-08": ["Mária"], "12-09": ["Natália"], "12-10": ["Judit"], "12-12": ["Gabriella"], "12-13": ["Luca", "Otília"], "12-14": ["Szilárda"], "12-15": ["Valér"], "12-16": ["Aletta", "Etelka"],"12-17": ["Lázár", "Olimpia"], "12-18": ["Auguszta"], "12-19": ["Viola"], "12-20": ["Teofil"], "12-21": ["Tamás"],"12-22": ["Zénó"], "12-23": ["Viktória"], "12-24": ["Ádám", "Éva"], "12-25": ["Eugénia"], "12-26": ["István"],"12-27": ["János"], "12-28": ["Kamilla"], "12-29": ["Tamara", "Tamás"], "12-30": ["Dávid"], "12-31": ["Szilveszter"] } };
         
         const THEMATIC_BLOCKS = [
-            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [], desc: "Csendes percek, amíg a város alszik – itt a tegnap legjava." },
-            { start: 6,    name: 'Napindító',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Éjszakai események és a reggel első hírei egy csokorban." },
-            { start: 7,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Jó reggelt! Kávé mellé tálaljuk a legfrissebbeket." },
-            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Lendületben a nap – tarts velünk munka közben is!" },
-            { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Ebédidő? Kapcsolódj ki egy kis friss információval!" },
-            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Délutáni körkép: lássuk, merre tart a világ ma." },
-            { start: 18,   name: 'Esti gyors',           type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Munkából hazafelé? Ez történt, míg te dolgoztál." },
-            { start: 20,   name: 'Este a TKP NEWS-al',   type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Esti lazítás: a nap legfontosabb pillanatai egy helyen." },
-            { start: 22,   name: 'Késő este a TKP NEWS-al', type: 'fresh',                 timeWindowHours: 4, refreshMinutes: 20, categories: [], desc: "Még nem alszol? Mi sem! Friss hírek éjszakai baglyoknak." },
-            { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [], desc: "Köszönjük a figyelmed, holnap is várunk szeretettel!" }
+            { start: 0,    name: 'Éjszakai műszak',      type: 'summary_yesterday',        categories: [], desc: "Csendes percek, amíg a város alszik – itt a tegnap legjava.", promoText: "Miközben a város alszik, mi ébren vagyunk. Rendkívüli hírek esetén azonnal megszakítjuk adásunkat, egyébként pedig a nap legfontosabb eseményeinek összefoglalóját olvashatja. Csendes társ az éjszakában." },
+            { start: 6,    name: 'Napindító',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Éjszakai események és a reggel első hírei egy csokorban.", promoText: "Jó reggelt! Indítsa a napot felkészülten. Az éjszaka történései és a kora reggel legfrissebb hírei egy helyen, hogy képben legyen az első kávé mellé." },
+            { start: 7,    name: 'Reggeli gyors',        type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Jó reggelt! Kávé mellé tálaljuk a legfrissebbeket.", promoText: "Pörögjön fel velünk! A reggeli csúcsforgalom legfontosabb információi, friss hírek és a napindító tudnivalók gyorsan, tömören." },
+            { start: 9,    name: 'Délelőtt a TKP NEWS-al', type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Lendületben a nap – tarts velünk munka közben is!", promoText: "Munka közben is naprakészen. A délelőtt legfontosabb fejleményei, gazdasági hírek és minden, ami a világban történik, amíg Ön dolgozik." },
+            { start: 12,   name: 'Délidőben',            type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Ebédidő? Kapcsolódj ki egy kis friss információval!", promoText: "Ebédidőre tálalva. Tartson egy kis szünetet és frissítse fel tudását a nap eddigi legfontosabb híreivel. Könnyed és informatív." },
+            { start: 13,   name: 'Délután a TKP NEWS-al',type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Délutáni körkép: lássuk, merre tart a világ ma.", promoText: "A nap második felében sem áll meg az élet. Délutáni hírösszefoglalónk segít átlátni a folyamatosan változó eseményeket." },
+            { start: 18,   name: 'Esti gyors',           type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Munkából hazafelé? Ez történt, míg te dolgoztál.", promoText: "Munkából hazafelé? Tudja meg 2 perc alatt, mi történt ma, amíg Ön elfoglalt volt. A nap legfontosabb hírei egy csokorban." },
+            { start: 20,   name: 'Este a TKP NEWS-al',   type: 'fresh',                    timeWindowHours: 2, categories: [], desc: "Esti lazítás: a nap legfontosabb pillanatai egy helyen.", promoText: "Esti lazítás informáltan. A nap lezárása, elemzések és a legfontosabb pillanatok összefoglalója a nyugodt estéhez." },
+            { start: 22,   name: 'Késő este a TKP NEWS-al', type: 'fresh',                 timeWindowHours: 4, refreshMinutes: 20, categories: [], desc: "Még nem alszol? Mi sem! Friss hírek éjszakai baglyoknak.", promoText: "Még nem alszik? Mi sem! Friss hírek éjszakai baglyoknak és azoknak, akik lefekvés előtt még vetnének egy pillantást a nagyvilágra." },
+            { start: 23.98333, name: 'Elköszönés',       type: 'goodbye',                  categories: [], desc: "Köszönjük a figyelmed, holnap is várunk szeretettel!", promoText: "Köszönjük a mai figyelmet." }
         ];
 
         const NYIREGYHAZA_COORDS = { lat: 47.95, lon: 21.71 };
@@ -960,6 +1053,8 @@
         const introAnimationContainer = document.getElementById('intro-animation-container');
         const countdownOverlayEl = document.getElementById('countdown-overlay');
         const countdownClockEl = document.getElementById('countdown-clock');
+        const breakingNewsLayer = document.getElementById('breaking-news-layer');
+        const itemTimerEl = document.getElementById('item-timer'); 
 
 
         let activeTrackKey = 'a', rssFeeds = {}, customAnnouncements = [], updateTimeout = null, debounceTimeout = null;
@@ -976,10 +1071,12 @@
         const FLIP_INTERVAL_INFO = 10000;
         const FLIP_INTERVAL_ANNOUNCEMENT = 15000;
 
-        // BREAKING NEWS GLOBALS
         let breakingNewsQueue = [];
         let isShowingBreaking = false;
+        let breakingTimer = null;
         let lastRegularItemIndex = 0; 
+        let pendingUpdate = false; 
+        let visualTimerInterval = null;
 
         let weatherDisplayInterval = null, weatherFetchInterval = null;
         let pwsDataStore = [];
@@ -1004,17 +1101,26 @@
         let accumulatedNewNewsCount = 0;
         let wasPreviousItemBreaking = false;
         let isCountdownActive = false;
-        let isTabReturn = false; // NEW FLAG for tab return handling
+        let isTabReturn = false; 
+        let lastNewsFetchTimestamp = 0; 
         
         async function fetchWithProxyFallback(url) {
             for (const proxy of CORS_PROXIES) {
+                // FIX: REPLACED AbortSignal.timeout for older browser compatibility
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                
                 try {
-                    const response = await fetch(proxy + url, { signal: AbortSignal.timeout(10000) });
+                    const response = await fetch(proxy + url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     return response;
                 } catch (error) {
+                    clearTimeout(timeoutId);
+                    // Continue to next proxy
                 }
             }
             throw new Error(`Minden proxy sikertelen volt a forrás letöltésekor: ${url}`);
@@ -1118,50 +1224,76 @@
 
         function buildPlaylist() {
             if (pwsDataStore.length === 0 && foreignDataStore.length === 0) return [];
-            const round1 = shuffleArray([...pwsDataStore]);
-            const round2 = shuffleArray([...pwsDataStore]);
+            const local = shuffleArray([...pwsDataStore]);
             const foreign = shuffleArray([...foreignDataStore]);
-            return [...round1, ...round2, ...foreign];
+            return [...local, ...foreign];
         }
 
         async function fetchWeatherData() {
             let newPwsData = [];
             let newForeignData = [];
 
+            // --- PWS ADATOK (DIREKT LEKÉRÉS PROXY NÉLKÜL) ---
             if (WUNDERGROUND_API_KEY && PWS_MAP) {
                 const pwsKeys = Object.keys(PWS_MAP);
-                const pwsPromises = pwsKeys.map(async (stationId) => {
-                    try {
-                        const url = `https://api.weather.com/v2/pws/observations/current?stationId=${stationId}&format=json&units=m&apiKey=${WUNDERGROUND_API_KEY}&numericPrecision=decimal`;
-                        const response = await fetchWithProxyFallback(url);
-                        const data = await response.json();
-                        if (!data.observations || data.observations.length === 0) return null;
-                        const obs = data.observations[0];
-                        return {
-                            type: 'PWS',
-                            name: PWS_MAP[stationId], 
-                            id: obs.stationID,
-                            time: obs.obsTimeLocal.split(' ')[1].substring(0,5),
-                            temp: obs.metric.temp,
-                            humidity: obs.humidity,
-                            windSpeed: obs.metric.windSpeed,
-                            windGust: obs.metric.windGust,
-                            windDir: obs.winddir,
-                            pressure: obs.metric.pressure,
-                            precipRate: obs.metric.precipRate,
-                            precipTotal: obs.metric.precipTotal,
-                            uv: obs.uv,
-                            solarRad: obs.solarRadiation,
-                            heatIndex: obs.metric.heatIndex,
-                            windChill: obs.metric.windChill,
-                            dewpt: obs.metric.dewpt
-                        };
-                    } catch (error) { return null; }
-                });
-                const pwsResults = await Promise.all(pwsPromises);
-                newPwsData = pwsResults.filter(r => r !== null);
+                
+                // 10-esével küldjük őket.
+                const BATCH_SIZE = 10; 
+                
+                for (let i = 0; i < pwsKeys.length; i += BATCH_SIZE) {
+                    const batch = pwsKeys.slice(i, i + BATCH_SIZE);
+                    
+                    const batchPromises = batch.map(async (stationId) => {
+                        try {
+                            // 5 másodperces időkorlát bőven elég direkt kapcsolatnál
+                            const controller = new AbortController();
+                            const timeoutId = setTimeout(() => controller.abort(), 5000); 
+                            
+                            // KÖZVETLEN URL (Nincs proxy előtag)
+                            const url = `https://api.weather.com/v2/pws/observations/current?stationId=${stationId}&format=json&units=m&apiKey=${WUNDERGROUND_API_KEY}&numericPrecision=decimal`;
+                            
+                            const response = await fetch(url, { signal: controller.signal });
+                            clearTimeout(timeoutId);
+                            
+                            if (!response.ok) return null;
+
+                            const data = await response.json();
+                            if (!data.observations || data.observations.length === 0) return null;
+                            const obs = data.observations[0];
+                            return {
+                                type: 'PWS',
+                                name: PWS_MAP[stationId], 
+                                id: obs.stationID,
+                                time: obs.obsTimeLocal.split(' ')[1].substring(0,5),
+                                temp: obs.metric.temp,
+                                humidity: obs.humidity,
+                                windSpeed: obs.metric.windSpeed,
+                                windGust: obs.metric.windGust,
+                                windDir: obs.winddir,
+                                pressure: obs.metric.pressure,
+                                precipRate: obs.metric.precipRate,
+                                precipTotal: obs.metric.precipTotal,
+                                uv: obs.uv,
+                                solarRad: obs.solarRadiation,
+                                heatIndex: obs.metric.heatIndex,
+                                windChill: obs.metric.windChill,
+                                dewpt: obs.metric.dewpt,
+                                lastFetch: Date.now()
+                            };
+                        } catch (error) { 
+                            return null; 
+                        }
+                    });
+
+                    const batchResults = await Promise.all(batchPromises);
+                    newPwsData.push(...batchResults.filter(r => r !== null));
+                    
+                    // Pici szünet
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
             }
 
+            // --- KÜLFÖLDI VÁROSOK (Open-Meteo alapból sem igényel proxyt) ---
             if (FOREIGN_CITIES && FOREIGN_CITIES.length > 0) {
                 const foreignPromises = FOREIGN_CITIES.map(async (city) => {
                     try {
@@ -1189,8 +1321,18 @@
                 newForeignData = foreignResults.filter(r => r !== null);
             }
 
-            pwsDataStore = newPwsData;
-            foreignDataStore = newForeignData;
+            // ADATOK MENTÉSE
+            if (newPwsData.length > 0) {
+                newPwsData.forEach(newItem => {
+                    const index = pwsDataStore.findIndex(old => old.id === newItem.id);
+                    if (index !== -1) pwsDataStore[index] = newItem;
+                    else pwsDataStore.push(newItem);
+                });
+            }
+            
+            if (newForeignData.length > 0) {
+                 foreignDataStore = newForeignData;
+            }
             
             if (weatherPlaylist.length === 0) {
                 weatherPlaylist = buildPlaylist();
@@ -1210,23 +1352,72 @@
                 const currentWidget = document.querySelector('.weather-widget');
                 if (currentWidget) {
                     const currentLocationEl = currentWidget.querySelector('.weather-location');
-                    const currentLocationName = currentLocationEl ? currentLocationEl.textContent : '';
-                    
-                    let freshData = pwsDataStore.find(p => p.name === currentLocationName) || 
-                                    foreignDataStore.find(f => f.name === currentLocationName);
-                    
-                    if (freshData) {
-                        updateCurrentWidgetValues(freshData);
-                    }
+                    const currentLocationName = currentLocationEl ? currentLocationEl.textContent.trim() : '';
+                    let freshData = pwsDataStore.find(p => p.name === currentLocationName || (currentLocationEl.innerHTML.includes(p.name)));
+                    if (!freshData) freshData = foreignDataStore.find(f => f.name === currentLocationName);
+                    if (freshData) updateCurrentWidgetValues(freshData);
                 }
             }
+        }
+        
+        async function updateSinglePwsStation(stationId) {
+            try {
+                // DIRECT FETCH WITHOUT PROXY
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                const url = `https://api.weather.com/v2/pws/observations/current?stationId=${stationId}&format=json&units=m&apiKey=${WUNDERGROUND_API_KEY}&numericPrecision=decimal`;
+                
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                const data = await response.json();
+                
+                if (data.observations && data.observations.length > 0) {
+                    const obs = data.observations[0];
+                    const newData = {
+                        type: 'PWS',
+                        name: PWS_MAP[stationId], 
+                        id: obs.stationID,
+                        time: obs.obsTimeLocal.split(' ')[1].substring(0,5),
+                        temp: obs.metric.temp,
+                        humidity: obs.humidity,
+                        windSpeed: obs.metric.windSpeed,
+                        windGust: obs.metric.windGust,
+                        windDir: obs.winddir,
+                        pressure: obs.metric.pressure,
+                        precipRate: obs.metric.precipRate,
+                        precipTotal: obs.metric.precipTotal,
+                        uv: obs.uv,
+                        solarRad: obs.solarRadiation,
+                        heatIndex: obs.metric.heatIndex,
+                        windChill: obs.metric.windChill,
+                        dewpt: obs.metric.dewpt,
+                        lastFetch: Date.now()
+                    };
+                    
+                    const idx = pwsDataStore.findIndex(p => p.id === stationId);
+                    if (idx !== -1) pwsDataStore[idx] = newData;
+                    else pwsDataStore.push(newData);
+                    
+                    weatherPlaylist = weatherPlaylist.map(item => item.id === stationId ? newData : item);
+
+                    const currentWidget = document.querySelector('.weather-widget');
+                    if (currentWidget) {
+                        const currentLocationEl = currentWidget.querySelector('.weather-location');
+                        if (currentLocationEl && currentLocationEl.title === stationId) {
+                             updateCurrentWidgetValues(newData);
+                        }
+                    }
+                }
+            } catch(e) { }
         }
         
         function updateCurrentWidgetValues(data) {
             const w = document.querySelector('.weather-widget');
             if (!w) return;
 
-            const updateText = (selector, text) => {
+            const safeUpdate = (selector, text) => {
                 const el = w.querySelector(selector);
                 if (el) el.textContent = text;
             };
@@ -1267,7 +1458,7 @@
                         items[3].querySelector('.pws-sub-value').textContent = "";
                     }
                 }
-                updateText('.weather-time', data.time);
+                safeUpdate('.weather-time', data.time);
 
             } else {
                 const temp = Math.round(data.temp);
@@ -1280,7 +1471,7 @@
                     items[1].querySelector('.pws-value').textContent = `${Math.round(data.windSpeed)} km/h`;
                     items[2].querySelector('.pws-value').textContent = `${Math.round(data.pressure)} hPa`;
                 }
-                updateText('.weather-time', data.time);
+                safeUpdate('.weather-time', data.time);
             }
         }
 
@@ -1290,13 +1481,30 @@
                 weatherIndex = 0;
             }
 
+            // If no data yet, keep the loading screen visible (don't overwrite with text placeholder)
             if (weatherPlaylist.length === 0) {
-                 worldWeatherContainer.innerHTML = `<div class="placeholder">Adatok frissítése...</div>`;
+                 // The HTML structure already has the loading screen by default.
+                 // We ensure it is visible.
+                 const loadingEl = document.getElementById('weather-loading');
+                 if(loadingEl) loadingEl.style.display = 'flex';
                  return;
             }
+            
+            // Hide loading screen if present
+            const loadingEl = document.getElementById('weather-loading');
+            if(loadingEl) loadingEl.style.display = 'none';
 
             const currentData = weatherPlaylist[weatherIndex];
             weatherIndex++;
+
+            // Check if PWS data is stale (> 60s) and needs immediate refresh
+            if (currentData.type === 'PWS') {
+                const now = Date.now();
+                if (!currentData.lastFetch || (now - currentData.lastFetch > 60000)) {
+                    // Fetch fresh data for this station specifically
+                    updateSinglePwsStation(currentData.id); 
+                }
+            }
 
             let widgetHtml = '';
 
@@ -1386,7 +1594,20 @@
                     </div>`;
             }
             
-            worldWeatherContainer.innerHTML = widgetHtml;
+            let weatherContentEl = document.getElementById('weather-content-slot');
+            if(!weatherContentEl) {
+                weatherContentEl = document.createElement('div');
+                weatherContentEl.id = 'weather-content-slot';
+                // Insert before schedule widget to maintain layout order
+                const scheduleEl = document.getElementById('schedule-widget');
+                if(scheduleEl && scheduleEl.parentNode) {
+                     scheduleEl.parentNode.insertBefore(weatherContentEl, scheduleEl);
+                } else {
+                     worldWeatherContainer.appendChild(weatherContentEl);
+                }
+            }
+            
+            weatherContentEl.innerHTML = widgetHtml;
         }
 
         function displayInfoWidgetSequence() {
@@ -1396,6 +1617,10 @@
             }
             
             clearTimeout(scheduleWidgetTimeout);
+
+            // HIDE WEATHER
+            const weatherSlot = document.getElementById('weather-content-slot');
+            if(weatherSlot) weatherSlot.style.opacity = '0';
 
             const fullHtml = `
                 <div id="info-widget">
@@ -1414,7 +1639,8 @@
                      </div>
                 </div>`;
             
-            worldWeatherContainer.innerHTML = fullHtml;
+            const scheduleWidget = document.getElementById('schedule-widget');
+            scheduleWidget.innerHTML = fullHtml;
 
             requestAnimationFrame(() => {
                 worldWeatherContainer.classList.add('schedule-expanded');
@@ -1424,7 +1650,8 @@
                 worldWeatherContainer.classList.remove('schedule-expanded');
                 
                 scheduleWidgetTimeout = setTimeout(() => {
-                    worldWeatherContainer.innerHTML = '<div class="placeholder"></div>';
+                    scheduleWidget.innerHTML = ''; // Clear schedule content
+                    if(weatherSlot) weatherSlot.style.opacity = '1'; // SHOW WEATHER
                     if (!weatherDisplayInterval) {
                         displayWeather();
                         weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
@@ -1500,6 +1727,48 @@
             }
         }
         
+        // --- TIMER FUNCTIONS ---
+        function startVisualTimer(ms, elementOverride = null) {
+            clearInterval(visualTimerInterval);
+            
+            // Find the correct element immediately
+            let timerEl;
+            if (elementOverride) {
+                 timerEl = elementOverride.querySelector('.item-timer');
+            } else {
+                 const activeItem = tracks[activeTrackKey].querySelectorAll('.ticker-item')[currentItemIndex];
+                 if (activeItem) {
+                     timerEl = activeItem.querySelector('.item-timer');
+                 }
+            }
+            
+            if (!timerEl) return;
+
+            let seconds = Math.ceil(ms / 1000);
+            if(seconds < 0) seconds = 0;
+            timerEl.textContent = seconds;
+            
+            const endTime = Date.now() + ms;
+
+            visualTimerInterval = setInterval(() => {
+                const remaining = endTime - Date.now();
+                const currentSec = Math.ceil(remaining / 1000);
+                if (currentSec >= 0) {
+                    timerEl.textContent = currentSec;
+                } else {
+                    timerEl.textContent = "0";
+                }
+
+                if (remaining <= 0) {
+                    clearInterval(visualTimerInterval);
+                }
+            }, 250);
+        }
+        
+        function stopVisualTimer() {
+            clearInterval(visualTimerInterval);
+        }
+        
         function generateScheduleHtml(blocks, startIndex, count) {
             let scheduleHTML = '';
             for (let i = startIndex; i < startIndex + count; i++) {
@@ -1527,6 +1796,10 @@
             }
             
             clearTimeout(scheduleWidgetTimeout);
+            
+            // HIDE WEATHER
+            const weatherSlot = document.getElementById('weather-content-slot');
+            if(weatherSlot) weatherSlot.style.opacity = '0';
 
             const currentIndex = THEMATIC_BLOCKS.findIndex(b => b.start === currentThematicBlock.start);
             if (currentIndex === -1) return;
@@ -1537,95 +1810,86 @@
             const laterItemsHtml = generateScheduleHtml(blockInfo, 4, 3);
 
             const fullHtml = `
-                <div id="schedule-widget">
-                    <div id="schedule-intro" class="schedule-card">
-                        <div class="schedule-header">Műsorajánló</div>
+                <div id="schedule-intro" class="schedule-card">
+                    <div class="schedule-header">MŰSORAJÁNLÓ</div>
+                </div>
+                <div id="schedule-next" class="schedule-card">
+                    <div class="schedule-header">
+                        Következik
+                        <svg viewBox="0 0 24 24"><path d="M13 6l-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z M6 6l-1.41 1.41L9.17 12l-4.58 4.59L6 18l6-6z"></path></svg>
                     </div>
-                    <div id="schedule-next" class="schedule-card">
-                        <div class="schedule-header">
-                            Következik
-                            <svg viewBox="0 0 24 24"><path d="M13 6l-1.41 1.41L16.17 12l-4.58 4.59L13 18l6-6z M6 6l-1.41 1.41L9.17 12l-4.58 4.59L6 18l6-6z"></path></svg>
-                        </div>
-                        <div class="schedule-list">${nextItemsHtml}</div>
+                    <div class="schedule-list">${nextItemsHtml}</div>
+                </div>
+                <div id="schedule-later" class="schedule-card">
+                    <div class="schedule-header">
+                        Később
+                        <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></svg>
                     </div>
-                    <div id="schedule-later" class="schedule-card">
-                        <div class="schedule-header">
-                            Később
-                            <svg viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></svg>
-                        </div>
-                        <div class="schedule-list">${laterItemsHtml}</div>
+                    <div class="schedule-list">${laterItemsHtml}</div>
+                </div>
+                 <div id="schedule-credits" class="schedule-card">
+                    <div class="credits-main-text">
+                        Kövesd a 
+                        <span class="credits-brand">
+                            <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
+                            <span>TKP NEWS</span>
+                            <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
+                        </span> 
+                        hírsávot a nap 24 órájában
                     </div>
-                     <div id="schedule-credits" class="schedule-card">
-                        <div class="credits-main-text">
-                            Kövesd a 
-                            <span class="credits-brand">
-                                <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
-                                <span>TKP NEWS</span>
-                                <svg class="ticker-logo" viewBox="0 0 24 24"><use href="#eye-paths"/></svg>
-                            </span> 
-                            hírsávot a nap 24 órájában
-                        </div>
-                        <div class="credits-footer">
-                            <span>Készítette: Robi</span>
-                            <span>&copy; Copyright by: Robi</span>
-                        </div>
+                    <div class="credits-footer">
+                        <span>Készítette: Robi</span>
+                        <span>&copy; Copyright by: Robi</span>
                     </div>
                 </div>`;
             
-            worldWeatherContainer.innerHTML = fullHtml;
+            const scheduleWidget = document.getElementById('schedule-widget');
+            scheduleWidget.innerHTML = fullHtml;
+            
+            const intro = document.getElementById('schedule-intro');
+            const next = document.getElementById('schedule-next');
+            const later = document.getElementById('schedule-later');
+            const credits = document.getElementById('schedule-credits');
 
-            const introCard = document.getElementById('schedule-intro');
-            const nextCard = document.getElementById('schedule-next');
-            const laterCard = document.getElementById('schedule-later');
-            const creditsCard = document.getElementById('schedule-credits');
-
-            const highlightSequence = (cardElement) => {
-                const items = cardElement.querySelectorAll('.schedule-item-v2');
-                if (items.length === 0) return;
-
-                setTimeout(() => items[0].classList.add('highlight-gold'), 500); // Start after fade-in
-                setTimeout(() => {
-                    items[0].classList.remove('highlight-gold');
-                    if (items[1]) items[1].classList.add('highlight-gold');
-                }, 3500);
-                setTimeout(() => {
-                    if (items[1]) items[1].classList.remove('highlight-gold');
-                    if (items[2]) items[2].classList.add('highlight-gold');
-                }, 6500);
-                 setTimeout(() => {
-                    if (items[2]) items[2].classList.remove('highlight-gold');
-                }, 9500);
-            };
-
-            // --- Animation Sequence ---
             requestAnimationFrame(() => {
                 worldWeatherContainer.classList.add('schedule-expanded');
-                introCard.classList.add('visible');
+                intro.classList.add('visible');
             });
 
             scheduleWidgetTimeout = setTimeout(() => {
-                introCard.classList.remove('visible');
-                nextCard.classList.add('visible');
-                highlightSequence(nextCard);
+                intro.classList.remove('visible');
+                next.classList.add('visible');
+                const items = next.querySelectorAll('.schedule-item-v2');
+                if (items.length > 0) {
+                    setTimeout(() => items[0].classList.add('highlight-gold'), 500); 
+                    setTimeout(() => {
+                        items[0].classList.remove('highlight-gold');
+                        if (items[1]) items[1].classList.add('highlight-gold');
+                    }, 3500);
+                }
             }, 5000);
 
             scheduleWidgetTimeout = setTimeout(() => {
-                nextCard.classList.remove('visible');
-                laterCard.classList.add('visible');
-                highlightSequence(laterCard);
+                next.classList.remove('visible');
+                later.classList.add('visible');
+                const items = later.querySelectorAll('.schedule-item-v2');
+                 if (items.length > 0) {
+                    setTimeout(() => items[0].classList.add('highlight-gold'), 500); 
+                 }
             }, 20000); 
             
             scheduleWidgetTimeout = setTimeout(() => {
-                laterCard.classList.remove('visible');
-                creditsCard.classList.add('visible');
+                later.classList.remove('visible');
+                credits.classList.add('visible');
             }, 35000); 
 
             scheduleWidgetTimeout = setTimeout(() => {
-                creditsCard.classList.remove('visible');
+                credits.classList.remove('visible');
                 worldWeatherContainer.classList.remove('schedule-expanded');
                 
                 scheduleWidgetTimeout = setTimeout(() => {
-                    worldWeatherContainer.innerHTML = '<div class="placeholder"></div>';
+                     scheduleWidget.innerHTML = '';
+                     if(weatherSlot) weatherSlot.style.opacity = '1'; // SHOW WEATHER
                     if (!weatherDisplayInterval) {
                         displayWeather();
                         weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
@@ -1659,7 +1923,8 @@
         function updateClock() {
             const now = new Date(); 
             const year = now.getFullYear(), month = String(now.getMonth() + 1).padStart(2, '0'), day = String(now.getDate()).padStart(2, '0'), dayOfWeek = CALENDAR_DATA.napok[now.getDay()], hours = String(now.getHours()).padStart(2, '0'), minutes = String(now.getMinutes()).padStart(2, '0'), seconds = now.getSeconds();
-            
+            const minVal = parseInt(minutes);
+
             document.getElementById('clock').innerHTML = `${year}.${month}.${day}. ${dayOfWeek} ${hours}<span class="clock-colon">:</span>${minutes}`;
             
             const { current, next } = getCurrentAndNextBlocks(now);
@@ -1672,7 +1937,6 @@
                     countdownOverlayEl.classList.add('visible');
                     
                     if (seconds === 50) {
-                        console.log("Óránkénti frissítés indítása a visszaszámlálás alatt...");
                         sessionStorage.removeItem('newsCache');
                         triggerUpdate(true);
                     }
@@ -1686,44 +1950,35 @@
                     isCountdownActive = false;
                     tickerWrap.classList.remove('countdown-active');
                     countdownOverlayEl.classList.remove('visible');
-                    console.log("Visszaszámlálás vége, hírciklus indítása elölről.");
                     startFlipCycle(true);
                 }
             }
             
-            if ((parseInt(minutes) === 25 || parseInt(minutes) === 50) && seconds < 10 && minutes !== lastInfoMinute) {
+            // INFO WIDGET LOGIC (xx:25 and xx:50)
+            if ((minVal === 25 || minVal === 50) && seconds < 10 && minutes !== lastInfoMinute) {
                 lastInfoMinute = minutes;
                  if (document.visibilityState === 'visible' && !isCountdownActive) {
                     displayInfoWidgetSequence();
                 }
             }
 
-            const isSpecialTime = (hours === "00" && minutes === "01");
-            const isRegularTime = (parseInt(minutes) % 20 === 0) && !(hours === "00" && minutes === "00");
-
-            if ((isSpecialTime || isRegularTime) && seconds < 10 && minutes !== lastScheduleMinute) {
+            // SCHEDULE LIST (xx:00, xx:20, xx:40 - Standard 20 min interval)
+            if ((minVal === 0 || minVal === 20 || minVal === 40) && seconds < 10 && minutes !== lastScheduleMinute && !isCountdownActive) {
                 lastScheduleMinute = minutes;
-                if (document.visibilityState === 'visible' && !isCountdownActive) {
+                if (document.visibilityState === 'visible') {
                     displayScheduleWidgetSequence();
                 }
             }
 
             if (currentThematicBlock === null || current.start !== currentThematicBlock.start) {
-                console.log(`Tematikus blokk váltás: ${current.name}`);
                 currentThematicBlock = current;
-                
-                if (current.type === 'summary_yesterday') {
-                    sessionStorage.removeItem('newsCache');
-                    triggerUpdate(true);
-                } else {
-                    sessionStorage.removeItem('newsCache');
-                    if(isCountdownActive) {
-                        isCountdownActive = false;
-                        tickerWrap.classList.remove('countdown-active');
-                        countdownOverlayEl.classList.remove('visible');
-                    }
-                    triggerUpdate(true);
+                sessionStorage.removeItem('newsCache');
+                if(isCountdownActive) {
+                    isCountdownActive = false;
+                    tickerWrap.classList.remove('countdown-active');
+                    countdownOverlayEl.classList.remove('visible');
                 }
+                triggerUpdate(true);
                 return;
             }
             
@@ -1732,7 +1987,7 @@
             if (next.start < current.start) nextStartTime.setDate(nextStartTime.getDate() + 1);
             
             const secondsSinceMidnight = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-            const limitSeconds = 5 * 3600 + 45 * 60; // 05:45:00
+            const limitSeconds = 5 * 3600 + 45 * 60;
             let customNightMessage = false;
 
             if (currentThematicBlock && currentThematicBlock.start === 0) {
@@ -1758,7 +2013,6 @@
             if (currentThematicBlock.type === 'fresh' && minutes % refreshInterval === 0 && seconds === 0 && minutes !== lastUpdateMinute) {
                 lastUpdateMinute = minutes;
                 if (document.visibilityState === 'visible' && !isCountdownActive) {
-                    console.log(`Automatikus frissítés (${refreshInterval} percenként)...`);
                     sessionStorage.removeItem('newsCache');
                     triggerUpdate(true);
                 }
@@ -1786,8 +2040,28 @@
         const formatTime = (dateObj) => dateObj.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
         const formatBlockTime = (time) => { const hour = Math.floor(time); const minute = Math.round((time % 1) * 60); return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`; };
 
-        function pauseFlipCycle() { if (flipTimeoutId) { clearTimeout(flipTimeoutId); flipTimeoutId = null; const elapsed = Date.now() - flipStartTime; flipRemainingTime -= elapsed; progressBar.style.animationPlayState = 'paused'; } }
-        function resumeFlipCycle() { if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { flipStartTime = Date.now(); flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); progressBar.style.animationPlayState = 'running';} }
+        function pauseFlipCycle() { 
+            if (flipTimeoutId) { 
+                clearTimeout(flipTimeoutId); 
+                flipTimeoutId = null; 
+                const elapsed = Date.now() - flipStartTime; 
+                flipRemainingTime -= elapsed; 
+                progressBar.style.animationPlayState = 'paused'; 
+                clearInterval(visualTimerInterval); // Pause visual timer
+            } 
+        }
+
+        function resumeFlipCycle() { 
+            if (flipRemainingTime > 0 && !isInfoMessageActive && !isCountdownActive && tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item').length > 1) { 
+                flipStartTime = Date.now(); 
+                flipTimeoutId = setTimeout(cycleItems, flipRemainingTime); 
+                progressBar.style.animationPlayState = 'running';
+                // Find current active item to restart timer
+                const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+                const activeItem = items[currentItemIndex];
+                if (activeItem) startVisualTimer(flipRemainingTime, activeItem);
+            } 
+        }
         
         function showBreakingItem(item) {
             isShowingBreaking = true;
@@ -1799,6 +2073,8 @@
             const breakingHtml = `
                 <a href="${item.link}" class="ticker-item breaking-highlight visible" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
                      <div class="item-watermark watermark-breaking">MOST ÉRKEZETT</div>
+                     <div class="item-breaking-indicator">Rendkívüli hír</div>
+                     <div class="item-timer"></div>
                      <div class="ticker-item-content-wrapper">
                         <div class="ticker-item-header">
                             <span class="meta">[<span class="source">${item.source}</span> | ${formatTime(new Date())}]</span>
@@ -1812,12 +2088,13 @@
             const originalContent = container.innerHTML;
             container.innerHTML = breakingHtml;
             
+            // Get the newly injected breaking item to pass to timer
+            const breakingItem = container.querySelector('.ticker-item');
+
             // Handle image mode if any
             if (item.imageUrl) {
-                 fetchWithProxyFallback(item.imageUrl)
-                    .then(response => response.blob())
-                    .then(blob => { labelImage.src = URL.createObjectURL(blob); tickerLabel.classList.add('image-mode-active'); })
-                    .catch(() => {});
+                 labelImage.src = item.imageUrl;
+                 tickerLabel.classList.add('image-mode-active');
             } else {
                 tickerLabel.classList.remove('image-mode-active');
             }
@@ -1829,30 +2106,23 @@
             
             flipRemainingTime = 20000;
             flipStartTime = Date.now();
+            startVisualTimer(20000, breakingItem); // Pass element explicitly
             
             flipTimeoutId = setTimeout(() => {
-                // Restore original content structure for next cycle
-                // We need to completely refresh the view because we overwrote innerHTML
-                // Easiest way is to re-render current item index
                 isShowingBreaking = false;
-                
-                // Reset to normal
-                container.innerHTML = originalContent; // Restore structure
-                
-                // Re-fetch to be safe or just rely on cycleItems which will rebuild if needed
-                // Actually, cycleItems() calls showItemAtIndex() which rebuilds visibility classes
-                // BUT we lost the DOM nodes for the list items when we overwrote innerHTML.
-                // So we must re-render the list from masterNewsList.
-                // Force a re-render of the current track content:
-                
-                // Quick fix: re-trigger update without fetch, just display
-                fetchAndDisplayContent(false); 
-                
+
+                if (pendingUpdate) {
+                    pendingUpdate = false;
+                    triggerUpdate(true); 
+                } else {
+                    container.innerHTML = originalContent; 
+                    showItemAtIndex(lastRegularItemIndex); 
+                }
             }, 20000);
         }
 
         function showItemAtIndex(index, isManual = false) {
-            if (isInfoMessageActive || isCountdownActive) return;
+            if (isInfoMessageActive || isCountdownActive || isShowingBreaking) return;
             pauseFlipCycle();
             const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
             if(items.length === 0) return;
@@ -1886,8 +2156,14 @@
                     if (breakingIndicatorEl) breakingIndicatorEl.style.display = 'none';
                     if (watermarkEl) {
                         watermarkEl.style.display = 'block';
-                        // STROBE EFFECT ON RETURN FROM BREAKING (Handled by re-render now, but good to keep logic)
-                         if (wasPreviousItemBreaking) {
+                        // STROBE EFFECT ON RETURN
+                        if (isShowingBreaking) {
+                            isShowingBreaking = false; // Reset flag
+                            watermarkEl.classList.add('strobe-in');
+                            watermarkEl.addEventListener('animationend', () => {
+                                watermarkEl.classList.remove('strobe-in');
+                            }, { once: true });
+                        } else if (wasPreviousItemBreaking) {
                              watermarkEl.style.visibility = 'hidden';
                             setTimeout(() => {
                                 watermarkEl.style.visibility = 'visible';
@@ -1903,16 +2179,13 @@
                 wasPreviousItemBreaking = isCurrentItemBreaking;
                 
                 const imageUrl = currentItem.dataset.imageUrl;
-                if (imageUrl && imageUrl !== 'null') {
-                     fetchWithProxyFallback(imageUrl)
-                        .then(response => response.blob())
-                        .then(blob => {
-                            labelImage.src = URL.createObjectURL(blob);
-                            tickerLabel.classList.add('image-mode-active');
-                        })
-                        .catch(() => tickerLabel.classList.remove('image-mode-active'));
+                if (imageUrl && imageUrl !== 'null' && imageUrl.trim() !== '') {
+                    labelImage.src = imageUrl;
+                    tickerLabel.classList.add('image-mode-active');
                 } else {
                     tickerLabel.classList.remove('image-mode-active');
+                    // Clear src to prevent showing old image if opacity transition fails or lags
+                    setTimeout(() => { if(!tickerLabel.classList.contains('image-mode-active')) labelImage.src = ''; }, 600);
                 }
 
                 requestAnimationFrame(() => { 
@@ -1922,6 +2195,7 @@
                 });
 
                 flipRemainingTime = duration;
+                startVisualTimer(duration, currentItem); // Pass element explicitly
                 if(currentThematicBlock.type !== 'goodbye') resumeFlipCycle();
             }
         }
@@ -1936,20 +2210,26 @@
                 return;
             }
 
-            const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
-            if (activeFilter !== 'all' && currentItemIndex >= items.length - 1) {
-                const totalAvailable = fullFilteredNewsList.length;
-                const preliminaryItemsCount = (currentFilterPage === 1) ? preliminaryItems.length : 0;
-                const currentlyLoaded = (items.length - preliminaryItemsCount) + (currentFilterPage - 1) * FILTER_CHUNK_SIZE;
+            // 2. Normal Cycle
+            if (isShowingBreaking) {
+                // Just returned from breaking news
+                showItemAtIndex(lastRegularItemIndex); 
+            } else {
+                const items = tracks[activeTrackKey].querySelectorAll('.ticker-item, a.ticker-item');
+                if (activeFilter !== 'all' && currentItemIndex >= items.length - 1) {
+                    const totalAvailable = fullFilteredNewsList.length;
+                    const preliminaryItemsCount = (currentFilterPage === 1) ? preliminaryItems.length : 0;
+                    const currentlyLoaded = (items.length - preliminaryItemsCount) + (currentFilterPage - 1) * FILTER_CHUNK_SIZE;
 
-                if (currentlyLoaded < totalAvailable) {
-                    console.log("Hírek végére ért, következő adag betöltése...");
-                    currentFilterPage++;
-                    triggerUpdate(true, true);
-                    return;
+                    if (currentlyLoaded < totalAvailable) {
+                        console.log("Hírek végére ért, következő adag betöltése...");
+                        currentFilterPage++;
+                        triggerUpdate(true, true);
+                        return;
+                    }
                 }
+                showItemAtIndex(currentItemIndex + 1); 
             }
-            showItemAtIndex(currentItemIndex + 1); 
         }
         
         function startFlipCycle(startAtFirst = true) {
@@ -2006,8 +2286,10 @@
         }
 
         async function fetchAndDisplayContent(isManualTrigger = false) {
+            // FIX: Ha az első betöltésnél még nincs feed, de a Firebase már elindult, várjunk kicsit
             if (Object.keys(rssFeeds).length === 0) {
                  console.log("Várakozás feedekre...");
+                 // Nem return-ölünk azonnal, hanem próbálkozunk
             }
             if (!currentThematicBlock) return;
             
@@ -2034,6 +2316,12 @@
                 return; 
             }
 
+            if (isShowingBreaking) {
+                console.log("Breaking news active, deferring update...");
+                pendingUpdate = true;
+                return;
+            }
+
             isInfoMessageActive = false;
             fetchStartTime = Date.now();
             clearTimeout(loadingTimeout);
@@ -2041,11 +2329,15 @@
             if (!isContentLoaded) {
                 showRefreshState(true, isManualTrigger ? 'animation' : 'text');
             } else if (!isCountdownActive) {
+                manualRefreshTriggerEl.innerHTML = 'Frissítem a híreket<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
                 manualRefreshTriggerEl.style.cursor = 'default';
+                manualRefreshTriggerEl.style.display = 'block';
             }
             
             stopNewsCheckCycle();
             accumulatedNewNewsCount = 0;
+            // Breaking queue clear on full refresh? Maybe yes, to avoid duplicates or old news
+            breakingNewsQueue = []; 
 
             loadingTimeout = setTimeout(() => {
                 if (!isContentLoaded) showRefreshState(false);
@@ -2075,7 +2367,18 @@
             }
 
             if (!allNewsItems) {
-                 const feedList = Object.keys(rssFeeds).length > 0 ? rssFeeds : {};
+                 let feedList = Object.keys(rssFeeds).length > 0 ? rssFeeds : {};
+                 
+                 // FALLBACK FEEDS if Firebase failed
+                 if(Object.keys(feedList).length === 0) {
+                     console.log("Using fallback feeds");
+                     feedList = {
+                         "Index": "https://index.hu/24ora/rss/",
+                         "Telex": "https://telex.hu/rss",
+                         "24hu": "https://24.hu/feed/"
+                     };
+                 }
+
                  const newsPromises = Object.entries(feedList).map(async ([key, url]) => {
                     try {
                         const res = await fetchWithProxyFallback(url);
@@ -2086,8 +2389,14 @@
                     } catch (error) { return { success: false, url, reason: error.message }; }
                 });
                 
-                const fetchResults = await Promise.all(newsPromises);
-                allNewsItems = tagNewsItems(fetchResults.filter(result => result.success).flatMap(result => result.data));
+                // CHANGE: Promise.all -> Promise.allSettled to handle partial failures
+                const fetchResults = await Promise.allSettled(newsPromises);
+                
+                allNewsItems = tagNewsItems(
+                    fetchResults
+                        .filter(result => result.status === 'fulfilled' && result.value.success)
+                        .flatMap(result => result.value.data)
+                );
 
                 if (allNewsItems.length > 0) {
                     sessionStorage.setItem(CACHE_KEY, JSON.stringify({ news: allNewsItems, timestamp: Date.now() }));
@@ -2120,11 +2429,13 @@
             if (activeFilter !== 'all') {
                 timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.name === 'Napindító') {
+                // FIX: Napindító: Mai 00:00-tól mostanáig
                 timeLimit.setHours(0, 0, 0, 0);
             } else if (currentThematicBlock.type === 'fresh') {
                 const hours = currentThematicBlock.timeWindowHours || 2;
                 timeLimit.setHours(timeLimit.getHours() - hours);
             } else if (currentThematicBlock.type === 'summary_yesterday') {
+                // Éjszakai műszak: Teljes tegnapi nap
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
                 yesterday.setHours(0, 0, 0, 0);
@@ -2154,7 +2465,7 @@
                 newsToDisplay = fullFilteredNewsList;
             }
 
-            // FIX: TAB RETURN: Skip intro items if returning
+            // FIX: Skip Intro on Tab Return or Filter Change
             if ((activeFilter === 'all' || (isManualTrigger && currentFilterPage === 1)) && !isManualTrigger && !isTabReturn) {
                 const dayOfMonth = today.getDate();
                 const monthName = CALENDAR_DATA.honapok[today.getMonth()].toUpperCase();
@@ -2170,6 +2481,7 @@
                 const calendarHtml = `
                     <div class="ticker-item calendar-item-v2" data-image-url="">
                         ${watermarkHtml}
+                        <div class="item-timer"></div>
                         <div class="ci-left">
                             <div class="ci-day">${String(dayOfMonth).padStart(2, '0')}</div>
                             <div class="ci-month-year">${year}. ${monthName}</div>
@@ -2190,6 +2502,7 @@
                     const quoteHtml = `
                         <div class="ticker-item quote-item-v2" data-image-url="">
                             <div class="item-watermark">${currentThematicBlock.name}</div>
+                            <div class="item-timer"></div>
                             <blockquote>“${quote.text}”</blockquote>
                             <div class="quote-divider"><cite>${quote.author}</cite></div>
                         </div>`;
@@ -2217,6 +2530,7 @@
                     <a href="${item.link}" class="ticker-item ${isBreaking ? 'breaking-highlight' : ''}" target="_blank" rel="noopener noreferrer" data-image-url="${item.imageUrl || ''}">
                         ${watermarkHtml}
                         ${breakingIndicatorHtml}
+                        <div class="item-timer"></div>
                         <div class="ticker-item-content-wrapper">
                             <div class="ticker-item-header">
                                 <span class="meta">${faviconImg}[<span class="source">${item.source}</span> | ${time}]</span>
@@ -2249,19 +2563,24 @@
                         tracks[standbyTrackKey].classList.add('visible');
                         tracks[activeTrackKey].classList.remove('visible');
                         activeTrackKey = standbyTrackKey;
-                        // FIX: If tab return, start at 0 (newest), otherwise continue or start at 0
-                        startFlipCycle(isTabReturn ? true : true); 
-                        // Note: startFlipCycle(true) starts at index 0. 
+                        
+                        // FIX: Start immediately (no intro) if coming back from tab
+                        if (isTabReturn) {
+                            startFlipCycle(true); 
+                        } else {
+                            startFlipCycle(true);
+                        }
                     });
                 }
                 lastNewsCheckTimestamp = Date.now();
+                lastNewsFetchTimestamp = Date.now(); // Added tracking for last full fetch
                 startNewsCheckCycle();
-                isTabReturn = false; // Reset flag
+                isTabReturn = false;
             }, remainingTime);
         };
 
         async function checkForNewNews() {
-            if (!currentThematicBlock || currentThematicBlock.type !== 'fresh' || document.visibilityState !== 'visible' || Object.keys(rssFeeds).length === 0) {
+            if (!currentThematicBlock || document.visibilityState !== 'visible') {
                 return;
             }
 
@@ -2273,7 +2592,14 @@
             }
 
             try {
-                const newsPromises = Object.values(rssFeeds).map(url => fetchWithProxyFallback(url).then(res => res.text()));
+                // Use Fallback Feeds for checking if Firebase feeds empty
+                let feedList = Object.keys(rssFeeds).length > 0 ? rssFeeds : {
+                     "Index": "https://index.hu/24ora/rss/",
+                     "Telex": "https://telex.hu/rss"
+                };
+
+                // CHANGE: Reduce timeout here too for fast checks
+                const newsPromises = Object.values(feedList).map(url => fetchWithProxyFallback(url).then(res => res.text()));
                 const results = await Promise.allSettled(newsPromises);
                 
                 for (const result of results) {
@@ -2303,10 +2629,13 @@
 
                                         breakingNewsQueue.push(newItem);
 
-                                        // FIX: Interrupt immediately
+                                        // FIX: Interrupt immediately!
                                         if (!isShowingBreaking) {
-                                            clearTimeout(flipTimeoutId); // Kill current timer
-                                            cycleItems(); // Run cycle which will pick up the queue
+                                            // Get first item from queue
+                                            const nextBreaking = breakingNewsQueue.shift();
+                                            if(nextBreaking) {
+                                                showBreakingItem(nextBreaking);
+                                            }
                                         }
                                     }
                                 }
@@ -2324,7 +2653,8 @@
 
         function startNewsCheckCycle() {
             stopNewsCheckCycle();
-            if (currentThematicBlock && currentThematicBlock.type === 'fresh') {
+            // FIX: Allow scan in night mode too (removed type==fresh check)
+            if (currentThematicBlock) {
                 // Check every 2 minutes
                 setTimeout(checkForNewNews, 2 * 60 * 1000);
                 newsCheckInterval = setInterval(checkForNewNews, 2 * 60 * 1000);
@@ -2378,7 +2708,25 @@
             }, 500);
         };
         
-        function stopAllTimers() { clearTimeout(updateTimeout); clearTimeout(debounceTimeout); clearTimeout(newsFetchRetryTimeout); clearTimeout(loadingTimeout); pauseFlipCycle(); if(weatherDisplayInterval) clearInterval(weatherDisplayInterval); if(weatherFetchInterval) clearInterval(weatherFetchInterval); weatherDisplayInterval = null; weatherFetchInterval = null; stopAllAnimatedEffects(); stopNewsCheckCycle(); clearTimeout(scheduleWidgetTimeout); }
+        function stopAllTimers() { 
+            clearTimeout(updateTimeout); 
+            clearTimeout(debounceTimeout); 
+            clearTimeout(newsFetchRetryTimeout); 
+            clearTimeout(loadingTimeout); 
+            pauseFlipCycle(); 
+            
+            if(weatherDisplayInterval) {
+                clearInterval(weatherDisplayInterval);
+                weatherDisplayInterval = null;
+            }
+            // FIX: Do not clear weatherFetchInterval here to keep PWS updating in background
+            // if(weatherFetchInterval) clearInterval(weatherFetchInterval); 
+            // weatherFetchInterval = null; 
+            
+            stopAllAnimatedEffects(); 
+            stopNewsCheckCycle(); 
+            clearTimeout(scheduleWidgetTimeout); 
+        }
         
         async function startAllTimers() { 
             sessionStorage.removeItem('newsCache'); 
@@ -2422,20 +2770,45 @@
             
             document.addEventListener('visibilitychange', () => { 
                 if (document.visibilityState === 'visible') {
-                    // FIX: Tab return logic
-                    isTabReturn = true;
-                    updateDynamicSkyAndTheme();
-                    resumeFlipCycle();
-                    startAllAnimatedEffects();
-                    
-                    // Force immediate weather update
-                    fetchWeatherData();
-                    // Force immediate news update
-                    sessionStorage.removeItem('newsCache');
-                    triggerUpdate(true);
-                    
-                    // Ensure check cycle is active
-                    startNewsCheckCycle();
+                    if (bodyEl.classList.contains('intro-finished')) {
+                        isTabReturn = true; 
+                        updateDynamicSkyAndTheme();
+                        resumeFlipCycle();
+                        startAllAnimatedEffects();
+                        
+                        // Force Weather
+                        fetchWeatherData(); 
+                        // Ensure Fetch Interval is running (if it was somehow stopped or first load)
+                        if (!weatherFetchInterval) weatherFetchInterval = setInterval(fetchWeatherData, 30000);
+                        if (!weatherDisplayInterval) weatherDisplayInterval = setInterval(displayWeather, WEATHER_DISPLAY_INTERVAL_DURATION);
+
+                        // --- Smart News Resume Logic ---
+                        const now = new Date();
+                        const minutes = now.getMinutes();
+                        let needsRefresh = false;
+
+                        if (currentThematicBlock && currentThematicBlock.type === 'fresh') {
+                            const refreshInterval = currentThematicBlock.refreshMinutes || 15;
+                            const currentRefreshSlot = Math.floor(minutes / refreshInterval);
+                            const lastFetchTime = new Date(lastNewsFetchTimestamp);
+                            const lastRefreshSlot = Math.floor(lastFetchTime.getMinutes() / refreshInterval);
+                            
+                            // Check if we crossed into a new refresh slot period (e.g. passed xx:00, xx:15)
+                            if (currentRefreshSlot !== lastRefreshSlot || (now - lastFetchTime) > (refreshInterval * 60 * 1000)) {
+                                needsRefresh = true;
+                            }
+                        }
+
+                        if (needsRefresh) {
+                            sessionStorage.removeItem('newsCache');
+                            triggerUpdate(true);
+                        } else {
+                            // Just continue with next item
+                            showItemAtIndex(currentItemIndex + 1, true);
+                        }
+                        
+                        startNewsCheckCycle();
+                    }
                 } else {
                     stopAllTimers();
                 }
@@ -2448,7 +2821,6 @@
             
             manualRefreshTriggerEl.addEventListener('click', () => {
                 if (!refreshOverlay.classList.contains('visible') && !isCountdownActive) {
-                    console.log("Manuális frissítés...");
                     sessionStorage.removeItem('newsCache');
                     triggerUpdate(true, true);
                 }
@@ -2467,12 +2839,10 @@
         });
 
         filterControls.addEventListener('click', (e) => setFilter(e.target));
-        // FIX: Firebase adatváltozáskor is azonnali trigger
         onValue(announcementsRef, (snapshot) => { customAnnouncements = snapshot.val() ? Object.values(snapshot.val()) : []; sessionStorage.removeItem('newsCache'); triggerUpdate(true); });
         onValue(feedsRef, (snapshot) => { 
             rssFeeds = snapshot.val() || {};
             sessionStorage.removeItem('newsCache');
-            // Ha már betöltött az oldal (intro kész), frissítünk, egyébként a startAllTimers elintézi
             if(bodyEl.classList.contains('intro-finished')) {
                 triggerUpdate(true);
             }
